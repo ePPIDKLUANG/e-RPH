@@ -88,6 +88,19 @@
             color: #198754;
         }
 
+        /* Tambahan CSS Dinamik untuk Pilihan Saiz Tulisan */
+        body.saiz-kecil { font-size: 1.0rem; }
+        body.saiz-kecil .form-control, body.saiz-kecil .form-select, body.saiz-kecil .form-check-label, body.saiz-kecil .select2-results__option { font-size: 1.0rem; }
+        body.saiz-kecil .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.0rem; }
+
+        body.saiz-sederhana { font-size: 1.2rem; }
+        body.saiz-sederhana .form-control, body.saiz-sederhana .form-select, body.saiz-sederhana .form-check-label, body.saiz-sederhana .select2-results__option { font-size: 1.1rem; }
+        body.saiz-sederhana .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.1rem; }
+
+        body.saiz-besar { font-size: 1.5rem; }
+        body.saiz-besar .form-control, body.saiz-besar .form-select, body.saiz-besar .form-check-label, body.saiz-besar .select2-results__option { font-size: 1.4rem; }
+        body.saiz-besar .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.4rem; }
+
         @media print {
             body { 
                 background-color: white; 
@@ -479,6 +492,14 @@
                                     <option value="portrait">منکق (Portrait)</option>
                                     <option value="landscape">ملينتغ (Landscape)</option>
                                 </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">ساءيز توليسن</label>
+                                <div class="btn-group w-100" role="group" id="btn-group-saiz">
+                                    <button type="button" class="btn btn-outline-success" onclick="tukarSaizTulisan('kecil', this)">كچيل (Kecil)</button>
+                                    <button type="button" class="btn btn-outline-success active" onclick="tukarSaizTulisan('sederhana', this)">سدرهانا (Sederhana)</button>
+                                    <button type="button" class="btn btn-outline-success" onclick="tukarSaizTulisan('besar', this)">بسر (Besar)</button>
+                                </div>
                             </div>
                         </div>
                         <button type="button" class="btn btn-success btn-lg px-5 shadow-sm ms-2" onclick="laksanaCetak()">
@@ -1075,6 +1096,27 @@ function laksanaCetak() {
     setTimeout(() => {
         window.print();
     }, 300);
+}
+
+function tukarSaizTulisan(saiz, btnEl) {
+    // Membuang saiz sedia ada pada body
+    document.body.classList.remove('saiz-kecil', 'saiz-sederhana', 'saiz-besar');
+    
+    // Menambah class saiz yang dipilih
+    document.body.classList.add('saiz-' + saiz);
+    
+    // Kemas kini visual butang aktif
+    const btns = document.getElementById('btn-group-saiz').querySelectorAll('.btn');
+    btns.forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+
+    // Susun semula ketinggian (height) kotak teks automatik selepas saiz bertukar
+    setTimeout(() => {
+        document.querySelectorAll('textarea').forEach(el => {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
+        });
+    }, 100);
 }
 </script>
 </body>
