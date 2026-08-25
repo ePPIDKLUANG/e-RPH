@@ -55,16 +55,11 @@
             font-size: 1.1rem; 
         }
         .select2-container .select2-selection--single {
-            height: calc(3.5rem + 2px);
             padding: 0.375rem 0.75rem;
         }
         .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: calc(3.5rem + 2px);
             left: 1px;
             right: auto;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 2.8rem;
         }
 
         .table-maklumat {
@@ -88,18 +83,27 @@
             color: #198754;
         }
 
-        /* Tambahan CSS Dinamik untuk Pilihan Saiz Tulisan */
+        /* Tambahan CSS Dinamik untuk Pilihan Saiz Tulisan & Jadual Auto-fit */
         body.saiz-kecil { font-size: 1.0rem; }
         body.saiz-kecil .form-control, body.saiz-kecil .form-select, body.saiz-kecil .form-check-label, body.saiz-kecil .select2-results__option { font-size: 1.0rem; }
-        body.saiz-kecil .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.0rem; }
+        body.saiz-kecil .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.0rem; line-height: 2.2rem; }
+        body.saiz-kecil .select2-container .select2-selection--single { height: 2.8rem; }
+        body.saiz-kecil .select2-container--default .select2-selection--single .select2-selection__arrow { height: 2.8rem; }
+        body.saiz-kecil .table-maklumat td, body.saiz-kecil .table-maklumat th { padding: 6px 10px; }
 
         body.saiz-sederhana { font-size: 1.2rem; }
         body.saiz-sederhana .form-control, body.saiz-sederhana .form-select, body.saiz-sederhana .form-check-label, body.saiz-sederhana .select2-results__option { font-size: 1.1rem; }
-        body.saiz-sederhana .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.1rem; }
+        body.saiz-sederhana .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.1rem; line-height: 2.8rem; }
+        body.saiz-sederhana .select2-container .select2-selection--single { height: calc(3.5rem + 2px); }
+        body.saiz-sederhana .select2-container--default .select2-selection--single .select2-selection__arrow { height: calc(3.5rem + 2px); }
+        body.saiz-sederhana .table-maklumat td, body.saiz-sederhana .table-maklumat th { padding: 10px 15px; }
 
         body.saiz-besar { font-size: 1.5rem; }
         body.saiz-besar .form-control, body.saiz-besar .form-select, body.saiz-besar .form-check-label, body.saiz-besar .select2-results__option { font-size: 1.4rem; }
-        body.saiz-besar .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.4rem; }
+        body.saiz-besar .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.4rem; line-height: 3.5rem; }
+        body.saiz-besar .select2-container .select2-selection--single { height: 4.2rem; }
+        body.saiz-besar .select2-container--default .select2-selection--single .select2-selection__arrow { height: 4.2rem; }
+        body.saiz-besar .table-maklumat td, body.saiz-besar .table-maklumat th { padding: 14px 20px; }
 
         @media print {
             body { 
@@ -229,7 +233,7 @@
                                         <option value="6">٦ (انم)</option>
                                         <option value="Khas">درجة خاص</option>
                                     </select>
-                                    <input type="text" class="form-control border-0 p-0 m-0 ms-2" placeholder="نام كلس..." required>
+                                    <input type="text" id="nama_kelas" class="form-control border-0 p-0 m-0 ms-2" placeholder="نام كلس..." required>
                                 </div>
                             </td>
                         </tr>
@@ -239,7 +243,7 @@
                                 <div class="d-flex align-items-center">
                                     <input type="date" class="form-control border-0 p-0 m-0 w-auto" id="tarikh" required>
                                     <span class="mx-3">/</span>
-                                    <select class="form-select border-0 p-0 m-0 w-auto" required>
+                                    <select id="hari" class="form-select border-0 p-0 m-0 w-auto" required>
                                         <option value="">هاري...</option>
                                         <option value="Ahad">احد</option>
                                         <option value="Isnin">اثنين</option>
@@ -277,7 +281,7 @@
                         </tr>
                         <tr>
                             <td>بيلڠن موريد</td>
-                            <td><input type="text" class="form-control border-0 p-0 m-0" placeholder="چونتوه: ٣٠ اورڠ" required></td>
+                            <td><input type="text" id="bil_murid" class="form-control border-0 p-0 m-0" placeholder="چونتوه: ٣٠ اورڠ" required></td>
                         </tr>
                         <tr>
                             <td>ميڠݢو ك-</td>
@@ -498,18 +502,24 @@
                                 <div class="btn-group w-100" role="group" id="btn-group-saiz">
                                     <button type="button" class="btn btn-outline-success" onclick="tukarSaizTulisan('kecil', this)">كچيل (Kecil)</button>
                                     <button type="button" class="btn btn-outline-success active" onclick="tukarSaizTulisan('sederhana', this)">سدرهانا (Sederhana)</button>
-                                    <button type="button" class="btn btn-outline-success" onclick="tukarSaizTulisan('besar', this)">بسر (Besar)</button>
+                                    <button type="button" class="btn btn-outline-success" onclick="tukarSaizTulisan('besar', this)">لبيه بسر (Lebih Besar)</button>
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-success btn-lg px-5 shadow-sm ms-2" onclick="laksanaCetak()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-printer ms-2" viewBox="0 0 16 16">
-                                <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
-                                <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/>
-                            </svg>
-                            چيتق / سيمڤن PDF
-                        </button>
-                        <button type="button" class="btn btn-outline-danger btn-lg shadow-sm" onclick="location.reload();">كوسوڠكن بورڠ</button>
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-success btn-lg px-4 shadow-sm ms-2 mb-2" onclick="laksanaCetak()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-printer ms-2" viewBox="0 0 16 16">
+                                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
+                                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/>
+                                </svg>
+                                چيتق / سيمڤن PDF
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-lg shadow-sm ms-2 mb-2" onclick="location.reload();">كوسوڠكن</button>
+                            <button type="button" class="btn btn-outline-primary btn-lg shadow-sm ms-2 mb-2" onclick="eksportCSV()">Eksport CSV</button>
+                            <button type="button" class="btn btn-outline-info btn-lg shadow-sm ms-2 mb-2" onclick="document.getElementById('importFile').click()">Import CSV</button>
+                            <button type="button" class="btn btn-warning btn-lg shadow-sm mb-2 fw-bold" id="btn-hantar-gs" onclick="hantarKeGoogleSheets()">SAVE</button>
+                            <input type="file" id="importFile" accept=".csv" style="display:none;" onchange="importCSV(event)">
+                        </div>
                     </div>
                 </div>
             </form>
@@ -1117,6 +1127,130 @@ function tukarSaizTulisan(saiz, btnEl) {
             el.style.height = el.scrollHeight + 'px';
         });
     }, 100);
+}
+
+function eksportCSV() {
+    const fields = ['sekolahSelect', 'guruSelect', 'subjek', 'darjah', 'nama_kelas', 'tarikh', 'hari', 'masa', 'bil_murid', 'minggu', 'tajuk', 'psa', 'sk', 'sp', 'objektif', 'kb', 'gj', 'pi', 'nilai_display', 'pedagogi', 'ki', 'amk', 'penilaian', 'bbm_display', 'hasrat', 'kriteria', 'aktiviti', 'refleksi'];
+    let csvContent = "\uFEFFID_Medan,Nilai\n"; // \uFEFF memastikan sokongan karakter Jawi (UTF-8) di Excel
+    
+    fields.forEach(id => {
+        let el = document.getElementById(id);
+        if(el) {
+            let val = el.value.replace(/"/g, '""'); // Format khas CSV jika ada " (Double Quote)
+            csvContent += `${id},"${val}"\n`;
+        }
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    let tarikh = document.getElementById('tarikh').value || "TiadaTarikh";
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Draf_RPH_${tarikh}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function importCSV(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const text = e.target.result;
+        // Regex untuk membaca CSV berformat: Kunci,"Nilai (termasuk baris baharu)"
+        const regex = /([^,]+),"([\s\S]*?)"(?=\n[^,]+,"|$)/g;
+        let match;
+        let dataMap = {};
+        
+        while ((match = regex.exec(text)) !== null) {
+            let key = match[1].trim();
+            let val = match[2].replace(/""/g, '"'); // Kembalikan "" menjadi "
+            dataMap[key] = val;
+        }
+
+        // Masukkan data ke dalam borang
+        for (let id in dataMap) {
+            let el = document.getElementById(id);
+            if (el) {
+                if (id === 'sekolahSelect') {
+                    $(el).val(dataMap[id]).trigger('change');
+                } else if (id === 'guruSelect') {
+                    setTimeout(() => { $(el).val(dataMap[id]).trigger('change'); }, 150); // Tunggu sekolahSelect muat senarai guru
+                } else {
+                    el.value = dataMap[id];
+                    if(el.tagName === 'TEXTAREA') {
+                        el.style.height = 'auto';
+                        el.style.height = el.scrollHeight + 'px'; // Auto-resize semula ketinggian kotak
+                    }
+                }
+            }
+        }
+
+        // Menandakan semula (tick) Checkbox untuk BBM dan Nilai Murni
+        setTimeout(() => {
+            ['nilai', 'bbm'].forEach(jenis => {
+                let textValue = document.getElementById(jenis + '_display').value;
+                let senaraiPilihan = textValue.split('،').map(v => v.trim());
+                document.querySelectorAll('.' + jenis + '-cb').forEach(cb => {
+                    cb.checked = senaraiPilihan.includes(cb.value);
+                });
+            });
+        }, 200);
+
+        event.target.value = ''; // Reset input fail supaya fail sama boleh di-upload semula
+    };
+    reader.readAsText(file);
+}
+
+function hantarKeGoogleSheets() {
+    const btn = document.getElementById('btn-hantar-gs');
+    btn.innerHTML = 'Saving...';
+    btn.disabled = true;
+
+    // Senarai medan data yang akan dihantar
+    const fields = ['sekolahSelect', 'guruSelect', 'subjek', 'darjah', 'nama_kelas', 'tarikh', 'hari', 'masa', 'bil_murid', 'minggu', 'tajuk', 'psa', 'sk', 'sp', 'objektif', 'kb', 'gj', 'pi', 'nilai_display', 'pedagogi', 'ki', 'amk', 'penilaian', 'bbm_display', 'hasrat', 'kriteria', 'aktiviti', 'refleksi'];
+    let dataMap = {};
+    
+    fields.forEach(id => {
+        let el = document.getElementById(id);
+        if(el) {
+            dataMap[id] = el.value;
+        }
+    });
+
+    // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzDrF7bW9cuuLt5xJucY1lQs50K7FPC-5GFTY-QbFz6m6av-U4Zhbahp5vtPwKimX1O/exec'; 
+
+    if (scriptURL === 'MASUKKAN_URL_WEB_APP_DI_SINI') {
+        alert('Ralat: Anda belum memasukkan URL Web App Google Apps Script ke dalam kod HTML.');
+        btn.innerHTML = 'SAVE';
+        btn.disabled = false;
+        return;
+    }
+
+    fetch(scriptURL, {
+        method: 'POST',
+        mode: 'no-cors', // MESTI DITAMBAH: Memintas sekatan keselamatan CORS dari browser
+        body: JSON.stringify(dataMap),
+        headers: {
+            'Content-Type': 'text/plain;charset=utf-8',
+        }
+    })
+    .then(response => {
+        // Disebabkan kita guna 'no-cors', kita tidak akan dapat baca 'reply' dari Google.
+        // Tapi kita anggap ia berjaya jika tiada ralat 'Failed to fetch'.
+        alert('Proses hantaran selesai! Sila semak fail Google Sheets anda untuk memastikan data telah masuk.');
+        btn.innerHTML = 'SAVE';
+        btn.disabled = false;
+    })
+    .catch(error => {
+        alert('Gagal menghantar: ' + error.message);
+        btn.innerHTML = 'SAVE';
+        btn.disabled = false;
+    });
 }
 </script>
 </body>
