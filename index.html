@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- Menggunakan format Right-To-Left (rtl) khusus untuk tulisan Jawi/Arab -->
 <html lang="ms-Arab" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -12,10 +11,10 @@
     
     <style>
         body { 
-            background-color: #f4f6f9; 
+            background-color: #f0fdf4; 
             font-family: 'Amiri', 'Traditional Arabic', 'Jawi Uthmanic', serif;
-            font-size: 1.8rem; /* Saiz fon dibesarkan lagi */
-            line-height: 2.0;
+            font-size: 1.8rem; 
+            line-height: 2.2;
         }
         .rph-container { 
             background-color: white; 
@@ -34,21 +33,25 @@
             font-weight: 700;
         }
         
-        .form-control, .form-select {
+        .form-control, .form-select, .form-check-label {
             font-family: 'Amiri', 'Traditional Arabic', serif;
-            font-size: 1.7rem; /* Saiz fon kotak input/dropdown dibesarkan */
+            font-size: 1.6rem; 
+        }
+        
+        textarea {
+            overflow: hidden;
+            resize: none;
         }
 
-        /* Jawi specific styling for Select2 to ensure RTL works well */
         .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered {
             font-family: 'Amiri', 'Traditional Arabic', serif;
-            font-size: 1.7rem; /* Saiz fon pilihan sekolah/guru dibesarkan */
+            font-size: 1.6rem; 
             padding-right: 8px;
             padding-left: 20px;
         }
         .select2-results__option {
             font-family: 'Amiri', 'Traditional Arabic', serif;
-            font-size: 1.7rem; /* Saiz fon senarai dropdown dibesarkan */
+            font-size: 1.6rem; 
         }
         .select2-container .select2-selection--single {
             height: calc(4.2rem + 2px);
@@ -63,6 +66,22 @@
             line-height: 3.2rem;
         }
 
+        .table-maklumat {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .table-maklumat td, .table-maklumat th {
+            border: 1px solid #dee2e6;
+            padding: 15px 15px;
+            vertical-align: top;
+        }
+        .table-maklumat td:first-child {
+            width: 28%;
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #198754;
+        }
 
         @media print {
             body { 
@@ -78,6 +97,17 @@
             .no-print { 
                 display: none !important; 
             }
+            
+            .table-maklumat td, .table-maklumat th {
+                border: 1px solid #000 !important;
+            }
+            .table-maklumat td:first-child {
+                background-color: #f8f9fa !important;
+                color: #000 !important;
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+            }
+
             .form-control, .form-select { 
                 border: none !important; 
                 background-color: transparent !important;
@@ -85,11 +115,12 @@
                 appearance: none !important; 
                 -webkit-appearance: none !important;
                 -moz-appearance: none !important;
-                background-image: none !important; /* Buang icon dropdown/kalendar */
-                padding-left: 0 !important;
-                padding-right: 0 !important;
+                background-image: none !important; 
+                padding: 0 !important;
+                margin: 0 !important;
+                resize: none !important;
             }
-            /* Hilangkan garisan kotak carian Select2 (Sekolah & Guru) semasa cetak */
+            
             .select2-container--default .select2-selection--single {
                 border: none !important;
                 background-color: transparent !important;
@@ -101,14 +132,6 @@
                 padding: 0 !important;
                 color: black !important;
             }
-            textarea.form-control {
-                resize: none;
-                overflow: hidden;
-            }
-            .section-title {
-                color: #000; 
-                border-bottom: 1px solid #000;
-            }
         }
     </style>
 </head>
@@ -116,218 +139,316 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-10 rph-container">
+        <div class="col-lg-12 rph-container">
             
             <div class="text-center mb-5">
-                <h3 class="fw-bold" style="color: #198754;">رنچڠن ڤڠاجرن هارين (e-RPH)</h3>
-                <h5 class="fw-bold text-muted">سكوله اݢام كراجاءن جوهر (SAKNJ) - داءيره كلواڠ</h5>
-                
-                <div class="alert alert-success no-print mt-4 text-start" role="alert" style="font-size: 1.1rem;">
-                    <strong>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-info-circle-fill ms-1 mb-1" viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg> 
-                        سيستم ايسين ڤينتر:
-                    </strong> 
-                    ڤڠكلن داتا <b>RPT ٦ سوبجيک (درجه ١ - ٢٠٢٦)</b> تله ديمواتكن. توكر مات ڤلاجرن دان 'ميڠݢو ك-' اونتوق مليهت كماس كيني اوتوماتيک.
-                </div>
+                <h3 class="fw-bold" style="color: #198754;">رانچڠن ڤڠاجرن هارين</h3>
+                <h5 class="fw-bold text-muted">سكوله اݢام كراجاءن جوهر (SAKNJ)</h5>
             </div>
 
             <form id="borangRPH">
-                <h5 class="section-title">١. معلومت اساس</h5>
-                
-                <div class="row mb-3">
-                    <div class="col-md-6 mb-3 mb-md-0">
-                        <label class="form-label fw-bold">سكوله</label>
-                        <select class="form-select" id="sekolahSelect" required>
-                            <option value="">-- ڤيليه سكوله --</option>
-                            <!-- Options akan diisi oleh JavaScript -->
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-3 mb-md-0">
-                        <label class="form-label fw-bold">نام ݢورو</label>
-                        <select class="form-select" id="guruSelect" required disabled>
-                            <option value="">-- ڤيليه سكوله دهولو --</option>
-                            <!-- Options akan diisi oleh JavaScript berdasarkan sekolah -->
-                        </select>
-                    </div>
-                </div>
+                <table class="table-maklumat">
+                    <tbody>
+                        <tr>
+                            <td>سكوله</td>
+                            <td>
+                                <select class="form-select border-0 p-0 m-0 w-100" id="sekolahSelect" required>
+                                    <option value="">-- ڤيليه سكوله --</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>نام ݢورو</td>
+                            <td>
+                                <select class="form-select border-0 p-0 m-0 w-100" id="guruSelect" required disabled>
+                                    <option value="">-- ڤيليه سكوله دهولو --</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>مات ڤلاجرن</td>
+                            <td>
+                                <select class="form-select border-0 p-0 m-0 w-auto d-inline-block fw-bold" id="subjek" required>
+                                    <option value="">-- ڤيليه --</option>
+                                    <option value="AlQuran">القرآن</option>
+                                    <option value="Tauhid">توحيد</option>
+                                    <option value="Ibadat">عبادات</option>
+                                    <option value="Sirah">سيرة</option>
+                                    <option value="Akhlak">اخلاق</option>
+                                    <option value="BahasaArab">اللغة العربية (بهاس عرب)</option>
+                                    <option value="JawiKhat">جاوي دان خط</option>
+                                    <option value="Tajwid">تجويد</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>كلس</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-select border-0 p-0 m-0 w-auto me-2" id="darjah" required>
+                                        <option value="1">١ (ساتو)</option>
+                                        <option value="2">٢ (دوا)</option>
+                                        <option value="3">٣ (تيݢ)</option>
+                                        <option value="4">٤ (امڤت)</option>
+                                        <option value="5">٥ (ليم)</option>
+                                        <option value="6">٦ (انم)</option>
+                                        <option value="Khas">درجة خاص</option>
+                                    </select>
+                                    <input type="text" class="form-control border-0 p-0 m-0 ms-2" placeholder="نام كلس..." required>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>تاريخ / هاري</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <input type="date" class="form-control border-0 p-0 m-0 w-auto" id="tarikh" required>
+                                    <span class="mx-3">/</span>
+                                    <select class="form-select border-0 p-0 m-0 w-auto" required>
+                                        <option value="">هاري...</option>
+                                        <option value="Ahad">احد</option>
+                                        <option value="Isnin">اثنين</option>
+                                        <option value="Selasa">ثلاث</option>
+                                        <option value="Rabu">رابو</option>
+                                        <option value="Khamis">خميس</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ماس</td>
+                            <td>
+                                <select class="form-select border-0 p-0 m-0 w-50" id="masa" required>
+                                    <option value="">-- ڤيليه ماس --</option>
+                                    <option value="٢:٠٠ - ٢:٣٠ ڤتڠ">٢:٠٠ - ٢:٣٠ ڤتڠ (٣٠ مينيت)</option>
+                                    <option value="٢:٣٠ - ٣:٠٠ ڤتڠ">٢:٣٠ - ٣:٠٠ ڤتڠ (٣٠ مينيت)</option>
+                                    <option value="٣:٠٠ - ٣:٣٠ ڤتڠ">٣:٠٠ - ٣:٣٠ ڤتڠ (٣٠ مينيت)</option>
+                                    <option value="٣:٣٠ - ٤:٠٠ ڤتڠ">٣:٣٠ - ٤:٠٠ ڤتڠ (٣٠ مينيت)</option>
+                                    <option value="٤:٠٠ - ٤:٣٠ ڤتڠ">٤:٠٠ - ٤:٣٠ ڤتڠ (٣٠ مينيت)</option>
+                                    <option value="٤:٣٠ - ٥:٠٠ ڤتڠ">٤:٣٠ - ٥:٠٠ ڤتڠ (٣٠ مينيت)</option>
+                                    <option value="٥:٠٠ - ٥:٣٠ ڤتڠ">٥:٠٠ - ٥:٣٠ ڤتڠ (٣٠ مينيت)</option>
+                                    <option value="٥:٣٠ - ٦:٠٠ ڤتڠ">٥:٣٠ - ٦:٠٠ ڤتڠ (٣٠ مينيت)</option>
+                                    <option value="٦:٠٠ - ٦:٣٠ ڤتڠ">٦:٠٠ - ٦:٣٠ ڤتڠ (٣٠ مينيت)</option>
+                                    <option value="٢:٠٠ - ٣:٠٠ ڤتڠ">٢:٠٠ - ٣:٠٠ ڤتڠ (١ جم)</option>
+                                    <option value="٢:٣٠ - ٣:٣٠ ڤتڠ">٢:٣٠ - ٣:٣٠ ڤتڠ (١ جم)</option>
+                                    <option value="٣:٠٠ - ٤:٠٠ ڤتڠ">٣:٠٠ - ٤:٠٠ ڤتڠ (١ جم)</option>
+                                    <option value="٣:٣٠ - ٤:٣٠ ڤتڠ">٣:٣٠ - ٤:٣٠ ڤتڠ (١ جم)</option>
+                                    <option value="٤:٠٠ - ٥:٠٠ ڤتڠ">٤:٠٠ - ٥:٠٠ ڤتڠ (١ جم)</option>
+                                    <option value="٤:٣٠ - ٥:٣٠ ڤتڠ">٤:٣٠ - ٥:٣٠ ڤتڠ (١ جم)</option>
+                                    <option value="٥:٠٠ - ٦:٠٠ ڤتڠ">٥:٠٠ - ٦:٠٠ ڤتڠ (١ جم)</option>
+                                    <option value="٥:٣٠ - ٦:٣٠ ڤتڠ">٥:٣٠ - ٦:٣٠ ڤتڠ (١ جم)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>بيلڠن موريد</td>
+                            <td><input type="text" class="form-control border-0 p-0 m-0" placeholder="چونتوه: ٣٠ اورڠ" required></td>
+                        </tr>
+                        <tr>
+                            <td>ميڠݢو ك-</td>
+                            <td><input type="number" class="form-control border-0 p-0 m-0 w-25" id="minggu" placeholder="چونتوه: ٣٠" min="1" max="43" required></td>
+                        </tr>
 
-                <div class="row mb-3">
-                    <div class="col-md-6 mb-3 mb-md-0">
-                        <label class="form-label fw-bold">تاريخ</label>
-                        <!-- Format date moden -->
-                        <input type="date" class="form-control text-end" id="tarikh" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">ماس</label>
-                        <input type="text" class="form-control text-end" placeholder="٠٨:٠٠ - ٠٩:٠٠" required>
-                    </div>
-                </div>
-                
-                <div class="row mb-4">
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <label class="form-label fw-bold">مات ڤلاجرن</label>
-                        <select class="form-select" id="subjek" required>
-                            <option value="">-- ڤيليه مات ڤلاجرن --</option>
-                            <option value="AlQuran">القرآن</option>
-                            <option value="Tauhid">توحيد</option>
-                            <option value="Ibadat">عبادات</option>
-                            <option value="Sirah">سيرة</option>
-                            <option value="Akhlak">اخلاق</option>
-                            <option value="BahasaArab">اللغة العربية (بهاس عرب)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <label class="form-label fw-bold">درجه</label>
-                        <select class="form-select" id="darjah" required>
-                            <option value="1">١ (ساتو)</option>
-                            <option value="2">٢ (دوا)</option>
-                            <option value="3">٣ (تيݢ)</option>
-                            <option value="4">٤ (امڤت)</option>
-                            <option value="5">٥ (ليم)</option>
-                            <option value="6">٦ (انم)</option>
-                            <option value="Khas">درجة خاص</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">ميڠݢو ك-</label>
-                        <input type="number" class="form-control text-end" id="minggu" placeholder="چونتوه: ٣٠" min="1" max="43" required>
-                    </div>
-                </div>
+                        <tr>
+                            <td>تاجوق</td>
+                            <td>
+                                <input type="text" class="form-control border-0 p-0 m-0 fw-bold" id="tajuk" list="tajuk_list" placeholder="ڤيليه اتاو تاءيڤ تاجوق ڤلاجرن..." autocomplete="off" required>
+                                <datalist id="tajuk_list"></datalist>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ڤڠتاهوان سديا اد</td>
+                            <td>
+                                <input type="text" class="form-control border-0 p-0 m-0" id="psa" list="psa_list" placeholder="موريد تله مڠتاهوءي..." required>
+                                <datalist id="psa_list"></datalist>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ستندرد كاندوڠن</td>
+                            <td>
+                                <textarea class="form-control border-0 p-0 m-0 mb-2" id="sk" rows="2" placeholder="ماسوقكن كود دان بوتيرن..." required></textarea>
+                                <div class="dropdown no-print">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-end" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                        + ڤيليه چادڠن تمبهن ستندرد كاندوڠن (Multi-Pilihan)
+                                    </button>
+                                    <ul class="dropdown-menu p-3 w-100 shadow-sm text-end" style="max-height: 200px; overflow-y: auto;" id="sk_options"></ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ستندرد ڤمبلاجرن</td>
+                            <td>
+                                <textarea class="form-control border-0 p-0 m-0 mb-2" id="sp" rows="3" placeholder="ماسوقكن كود دان بوتيرن..." required></textarea>
+                                <div class="dropdown no-print">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-end" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                        + ڤيليه چادڠن تمبهن ستندرد ڤمبلاجرن (Multi-Pilihan)
+                                    </button>
+                                    <ul class="dropdown-menu p-3 w-100 shadow-sm text-end" style="max-height: 200px; overflow-y: auto;" id="sp_options"></ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>اوبجيكتيف ڤمبلاجرن</td>
+                            <td>
+                                <textarea class="form-control border-0 p-0 m-0 mb-2" id="objektif" rows="4" placeholder="موريد داڤت..." required></textarea>
+                                <div class="dropdown no-print">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-end" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                        + ڤيليه چادڠن تمبهن اوبجيكتيف ڤمبلاجرن (Multi-Pilihan)
+                                    </button>
+                                    <ul class="dropdown-menu p-3 w-100 shadow-sm text-end" style="max-height: 200px; overflow-y: auto;" id="obj_options"></ul>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>كماهيرن برفيكير</td>
+                            <td>
+                                <input type="text" class="form-control border-0 p-0 m-0" id="kb" list="kb_list" placeholder="چونتوه: مڠنل ڤستي...">
+                                <datalist id="kb_list"></datalist>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>كابوڠ جالين</td>
+                            <td>
+                                <input type="text" class="form-control border-0 p-0 m-0" id="gj" list="gj_list" placeholder="چونتوه: عبادة / عقيدة...">
+                                <datalist id="gj_list"></datalist>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ڤنراڤن عيلمو</td>
+                            <td>
+                                <input type="text" class="form-control border-0 p-0 m-0" id="pi" list="pi_list" placeholder="چونتوه: ڤنديديقن جسماني...">
+                                <datalist id="pi_list"></datalist>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ڤنراڤن نيلاي</td>
+                            <td>
+                                <div class="dropdown">
+                                    <input type="text" class="form-control border-0 p-0 m-0" id="nilai_display" placeholder="ڤيليه نيلاي مورني..." readonly data-bs-toggle="dropdown" data-bs-auto-close="outside" style="cursor: pointer; background-color: transparent;">
+                                    <ul class="dropdown-menu p-3 w-100 shadow-sm text-end no-print" style="max-height: 250px; overflow-y: auto;" id="nilai_ul">
+                                        <!-- Will be populated via JS -->
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>عملن ڤيداݢوݢي ماس كيني</td>
+                            <td>
+                                <input type="text" class="form-control border-0 p-0 m-0" id="pedagogi" list="pedagogi_list" placeholder="چونتوه: ڤمبلاجرن كولابوراتيف...">
+                                <datalist id="pedagogi_list"></datalist>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>كماهيرن إنسانية</td>
+                            <td>
+                                <input type="text" class="form-control border-0 p-0 m-0" id="ki" list="ki_list" placeholder="چونتوه: كرجا برڤاسوقن...">
+                                <datalist id="ki_list"></datalist>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>اي.عيم.كيه (EMK)</td>
+                            <td>
+                                <input type="text" class="form-control border-0 p-0 m-0" id="amk" list="amk_list" placeholder="چونتوه: كأوسهاونن...">
+                                <datalist id="amk_list"></datalist>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ڤنيلاين ڤي.دي.ڤي</td>
+                            <td>
+                                <input type="text" class="form-control border-0 p-0 m-0" id="penilaian" list="penilaian_list" placeholder="چونتوه: ڤمرهاتين / سوءال جواب...">
+                                <datalist id="penilaian_list"></datalist>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>باهن بنتو مڠاجر</td>
+                            <td>
+                                <div class="dropdown">
+                                    <input type="text" class="form-control border-0 p-0 m-0" id="bbm_display" placeholder="ڤيليه BBM..." readonly data-bs-toggle="dropdown" data-bs-auto-close="outside" style="cursor: pointer; background-color: transparent;" required>
+                                    <ul class="dropdown-menu p-3 w-100 shadow-sm text-end no-print" style="max-height: 250px; overflow-y: auto;" id="bbm_ul">
+                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="بوكو تيك‌س" id="bbm1"><label class="form-check-label w-100" for="bbm1" style="cursor: pointer;">بوكو تيك‌س</label></div></li>
+                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="كد ايمبسن" id="bbm2"><label class="form-check-label w-100" for="bbm2" style="cursor: pointer;">كد ايمبسن</label></div></li>
+                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="لمبرن كرجا" id="bbm3"><label class="form-check-label w-100" for="bbm3" style="cursor: pointer;">لمبرن كرجا</label></div></li>
+                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="قرتس ماجوڠ" id="bbm4"><label class="form-check-label w-100" for="bbm4" style="cursor: pointer;">قرتس ماجوڠ</label></div></li>
+                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="كومڤوتر / سلءيد" id="bbm5"><label class="form-check-label w-100" for="bbm5" style="cursor: pointer;">كومڤوتر / سلءيد</label></div></li>
+                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="اوديو / ۏيديو" id="bbm6"><label class="form-check-label w-100" for="bbm6" style="cursor: pointer;">اوديو / ۏيديو</label></div></li>
+                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="مودل / باهن ماءوجود" id="bbm7"><label class="form-check-label w-100" for="bbm7" style="cursor: pointer;">مودل / باهن ماءوجود</label></div></li>
+                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="ڤاڤن ڤوتيه" id="bbm8"><label class="form-check-label w-100" for="bbm8" style="cursor: pointer;">ڤاڤن ڤوتيه</label></div></li>
+                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="بوكو لاتيهن" id="bbm9"><label class="form-check-label w-100" for="bbm9" style="cursor: pointer;">بوكو لاتيهن</label></div></li>
+                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="چرت / ݢامبر" id="bbm10"><label class="form-check-label w-100" for="bbm10" style="cursor: pointer;">چرت / ݢامبر</label></div></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>حسرت ڤمبلاجرن</td>
+                            <td>
+                                <textarea class="form-control border-0 p-0 m-0" id="hasrat" rows="2" placeholder="١. مپاتاكن..."></textarea>
+                                <div class="mt-2 no-print">
+                                    <select class="form-select border-secondary text-secondary" id="cadangan_hasrat" onchange="if(this.value){ document.getElementById('hasrat').value += (document.getElementById('hasrat').value ? '\n' : '') + this.value; this.selectedIndex = 0; document.getElementById('hasrat').dispatchEvent(new Event('input')); }">
+                                        <option value="">-- ڤيليه ٢٠ چادڠن حسرت ڤمبلاجرن --</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>كريتيريا كجاياءن</td>
+                            <td>
+                                <textarea class="form-control border-0 p-0 m-0" id="kriteria" rows="2" placeholder="١. موريد ممڤو..."></textarea>
+                                <div class="mt-2 no-print">
+                                    <select class="form-select border-secondary text-secondary" id="cadangan_kriteria" onchange="if(this.value){ document.getElementById('kriteria').value += (document.getElementById('kriteria').value ? '\n' : '') + this.value; this.selectedIndex = 0; document.getElementById('kriteria').dispatchEvent(new Event('input')); }">
+                                        <option value="">-- ڤيليه ٢٠ چادڠن كريتيريا كجاياءن --</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>اكتيۏيتي ڤڠاجرن دان ڤمبلاجرن</td>
+                            <td>
+                                <textarea class="form-control border-0 p-0 m-0" id="aktiviti" rows="5" placeholder="١. سيت ايندوکسي: ...&#10;٢. لڠكه اوتام: ...&#10;٣. ڤنوتوڤ: ..." required></textarea>
+                                <div class="mt-2 no-print">
+                                    <select class="form-select border-success text-success" id="cadangan_aktiviti" onchange="if(this.value){ document.getElementById('aktiviti').value = this.value; this.selectedIndex = 0; document.getElementById('aktiviti').dispatchEvent(new Event('input')); }">
+                                        <option value="">-- ڤيليه ٢٠ چادڠن اوتوماتيک اكتيۏيتي --</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ريفليكسي / ايمڤق</td>
+                            <td>
+                                <textarea class="form-control border-0 p-0 m-0" id="refleksi" rows="2" placeholder="____ / ____ موريد مڠواساءي..."></textarea>
+                                <div class="mt-2 no-print">
+                                    <select class="form-select border-primary text-primary" id="cadangan_refleksi" onchange="if(this.value){ document.getElementById('refleksi').value = this.value; this.selectedIndex = 0; document.getElementById('refleksi').dispatchEvent(new Event('input')); }">
+                                        <option value="">-- ڤيليه ٢٠ چادڠن اوتوماتيک ريفليكسي --</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                <h5 class="section-title mt-5">٢. فوكوس ڤمبلاجرن</h5>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">ستندرد كاندوڠن</label>
-                    <input type="text" class="form-control" id="sk" placeholder="ماسوقكن كود دان بوتيرن..." required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">ستندرد ڤمبلاجرن</label>
-                    <textarea class="form-control mb-2" id="sp" rows="3" placeholder="ماسوقكن كود دان بوتيرن..." required></textarea>
-                    
-                    <!-- Dropdown Multi-Select Cadangan Tambahan SP -->
-                    <div class="dropdown no-print">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-end" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                            + ڤيليه چادڠن تمبهن ستندرد ڤمبلاجرن (Multi-Pilihan)
-                        </button>
-                        <ul class="dropdown-menu p-3 w-100 shadow-sm text-end" style="max-height: 200px; overflow-y: auto;" id="sp_options">
-                            <!-- Javascript akan isikan ini -->
-                        </ul>
+                <div class="row mt-5 pt-4" style="break-inside: avoid;">
+                    <div class="col-6 text-center">
+                        <p class="fw-bold mb-5 pb-5">دسيمق اوليه:</p>
+                        <br><br><br>
+                        <p class="fw-bold mt-4 mb-0">تاريخ:</p>
                     </div>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label fw-bold">اوبجيكتيف ڤمبلاجرن</label>
-                    <textarea class="form-control mb-2" id="objektif" rows="4" placeholder="موريد داڤت..." required></textarea>
-                    
-                    <!-- Dropdown Multi-Select Cadangan Tambahan Objektif -->
-                    <div class="dropdown no-print">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-end" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                            + ڤيليه چادڠن تمبهن اوبجيكتيف ڤمبلاجرن (Multi-Pilihan)
-                        </button>
-                        <ul class="dropdown-menu p-3 w-100 shadow-sm text-end" style="max-height: 200px; overflow-y: auto;" id="obj_options">
-                            <!-- Javascript akan isikan ini -->
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="row mb-4">
-                    <div class="col-md-6 mb-3 mb-md-0">
-                        <label class="form-label fw-bold">باهن بنتو مڠاجر (BBM)</label>
-                        <div class="dropdown">
-                            <!-- Input ini memaparkan hasil gabungan pilihan, data-bs-auto-close="outside" membenarkan klik banyak kali -->
-                            <input type="text" class="form-control" id="bbm_display" placeholder="ڤيليه BBM (بوليه لبيه درڤد ساتو)..." readonly data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="cursor: pointer; background-color: #fff;" required>
-                            <ul class="dropdown-menu p-3 w-100 shadow-sm text-end" style="max-height: 250px; overflow-y: auto;">
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="بوكو تيك‌س" id="bbm1"><label class="form-check-label w-100" for="bbm1" style="cursor: pointer;">بوكو تيك‌س</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="كد ايمبسن" id="bbm2"><label class="form-check-label w-100" for="bbm2" style="cursor: pointer;">كد ايمبسن</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="لمبرن كرجا" id="bbm3"><label class="form-check-label w-100" for="bbm3" style="cursor: pointer;">لمبرن كرجا</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="قرتس ماجوڠ" id="bbm4"><label class="form-check-label w-100" for="bbm4" style="cursor: pointer;">قرتس ماجوڠ</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="كومڤوتر / سلءيد" id="bbm5"><label class="form-check-label w-100" for="bbm5" style="cursor: pointer;">كومڤوتر / سلءيد</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="اوديو / ۏيديو" id="bbm6"><label class="form-check-label w-100" for="bbm6" style="cursor: pointer;">اوديو / ۏيديو</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="مودل / باهن ماءوجود" id="bbm7"><label class="form-check-label w-100" for="bbm7" style="cursor: pointer;">مودل / باهن ماءوجود</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="ڤاڤن ڤوتيه" id="bbm8"><label class="form-check-label w-100" for="bbm8" style="cursor: pointer;">ڤاڤن ڤوتيه</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="بوكو لاتيهن" id="bbm9"><label class="form-check-label w-100" for="bbm9" style="cursor: pointer;">بوكو لاتيهن</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="چرت / ݢامبر" id="bbm10"><label class="form-check-label w-100" for="bbm10" style="cursor: pointer;">چرت / ݢامبر</label></div></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">نيلاي مورني</label>
-                        <div class="dropdown">
-                            <!-- Input ini memaparkan hasil gabungan pilihan, data-bs-auto-close="outside" membenarkan klik banyak kali -->
-                            <input type="text" class="form-control" id="nilai_display" placeholder="ڤيليه نيلاي مورني (بوليه لبيه درڤد ساتو)..." readonly data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="cursor: pointer; background-color: #fff;" required>
-                            <ul class="dropdown-menu p-3 w-100 shadow-sm text-end" style="max-height: 250px; overflow-y: auto;">
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="خشوع" id="nm1"><label class="form-check-label w-100" for="nm1" style="cursor: pointer;">خشوع</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="بكرجاسام" id="nm2"><label class="form-check-label w-100" for="nm2" style="cursor: pointer;">بكرجاسام</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="جوجور" id="nm3"><label class="form-check-label w-100" for="nm3" style="cursor: pointer;">جوجور</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="براني" id="nm4"><label class="form-check-label w-100" for="nm4" style="cursor: pointer;">براني</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="تولوڠ-منولوڠ" id="nm5"><label class="form-check-label w-100" for="nm5" style="cursor: pointer;">تولوڠ-منولوڠ</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="برديسيفلين" id="nm6"><label class="form-check-label w-100" for="nm6" style="cursor: pointer;">برديسيفلين</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="راجين" id="nm7"><label class="form-check-label w-100" for="nm7" style="cursor: pointer;">راجين</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="صبر" id="nm8"><label class="form-check-label w-100" for="nm8" style="cursor: pointer;">صبر</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="طاعة / ڤاتوه" id="nm9"><label class="form-check-label w-100" for="nm9" style="cursor: pointer;">طاعة / ڤاتوه</label></div></li>
-                                <li><div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="برسوڤن-سنتون" id="nm10"><label class="form-check-label w-100" for="nm10" style="cursor: pointer;">برسوڤن-سنتون</label></div></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <h5 class="section-title mt-5">٣. ڤلقساناءن دان ريفليكسي</h5>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">اكتيۏيتي ڤڠاجرن دان ڤمبلاجرن</label>
-                    <textarea class="form-control" id="aktiviti" rows="5" placeholder="١. سيت ايندوکسي: ...&#10;٢. لڠكه اوتام: ...&#10;٣. ڤنوتوڤ: ..." required></textarea>
-                    
-                    <!-- Senarai Drop-down Cadangan Aktiviti (20 Set) -->
-                    <div class="mt-2 no-print">
-                        <select class="form-select form-select-sm border-success" id="cadangan_aktiviti" onchange="if(this.value){ document.getElementById('aktiviti').value = this.value; this.selectedIndex = 0; }">
-                            <option value="">-- ڤيليه ٢٠ چادڠن اوتوماتيک اكتيۏيتي --</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label fw-bold">ريفليكسي / ايمڤق</label>
-                    <textarea class="form-control" id="refleksi" rows="2" placeholder="____ / ____ موريد مڠواساءي..."></textarea>
-                    
-                    <!-- Senarai Drop-down Cadangan Refleksi (20 Set) -->
-                    <div class="mt-2 no-print">
-                        <select class="form-select form-select-sm border-primary" id="cadangan_refleksi" onchange="if(this.value){ document.getElementById('refleksi').value = this.value; this.selectedIndex = 0; }">
-                            <option value="">-- ڤيليه ٢٠ چادڠن اوتوماتيک ريفليكسي --</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label fw-bold">ريفليكسي / ايمڤق</label>
-                    <textarea class="form-control" id="refleksi" rows="2" placeholder="____ / ____ موريد مڠواساءي..."></textarea>
-                    
-                    <!-- Senarai Drop-down Cadangan Refleksi (20 Set) -->
-                    <div class="mt-2 no-print">
-                        <select class="form-select form-select-sm border-primary" id="cadangan_refleksi" onchange="if(this.value){ document.getElementById('refleksi').value = this.value; this.selectedIndex = 0; }">
-                            <option value="">-- ڤيليه 20 چادڠن اوتوماتيک ريفليكسي --</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Ruangan Disemak dan Disahkan Oleh -->
-                <div class="row mt-5 pt-4 border-top" style="break-inside: avoid;">
-                    <div class="col-sm-6 mb-4 mb-sm-0">
-                        <p class="fw-bold mb-5 pb-3">دسيمق اوليه:</p>
-                        <p class="text-muted small mt-1">(تنداتاڠن دان چوڤ ݢورو كانن / ڤپيمق)</p>
-                        <p class="fw-bold mt-3">تاريخ:</p>
-                    </div>
-                    <div class="col-sm-6">
-                        <p class="fw-bold mb-5 pb-3">دصحكن اوليه:</p>
-                        <p class="text-muted small mt-1">(تنداتاڠن دان چوڤ ݢورو بسر)</p>
-                        <p class="fw-bold mt-3">تاريخ:</p>
+                    <div class="col-6 text-center">
+                        <p class="fw-bold mb-5 pb-5">دصحكن اوليه:</p>
+                        <br><br><br>
+                        <p class="fw-bold mt-4 mb-0">تاريخ:</p>
                     </div>
                 </div>
 
                 <div class="text-center mt-5 pt-3 no-print">
                     <button type="button" class="btn btn-success btn-lg px-5 shadow-sm ms-2" onclick="window.print()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-printer ms-2" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-printer ms-2" viewBox="0 0 16 16">
                             <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
                             <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/>
                         </svg>
                         چيتق / سيمڤن PDF
                     </button>
-                    <!-- Kemas kini butang reset untuk kosongkan kotak teks BBM & Nilai Murni juga -->
-                    <button type="button" class="btn btn-outline-danger btn-lg shadow-sm" onclick="document.getElementById('borangRPH').reset(); document.getElementById('bbm_display').value=''; document.getElementById('nilai_display').value='';">كوسوڠكن بورڠ</button>
+                    <button type="button" class="btn btn-outline-danger btn-lg shadow-sm" onclick="location.reload();">كوسوڠكن بورڠ</button>
                 </div>
             </form>
 
@@ -335,744 +456,397 @@
     </div>
 </div>
 
-<!-- jQuery (Required for Select2 if we were to use it, but keeping it native for simplicity first) -->
+<!-- jQuery, Bootstrap, Select2 JS -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Select2 JS (Optional, for better searchable dropdowns, highly recommended for long lists) -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-
 <script>
-// Data Sekolah dan Guru Daerah Kluang (Ditukar ke tulisan Jawi)
+const senaraiPsa = [
+    "موريد ڤرنه مندڠر تاجوق اين دالم كلس سبلومڽ",
+    "موريد تله مڠتاهوءي اساس ڤركارا اين دالم هيدوڤ هارين",
+    "موريد ڤرنه ملقساناكن عملن اين برسام كلوارݢ",
+    "موريد تله ممڤلاجري ڤركارا اساس ڤد تاهون لڤس",
+    "موريد ڤرنه منونتون ۏيديو بركاءيتن تاجوق اين",
+    "موريد بياسا ممباچ دعاء اين سلفس صلاة",
+    "موريد تله مڠنل چونتوه يڠ دبريكن",
+    "موريد سريڠ منجواب سوءالن يڠ بركاءيتن",
+    "موريد تله مڠهافل ببراڤ ايات درڤد سورة اين",
+    "موريد ڤرنه مپرتأي اكتيۏيتي بركاءيتن دالم ڤروݢرم سكوله",
+    "موريد سلالو منليتي كجادين عالم سكيتر",
+    "موريد ڤرنه مندڠر چريتا اين درڤد ايبو باڤ",
+    "موريد مڠتاهوءي نام٢ ڤنتيڠ دالم سيرة",
+    "موريد تله مڠنل حروف اساس جاوي",
+    "موريد بياسا مڠعملكن ادب اين دالم كلس",
+    "موريد ڤرنه مليهت باهن ماءوجود ترسبوت",
+    "موريد تله مڠتاهوءي حكوم اساس دالم إسلام",
+    "موريد سلالو مڠعملكن نيلاي مورني ترسبوت",
+    "موريد تله فصيح ممباچ سورة ڤيليهن",
+    "موريد ڤرنه منزيارهي تمڤت بركاءيتن"
+];
+
+const senaraiKb = [
+    "مڠنل ڤستي", "ممبيذاكن", "مڠهورايكن", "ممبنديڠ بيذا", "منجانا ايديا",
+    "ممبوات كسيمڤولن", "مڠهوبوڠ كاءيت", "منيلي", "مروموس", "مڠكلسيفيكاسيكن",
+    "مناكول", "مپلسأيكن مسأله", "مڠاناليسيس", "مڠعڤليكاسي", "منچيڤتا",
+    "منچيريكن", "ممبوات اوروتن", "مپوسون اتور", "ممبوات رامالن", "ممبوات كڤوتوسن"
+];
+
+const senaraiGj = [
+    "عبادات / عقيدة", "سيرة / اخلاق", "تجويد / تلاوة", "القرءان / جاوي", "بهاس عرب / خط",
+    "عقيدة / سيرة", "اخلاق / عبادات", "جاوي / القرءان", "تلاوة / حفظن", "حفظن / تجويد",
+    "عقيدة / اخلاق", "عبادات / سيرة", "جاوي / اخلاق", "القرءان / عقيدة", "سيرة / بهاس عرب",
+    "اخلاق / بهاس عرب", "تجويد / جاوي", "عبادات / حفظن", "سيرة / القرءان", "عقيدة / جاوي"
+];
+
+const senaraiPi = [
+    "ڤنديديقن إسلام", "بهاس ملايو", "ساءين‌س", "ماتماتيق", "سجارة",
+    "ڤنديديقن كصيحتن", "ڤنديديقن جسماني", "ڤنديديقن مورل", "ڤنديديقن سني ۏيزوال", "ڤنديديقن موزيك",
+    "ريكا بنتوق دان تيكنولوݢي", "تيكنولوݢي مكلومت", "بهاس ايڠݢريس", "ݢيوݢرافي", "كأوسهاونن",
+    "كليستاريان عالم سكيتر", "نيلاي مورني", "ساءين‌س سوكن", "كيسوڤانن دان كсусيلاءن", "ڤنديديقن سيۏيك"
+];
+
+const senaraiPedagogi = [
+    "ڤمبلاجرن كولابوراتيف", "ڤمبلاجرن كوڤراتيف", "ڤمبلاجرن براساسكن ڤروجيق", "ڤمبلاجرن براساسكن مسأله", "ڤمبلاجرن إنكويري",
+    "ڤمبلاجرن كونتيکستوال", "ڤمبلاجرن ماستري", "ڤمبلاجرن لوار بليق درجه", "كلس برباليق (Flipped Classroom)", "ڤمبلاجرن براساسكن كاجين كيس",
+    "ڤمبلاجرن ابد ك-٢١ (PAK-21)", "سومبڠ سارن", "ڤمبلاجرن ترارح كنديري", "ڤي.دي.ڤي بربنتوكن تيكنولوݢي", "كاجين ماس دڤن",
+    "ڤمبلاجرن براساسكن مأوخود", "سيمولاسي دان ماءين ڤرانن", "ڤمبلاجرن كونستروكتيۏيسمى", "ڤمبلاجرن ڤلبݢاي كچردسن", "رويتين ڤميكيرن"
+];
+
+const senaraiKi = [
+    "كماهيرن بركومونيكاسي", "كماهيرن ڤميكيرن كریتیس", "كماهيرن مپلسأيكن مسأله", "كماهيرن كرجا برڤاسوقن", "ڤمبلاجرن برتروسن",
+    "كماهيرن ڤڠوروسن مكلومت", "كماهيرن كأوسهاونن", "ايتيكا دان مورل", "كماهيرن كڤيمڤينن", "ڤروفيشناليسمى",
+    "كماهيرن سوسيال", "كماهيرن كرجا سڤاسوقن", "داي تاهن", "كيقينن ديري", "فليكسيبيليتي",
+    "كماهيرن مڠاتور ماس", "ادب دان اخلاق", "سيمڤاتي دان امڤاتي", "كمانديرين", "كچردسن ايموسي"
+];
+
+const senaraiAmk = [
+    "بهاس", "كليستاريان عالم سكيتر", "نيلاي مورني", "ساءين‌س دان تيكنولوݢي", "ڤاتريوتيسمى",
+    "كریاتيۏيتي دان اينوۏاسي", "كأوسهاونن", "تيكنولوݢي مكلومت", "كليستاريان ݢلوبل", "ڤنديديقن كواڠن",
+    "كصيحتن", "كسلامتن", "ڤنديديقن ڤڠݢونا", "ڤنديديقن كسلامتن جالن راي", "سني دان بودايا",
+    "ادب دان كсусيلاءن", "ڤرڤاودوان", "كچردسن ايموسي", "كبياكسانأن تمڤتن", "كمشاركتن"
+];
+
+const senaraiPenilaian = [
+    "ڤمرهاتين", "سوءال جواب", "لمبرن كرجا", "كوءيز", "حفظن",
+    "باچاءن", "عملي / ديمونستراسي", "ڤمبنتڠن", "توݢسن بركومڤولن", "حاصيل كرجا موريد",
+    "بوكو لاتيهن", "ڤنيلاين راكن سباي", "ڤنيلاين كنديري", "سيمولاسي / ماءين ڤرانن", "ديكلاماسي",
+    "لكونن", "بوكو تيک‌س / اكتيۏيتي", "ليسن", "توليسن", "سناراي سيمق"
+];
+
+const senaraiHasrat = [
+    "١. مپاتاكن فکتا دان مقصود دڠن جلس", "٢. ممبيذاكن انتارا يڠ صح دان يڠ بطل", "٣. مڠهورايكن حكمه دان ڤڠاجرن تاجوق", "٤. مڠحفل دعاء اتاو سورة دڠن لنچر", "٥. ممباچ تيكس دڠن فصيح دان برتجويد",
+    "٦. مڠعڤليكاسيكن عملن يڠ دڤلاجري دالم هيدوڤ", "٧. مپناريكن ركن، شرط دان بهاݢين دڠن بتول", "٨. ملاكوكن عملي عبادات دڠن سمڤورنا", "٩. منوليس ايجاءن جاوي دڠن بتول دان كمس", "١٠. مڠنل ڤستي حكوم تجويد دان چارا باچاءنڽ",
+    "١١. مپوسون اتور لڠكه دڠن تڤت", "١٢. مڠهوبوڠكاءيتكن تاجوق دڠن هيدوڤ هارين", "١٣. ممروموسكن ايسي ڤلاجرن دڠن باءيق", "١٤. برچريتا سمولا قيصه يڠ دڤلاجري", "١٥. ملابلكن باهݢين ݢامبر دڠن تڤت",
+    "١٦. مڠاناليسيس كجادين اتاو سيتواسي", "١٧. مناكول سبب دان مسبب", "١٨. منيلي سيتواسي يڠ دبري", "١٩. مپلسأيكن مسأله يڠ دكموكاكن", "٢٠. ممبينا ايات دڠن توليسن جاوي"
+];
+
+const senaraiKriteria = [
+    "١. موريد ممڤو مپبوت ٣ فکتا دڠن بتول", "٢. موريد ممڤو منجواب ٤ درڤد ٥ سوءالن كوءيز", "٣. موريد ممڤو مپوسون لڠكه عبادات دڠن تڤت", "٤. موريد ممڤو ممباچ دڠن مخرج يڠ بتول", "٥. موريد ممڤو ممبينا ٣ ايات دڠن توليسن جاوي",
+    "٦. موريد ممڤو مڠلوركن ٢ ڤڠاجرن درڤد قيصه", "٧. موريد ممڤو برچريتا سمولا دڠن ݢاي يڠ مناريک", "٨. موريد ممڤو ملاكونكن سيتواسي يڠ دبري", "٩. موريد ممڤو مپيڤكن لمبرن كرجا دڠن سمڤورنا", "١٠. موريد ممڤو مڠلوركن حكمه درڤد تاجوق",
+    "١١. موريد ممڤو مڠنل ڤستي ٣ حكوم تجويد", "١٢. موريد ممڤو مڠهورايكن ٢ شرط صح", "١٣. موريد ممڤو ممبوات كسيمڤولن دڠن جلس", "١٤. موريد ممڤو منيلي ٢ سيتواسي يڠ دبري", "١٥. موريد ممڤو ممبنديڠ بيذا ٢ ڤركارا",
+    "١٦. موريد ممڤو مڠعڤليكاسي عملن ترسبوت", "١٧. موريد ممڤو ملابلكن ٤ باهݢين ݢامبر", "١٨. موريد ممڤو ممادنكن ٥ ڤركاتاءن", "١٩. موريد ممڤو مڠحفل دعاء دڠن لنچر", "٢٠. موريد ممڤو بركوڠسي ايديا دالم كومڤولن"
+];
+
+const senaraiNilai = [
+    "خشوع", "بكرجاسام", "جوجور", "براني", "تولوڠ-منولوڠ", 
+    "برديسيفلين", "راجين", "صبر", "طاعة / ڤاتوه", "برسوڤن-سنتون",
+    "برشكور", "اخلاص", "امانه", "برتوڠݢوڠجواب", "برتوليرنسي",
+    "عاديل", "كاسيه سايڠ", "حرمت-مڠحرمتي", "منجاݢ كبرسيهن", "تڤتي ماس"
+];
+
+function binaDatalist(senarai, datalistId) {
+    const dl = document.getElementById(datalistId);
+    if (!dl) return;
+    dl.innerHTML = "";
+    senarai.forEach(item => {
+        let opt = document.createElement('option');
+        opt.value = item;
+        dl.appendChild(opt);
+    });
+}
+
+function binaDropdownList(senarai, selectId) {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    senarai.forEach(item => {
+        let opt = new Option(item.substring(0, 45) + (item.length > 45 ? '...' : ''), item);
+        sel.add(opt);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    binaDatalist(senaraiPsa, 'psa_list');
+    binaDatalist(senaraiKb, 'kb_list');
+    binaDatalist(senaraiGj, 'gj_list');
+    binaDatalist(senaraiPi, 'pi_list');
+    binaDatalist(senaraiPedagogi, 'pedagogi_list');
+    binaDatalist(senaraiKi, 'ki_list');
+    binaDatalist(senaraiAmk, 'amk_list');
+    binaDatalist(senaraiPenilaian, 'penilaian_list');
+
+    binaDropdownList(senaraiHasrat, 'cadangan_hasrat');
+    binaDropdownList(senaraiKriteria, 'cadangan_kriteria');
+
+    // Populate Nilai Murni Checkboxes
+    const ulNilai = document.getElementById('nilai_ul');
+    senaraiNilai.forEach((nilai, index) => {
+        let li = document.createElement('li');
+        li.innerHTML = `<div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="${nilai}" id="nm${index}"><label class="form-check-label w-100" for="nm${index}" style="cursor: pointer;">${nilai}</label></div>`;
+        ulNilai.appendChild(li);
+    });
+    setupMultiSelect('nilai-cb', 'nilai_display');
+});
+
 const senaraiSekolahGuru = {
-    "س.ا بوكيت توڠكت": [
-        "حفيظ بن احبية@حمزة",
-        "محمد مهيمن بن حاج حدران",
-        "نور ديانا بنت هارون",
-        "نور عزة بنت عبد الغفار",
-        "نور عزة بنت مختار",
-        "سلينا بنت وسل",
-        "سوسي تاتوم بنت محمد راشد"
-    ],
-    "س.ا داتو أحمد": [
-        "عائشة عزة بنت جمال الدين",
-        "عالية سكينة بنت ذوالكفلي",
-        "حزلينا بنت مد قادر",
-        "خير النساء بنت طالب",
-        "مسينتن بنت بصير",
-        "مزلان بن محمد نور",
-        "محمد رازق عرفان بن نورازلي",
-        "محمد توفيق بن عمر",
-        "محمد شزان بن جمال الدين",
-        "نزوحا بنت زينل",
-        "نور هداية بنت سايني",
-        "نور أنيسة بنت عبد الله",
-        "نور زيلة بنت عباس",
-        "نور عفيقة بنت مسكم",
-        "نور عليا بنت مد زينل",
-        "نور أميرة شهيرة بنت محمد يزيد",
-        "نور فرح هدى بنت بواڠ",
-        "نور شهيرة بنت أزهر",
-        "نور شهيدة الهدى بنت محمد أيوب",
-        "نور شهيرة نتاشا محمد نجمان",
-        "نور فضلين أدلينا بنت زينل",
-        "نور الأيمن هدايتي بنت محمد",
-        "روسية بنت عثمان",
-        "روسينة بنت سموري",
-        "سعاده بنت سمات",
-        "سيتي فائزة بنت محمد سعيدفودين"
-    ],
-    "س.ا فيلدا كاهڠ بارت": [
-        "محمد فاتح بن قمرين",
-        "نور ليانا بنت محمد طاهر",
-        "نور الإنشيراه بنت عبد الغفار",
-        "روسيله بنت حارث",
-        "سفورا بنت محمود",
-        "سيتي هاجر بنت إثنين"
-    ],
-    "س.ا فيلدا كاهڠ تيمور": [
-        "حسنة بنت مد قادر",
-        "محمد نجيب بن محمد رملي",
-        "نور مسنيتا بنت تسنوه",
-        "نورمه بنت حصرين",
-        "قصرين بنت إيمان",
-        "روهيزه بنت عبد الرحيم",
-        "روسماواتي بنت عبد الله",
-        "شهمي درويش بن روهيزاد",
-        "زليلى بنت جاني"
-    ],
-    "س.ا فيلدا اولو بليتوڠ": [
-        "أحمد زولهادي بن ذوالقرنين",
-        "عائشة بنت سلامت",
-        "حاجة زينون بنت عبد الصمد",
-        "حاج خير الدين بن رملي",
-        "جامعية بنت صالح",
-        "مستورا بنت نوڠمن",
-        "نور عين بنت رحمة",
-        "نور ليلى بنت ميسمان",
-        "رفيدة بنت رميان"
-    ],
-    "س.ا فيلدا اولو دڠر": [
-        "بلقيس شزواني بنت محمد أزهر",
-        "مد ضياء الدين بن جلال",
-        "نور فضيلة بنت اتن",
-        "شريفة بنت إسماعيل@سنداري"
-    ],
-    "س.ا فيلدا اولو ڤڠݢلي": [
-        "أربكية بنت محمد",
-        "إنتن زوليانا بنت محمد",
-        "محمد سعودي بن أحمد",
-        "نور حياتي بنت أحمد",
-        "روحانا بنت حاج سيرت",
-        "شريفة بنت ستار"
-    ],
-    "س.ا كاهڠ باتو 28": [
-        "أزلينا بنت بصري",
-        "نتيراه بنت حسن",
-        "نورميدة بنت محمد هليل",
-        "رئيمة بنت مد زم"
-    ],
-    "س.ا كامڤوڠ چونتوه": [
-        "محمد أمير الأشرف بن منان",
-        "نوريدة بنت علي",
-        "نور العين نبيلة بنت حسب الله",
-        "رسلي بن أحمد رفاعي",
-        "زبيدة بنت محمد"
-    ],
-    "س.ا كلواڠ بارت": [
-        "حليزه بنت ساريمان",
-        "حسليندا بنت غزالي",
-        "مهانوم بنت محمد إقبال",
-        "مسلا بنت حسن",
-        "محمد أنوار بن راؤف",
-        "محمد نقي الدين بن مهد",
-        "محمد نبيل زفري بن رحيم",
-        "محمد شهمي فارس بن مد أيوب",
-        "نور أزليزاواتي بنت حسن",
-        "نور الأميرة بنت محمد زين الدين",
-        "صائمة بنت ع. هادي",
-        "سيتي نور الهداية بنت أبو",
-        "سيتي صالحة بنت رسلاني",
-        "سوريا بنت يوسف",
-        "وان عبد الحكيم بن وان محمد فيصل"
-    ],
-    "س.ا لادڠ موتيارا": [
-        "خير العارفين بن سجود",
-        "محمد أسمادي بن سهر",
-        "زيلاواتي بنت شمس الدين",
-        "ذو الأكمال بن خميس"
-    ],
-    "س.ا لادڠ ڤامول": [
-        "مسليزاواتي بنت بحرين",
-        "محمد فردوس بن محزان",
-        "نبيلة هدى بنت جسري",
-        "نور شهمينا بنت دنيا",
-        "نورين نادية بنت نوريزت",
-        "سعيدة بنت سعيدين",
-        "سيتي يوسليا بنت يوسف"
-    ],
-    "س.ا سري كامڤوڠ تڠه 01": [
-        "عظيمة بنت محمد عارف",
-        "بحر الدين بن جعفر",
-        "دانيال عكيف بن شمس الزمان",
-        "عزة فرزانا بنت مد نظام",
-        "ماريا شهداء بنت جيلاني",
-        "مارياالين بنت مد أيوب",
-        "مستورا بنت مرسيدي",
-        "محمد نور عزت بن عبد الرحيم",
-        "محمد أمين نور حفيظ بن عباس",
-        "نظرية بنت مت نادي",
-        "نور حنيفا فيدا بنت محمد عباس",
-        "نور فرحانة بنت توݢيمون",
-        "نور إزياني ناجحة بنت جوهري",
-        "نور الجنة بنت أنوار",
-        "رشيدة بنت تايري",
-        "سيتي فطرية بنت خايرون",
-        "سيتي نور ليانا بنت محمد",
-        "زواوي بن روسدين",
-        "زورينا بنت أحمد"
-    ],
-    "س.ا سري كامڤوڠ تڠه 02": [
-        "دانيال فخر الزمان بن عبد الله دين",
-        "هانيم بنت كسلان",
-        "خير الرشيدي بن ڤردي",
-        "محمد بن قهار",
-        "محمد تقي الدين بن محمد جوڤري",
-        "نور حفيظة بنت محمد هيمي",
-        "نور أملينا بنت غزالي",
-        "نور عقيلة عزة بنت قمر الدين",
-        "نور عتيقة بنت رسلان",
-        "نور نزورة بنت رسلي",
-        "روسريديۏي بنت أحمد"
-    ],
-    "س.ا سلطان سير إبراهيم": [
-        "جواريين بنت جسمان",
-        "نور حبيبة بنت أمت مسرا",
-        "نور عيني بنت جلال",
-        "نور أزيلة بنت سنتيوڠ",
-        "شعيرة أديبة بنت يعقوب"
-    ],
-    "س.ا تامن سري لمبق": [
-        "أحمد نور فهمي بن مرسيد",
-        "عائشة نبيلة بنت محمد",
-        "أمينة بنت اتن حسن",
-        "عفة الإنشيراه بنت بحر الدين",
-        "لقمان الحكيم بن شهوان",
-        "مسني بنت جايس",
-        "محمد زاهين بن رحيم",
-        "نيك محمد حافظ الدين بن نيك أمير الهشام",
-        "نور عين بنت كاسنين",
-        "نور لي بنت أحمد",
-        "نوليانا بنت مغلن",
-        "نور فطينة العفة بنت تاج الدين",
-        "نور شميم مهيرا بنت إسحاق",
-        "نور العين بنت محمد",
-        "نور أسليمة بنت محمد سالم",
-        "نور عوني شهيرة بنت مد يزيد",
-        "نور نزات الشهداء بنت محمد عمران",
-        "روزيتا بنت عبد الرزاق",
-        "شمسية بنت محمد",
-        "شمس الدين بن اوڠ",
-        "سيتي فائزة بنت مارسين",
-        "سيتي حواء بنت أحمد نيزان",
-        "سيتي نور عادلة بنت قمر الزمان",
-        "سيتي زبيدة بنت توفيق",
-        "سوزانا@سيتي سلوى بنت عبد الحميد",
-        "توان نور عزيزان بنت توان مودا",
-        "أمي كلثوم بنت محمد أزهر",
-        "أم الخيرية بنت محمد إدريس",
-        "وان نور فرح هانيس بنت وان حسين"
-    ],
-    "س.ا بندر كلواڠ": [
-        "عفيفة نور سعادة بنت عزمي",
-        "عين الفاتحية الإنشيراه بنت يزيد",
-        "أسماء بنت عبد الصمد",
-        "أزحد بن عبد الرزاق",
-        "ديانا بنت عبد العزيز",
-        "إيميليانا عزة بنت عبد الرشيد",
-        "فاتن ناجية بنت مازلي",
-        "حياة السكينة بنت رملي",
-        "إيرزا ميسارا بنت محمد إحسان",
-        "خديجة بنت عمر",
-        "ماشطة بنت بهاروم",
-        "محمد أزهر بن رحيم",
-        "محمد حزوان صفوان بن محمد يونس",
-        "نور أزالينا بنت إدريس",
-        "نور عين بنت مهتيان",
-        "نور حنيزة بنت عبد الوهاب",
-        "نور هداية بنت محمد",
-        "نور صفوانة بنت محمد سالم",
-        "نور عائشة ناجحة بنت هشام",
-        "نور حزلين بنت حسيم",
-        "نور إزيان بنت إسحاق",
-        "نور حميراء بنت حزمان",
-        "سانيسة بنت مورني",
-        "سيتي خديجة بنت مارلان",
-        "سيتي نور عادلة بنت يسري",
-        "شازا أميرة بنت محمد",
-        "تسليمة بنت محمد",
-        "زليخة بنت محمد"
-    ],
-    "س.ا بندر ڤالوه": [
-        "مشاهدة بنت هاليدين",
-        "فوزية بنت عبد الجبار",
-        "تسنية بنت هاميل"
-    ],
-    "س.ا بندر ڤالوه 02": [
-        "حميدة بنت مسكم",
-        "مسدينا بنت حميد",
-        "محمد إيزاإيزمان بن مد إسماعيل",
-        "نور فرحاني عزة بنت إبراهيم"
-    ],
-    "س.ا فيلدا اءير هيتم": [
-        "فاتن عقيلة بنت محمد مصلح",
-        "هسڤاليلا بنت أبو حسن",
-        "مازلين بنت إسماعيل",
-        "محمد نظام الدين بن صوفي",
-        "نعيمة بنت سليمان",
-        "نور الحفيظة بنت زريمي",
-        "نور الشفيقة بنت أحمد عبد مالک",
-        "نور النجوى بنت ألليار @ إلياس",
-        "زارينا بنت أبو طاوسي"
-    ],
-    "س.ا ݢونوڠ لمبق": [
-        "أبو عرفان بن زين العابدين",
-        "محمد حافظ بن عمر",
-        "محمد عرفان بن رحيم",
-        "محمد خير الناس بن مد كامل",
-        "مظفر بن بيدين",
-        "نور حسنة الفضيلة بنت اوڠ",
-        "نور حفيظة بنت إسحاق",
-        "نورمه بنت خميس",
-        "نور العقيدة بنت صيهت",
-        "نور الإنشيراه بنت جفري",
-        "سيتي حواء فضيلة بنت عبد الحميد",
-        "سيتي رتنا أمي سلمية بنت شمس الدين",
-        "سيتي شريزة بنت عبد الحميد",
-        "سورياني بنت محمد"
-    ],
-    "س.ا كامڤوڠ ملايو چاميق": [
-        "عيني ناجيهة بنت إيبينو هاتوڤ",
-        "فائزة بنت عبد الصمد",
-        "فريزا بنت محمد @ هارون",
-        "نور ليزة بنت محمد كاسه",
-        "أم كلثوم بنت عارفين"
-    ],
-    "س.ا كيم مهكوتا": [
-        "عظمة بنت كيار",
-        "فيروز بنت محمد",
-        "جميلة بنت مسجم",
-        "محمد خير بن عبد الرحيم",
-        "محمد عزت أيمن بن روهيزاد",
-        "نور فراهين بنت عمر",
-        "نور النتاشا بنت محمد يسميران",
-        "نور الهدى بنت سايم",
-        "راتينة بنت كمساني",
-        "سيتي نور عوني عميراء بنت سيفول",
-        "سهايدا بنت أبو بكر"
-    ],
-    "س.ا لادڠ بوكيت بنوت": [
-        "عبد العظيم بن زيلاني",
-        "حياتي بنت حسن",
-        "روستينا بنت توميران"
-    ],
-    "س.ا لادڠ بوكيت ڤالوه": [
-        "عبد الحليم بن كسدر",
-        "حاجة جراينا بنت حاج عثمان",
-        "ليانا مستورينا بنت عبد العزيز",
-        "نوريته بنت رحمة"
-    ],
-    "س.ا لادڠ تيريه": [
-        "ميزة النظريفة بنت مهدي",
-        "محمد أنوار بن خنبالي",
-        "روزيتا بنت رملي",
-        "سيتي سلوى بنت مرزوقي"
-    ],
-    "س.ا نيور": [
-        "حنيفة بنت أحمد",
-        "روزيماه بنت روحاني",
-        "سيتي فاطمة بنت محمد",
-        "زريدة بنت إسماعيل"
-    ],
-    "س.ا سري تامن كلواڠ بارت": [
-        "عبد المطلب بن قمر الدين",
-        "عزيزة بنت رشدي",
-        "حفيظة بنت سلامت",
-        "جليلى بنت دكير",
-        "مهيون بنت ميسني",
-        "مزني بنت محمد مصلح",
-        "محمد نور فطري بن محمد خليل",
-        "نور المليانا بنت اب رحمن",
-        "نور فرح ديانا بنت عبد المالک",
-        "نور فاتن عليا بنت جلال الدين",
-        "نور راضية بنت محمد خمكا",
-        "نور شرافة بنت جوهري",
-        "راتية بنت أبو طالب",
-        "صبرينة بنت صبري",
-        "صالحين بن جسني",
-        "سيتي مصلحة بنت محمد أمين",
-        "سحانا بنت احبية @ حمزة"
-    ],
-    "س.ا سري لالڠ": [
-        "عبدة بنت إدريس",
-        "أمير نور أيمن بن رسلان",
-        "أمين الدين بن غزالي",
-        "هداية العزة بنت شريف",
-        "مارني بنت قرمان",
-        "محمد أشرف بن محزان",
-        "نور العيني بنت مد يونس",
-        "نور المودة بنت زريمي",
-        "رازية بنت زينل",
-        "سعيرة بنت عثمان"
-    ],
-    "س.ا تامن دليما": [
-        "عين المرضية بنت يحيى",
-        "أنس قسطينا بنت مت سيري",
-        "أسمهاني بنت حميد",
-        "عوني عفيفة بنت محمد مزران",
-        "مصرية بنت إسحاق",
-        "محمد يوسف بن محمد راشد",
-        "محمد علي الدين بن رايمي",
-        "محمد معاذ بن محمد فوزيل",
-        "محمد شهرالزام بن عبد موسى",
-        "نور العلمية بنت أ رحمن",
-        "نورسية بنت رامين",
-        "نور عفيفة بنت محمد جميل",
-        "نور عيني بنت مت ستار",
-        "نور عريسا بنت حزمان",
-        "نور المرحمة بنت جوهري",
-        "نور الجنة بنت مد إسماعيل",
-        "ڤوتري نور فضيلة بنت سقما",
-        "ڤوتري زمزارينا بنت كمال الدين",
-        "روزيتا بنت مسروم",
-        "سوزيليانا بنت أحمد",
-        "شهيدة بنت أبو بكر",
-        "يسري بن أحمد",
-        "زنة نور عفيفة بنت زيهان"
-    ],
-    "س.ا تامن ديسا": [
-        "باتريشيا بلقيس بنت عبد الله",
-        "محمد نور فؤاد بن نور الدين",
-        "ناجيهة بنت محمد يزيد",
-        "نجوى بنت روزالي",
-        "نور عزة بنت رميان",
-        "نور هداية بنت محمد تڠ",
-        "رابعة العدوية بنت إسماعيل",
-        "شدة النورا بنت سليمان",
-        "سيتي نور ليانا بنت سيدي",
-        "سيتي رفادة @ سيتي رفيدة بنت مد ساريڠ"
-    ],
-    "س.ر.ا.ب كلواڠ": [
-        "فائمة بنت إسماعيل",
-        "محمد عز الدين بن مد روزي",
-        "محمد خير الإقبال بن تاج الدين",
-        "نتاشا نور هازورا بنت محمد بصير",
-        "نور شفيقة بنت سلامت",
-        "نور الهدى بنت محمد خاريس"
-    ],
-    "س.ا بندر رڠݢم": [
-        "خيراواتي بنت سليمان",
-        "ميزة الأكمل بنت ريملي",
-        "محمد نظام بن كمال",
-        "نيلاکسوما بنت مد نواوي",
-        "فضيلة بنت رملي",
-        "زارينا بنت سليمان"
-    ],
-    "س.ا بوكيت كنعن": [
-        "عبد العزيز بن مناڤ",
-        "نور أزلين بنت شمس الدين",
-        "نور आशقين بنت قاسم",
-        "سري روهايو بنت عبد الحميد"
-    ],
-    "س.ا داتو إبراهيم مجيد": [
-        "عينون بنت جميران",
-        "أمين الدين بن محمد درويس",
-        "ألوانيزا بنت يوسوڤ",
-        "فضيلة بنت كريم",
-        "محمد أنيق إكليل بن يسريزان",
-        "نور أزورا بنت مولانا",
-        "نور عيني بنت هاشم",
-        "نور علياء بنت محمد رافي",
-        "صميدة بنت بكر",
-        "ساليناه بنت نواوي",
-        "سيتي نبيلة بنت أمال الدين",
-        "سيتي نور عائشة بنت جمال",
-        "سيتي سانه بنت كوسين",
-        "سيتي سهيلا بنت صائم",
-        "سوزيتا بنت سوكر",
-        "يزيد بن جبار @ ساهيد"
-    ],
-    "س.ا فيلدا لايڠ-لايڠ": [
-        "أزله بنت أحمد",
-        "نور أصلينا بنت إسماعيل",
-        "نور مزلينا بنت مرزوقي",
-        "سيتي خديجة بنت غزالي",
-        "سحيلي إيمي بنت عبد الشكور"
-    ],
-    "س.ا كومڤليكس ڤڠهولو": [
-        "أزيينا بنت محمد خيري",
-        "إرناواتي بنت عبد الطالب",
-        "فاتن نور الروضة بنت أرازمي",
-        "فاتن نبيلة بنت محمد نور الدين",
-        "جفري بن عبد الصمد@سمات",
-        "ليلى ساري بنت أسموني",
-        "ماريانا بنت عبد الرزاق",
-        "محمد هارون الرشيدين أحمد",
-        "محمد ذو الحلمي بن أبو",
-        "نادية عتيقة بنت إلياس",
-        "نصر الدين بن سيران",
-        "نور إزاتي بنت عزمان",
-        "نور سكينة بنت أحمد شهاب",
-        "أوكتريفيا أريانتي بنت أيدير",
-        "سيتي سلايا بنت ساريڠ"
-    ],
-    "س.ا ڤاريت حاج هاشم": [
-        "أبو حفيظ بن محمد كمال",
-        "هدى خالصة بنت محمد نور",
-        "محمد فوزان بن محمد مربت",
-        "نور ألينا بنت أبو بكر",
-        "نور فرحانة بنت رحمة",
-        "روحانا بنت عبد المجيد",
-        "سيتي نور حليمة السعدية بنت محمد رسلان",
-        "وحيدة بنت مرسودي",
-        "يوليزا إيليا بنت مد رملي"
-    ],
-    "س.ا ڤاسوكن ݢرقن عام": [
-        "أزواهيزا بنت مد عثمان",
-        "محمد الحفيظ بن سيرت",
-        "محمد إلهان بن عبد المالک",
-        "سيتي حميراء بنت زانودين"
-    ],
-    "س.ا ڤكن لايڠ-لايڠ": [
-        "عتيقة زليخة بنت اب قادر",
-        "حاجة مريامة بنت عبد المنان",
-        "محمد إقبال بن شعري",
-        "نور أسليندا بنت يسمين أفندي",
-        "نور الهدى بنت محمد إظهاري",
-        "روسياتيمة بنت سینوڠ",
-        "سيتي أفرينة بنت قمر الزمان",
-        "سيتي ربيعة بنت حمزة",
-        "زكية بنت عبد الحميد"
-    ],
-    "س.ا ڤنجارا سيمڤڠ رڠام": [
-        "نور فرحة بنت أ رحيم",
-        "نور شميلة بنت عبد الحفيظ",
-        "روسلينا بنت ڤانات",
-        "سوزيلياناه بنت باني"
-    ],
-    "س.ا سيمڤڠ رڠام": [
-        "فائزة بنت داود",
-        "مسنة بنت طالب",
-        "نور ليزار بنت أحمد",
-        "نور عين بنت محمد حسين",
-        "نور أزهم بن مد خيري",
-        "نور حسليندا بنت ݢمن@واݢيمن",
-        "نور ليلاواتي بنت محمد",
-        "نور عائشة بنت مد عيسى",
-        "نور فرح عين بنت عبد الكريم",
-        "نور आशقين بنت حسين",
-        "نور ماشطة بنت محمد جاني",
-        "نور مبشرة بنت محمد",
-        "نور العيني بنت نور عزمي",
-        "نور العين بنت فريد الأطرس",
-        "سيتي ميسرة بنت أمال الدين",
-        "سيتي ميسرة بنت مد بحر الدين",
-        "سيتي نور بلقيس بنت مامي"
-    ],
-    "س.ا سري كنچان": [
-        "أحمد شفاء الفواز بن عمر",
-        "أنيس بنت أنوار",
-        "فريدة بنت رملي",
-        "جليحة بنت جميل",
-        "قمر الزوراه بنت أزهر",
-        "نور ليانا بنت ميسڤار",
-        "نور مرهيداواتي بنت مرزوقي",
-        "سيتي زليخة بنت محمد"
-    ],
-    "س.ا سري ماچڤ": [
-        "أمني بنت أنوار",
-        "فريداواتي بنت هارون",
-        "محمد فائز بن محمد مربت",
-        "محمد صديق بن نور الدين",
-        "نور आशقين بنت جعفر",
-        "نور هدايت بنت إسحاق",
-        "سيتي سلمى بنت محمد تسليم",
-        "سبحان بن أحمد بندي",
-        "زائدة بنت موكسين"
-    ],
-    "س.ا سري ماجو جاي": [
-        "أديبة بنت أ.رحمان",
-        "محمد ثقيف خير الدين",
-        "نور لياني بنت محمد توكيران",
-        "نور أفيقة نزيهة محمد رسلان",
-        "نور الناجيهة بنت محمد سالم",
-        "رسنة بنت توكيمين"
-    ],
-    "س.ا سري تڠه رڠݢم": [
-        "أنيتا بنت ڤرمون",
-        "فريزة بنت إسمان",
-        "كرتيني بنت ليمان @ سليمان",
-        "محمد نور عين بن ڠانتيمين"
-    ],
-    "س.ا سوڠاي ليناو": [
-        "أنيس شهداء بنت إسحاق",
-        "ماريانا بنت طاهر",
-        "محمد أسلمهان بن مماجان خان",
-        "نور هدايو بنت ميسڤين",
-        "سيتي نور حفيظة بنت محمد جوها",
-        "توميسه بنت جاڤر"
-    ]
+    "س.ا بوكيت توڠكت": ["حفيظ بن احبية@حمزة", "محمد مهيمن بن حاج حدران", "نور ديانا بنت هارون", "نور عزة بنت عبد الغفار", "نور عزة بنت مختار", "سلينا بنت وسل", "سوسي تاتوم بنت محمد راشد"],
+    "س.ا داتو أحمد": ["عائشة عزة بنت جمال الدين", "عالية سكينة بنت ذوالكفلي", "حزلينا بنت مد قادر", "خير النساء بنت طالب", "مسينتن بنت بصير", "مزلان بن محمد نور", "محمد رازق عرفان بن نورازلي", "محمد توفيق بن عمر", "محمد شزان بن جمال الدين", "نزوحا بنت زينل", "نور هداية بنت سايني", "نور أنيسة بنت عبد الله", "نور زيلة بنت عباس", "نور عفيقة بنت مسكم", "نور عليا بنت مد زينل", "نور أميرة شهيرة بنت محمد يزيد", "نور فرح هدى بنت بواڠ", "نور شهيرة بنت أزهر", "نور شهيدة الهدى بنت محمد أيوب", "نور شهيرة نتاشا محمد نجمان", "نور فضلين أدلينا بنت زينل", "نور الأيمن هدايتي بنت محمد", "روسية بنت عثمان", "روسينة بنت سموري", "سعاده بنت سمات", "سيتي فائزة بنت محمد سعيدفودين"],
+    "س.ا فيلدا كاهڠ بارت": ["محمد فاتح بن قمرين", "نور ليانا بنت محمد طاهر", "نور الإنشيراه بنت عبد الغفار", "روسيله بنت حارث", "سفورا بنت محمود", "سيتي هاجر بنت إثنين"],
+    "س.ا فيلدا كاهڠ تيمور": ["حسنة بنت مد قادر", "محمد نجيب بن محمد رملي", "نور مسنيتا بنت تسنوه", "نورمه بنت حصرين", "قصرين بنت إيمان", "روهيزه بنت عبد الرحيم", "روسماواتي بنت عبد الله", "شهمي درويش بن روهيزاد", "زليلى بنت جاني"],
+    "س.ا فيلدا اولو بليتوڠ": ["أحمد زولهادي بن ذوالقرنين", "عائشة بنت سلامت", "حاجة زينون بنت عبد الصمد", "حاج خير الدين بن رملي", "جامعية بنت صالح", "مستورا بنت نوڠمن", "نور عين بنت رحمة", "نور ليلى بنت ميسمان", "رفيدة بنت رميان"],
+    "س.ا فيلدا اولو دڠر": ["بلقيس شزواني بنت محمد أزهر", "مد ضياء الدين بن جلال", "نور فضيلة بنت اتن", "شريفة بنت إسماعيل@سنداري"],
+    "س.ا فيلدا اولو ڤڠݢلي": ["أربكية بنت محمد", "إنتن زوليانا بنت محمد", "محمد سعودي بن أحمد", "نور حياتي بنت أحمد", "روحانا بنت حاج سيرت", "شريفة بنت ستار"],
+    "س.ا كاهڠ باتو ٢٨": ["أزلينا بنت بصري", "نتيراه بنت حسن", "نورميدة بنت محمد هليل", "رئيمة بنت مد زم"],
+    "س.ا كامڤوڠ چونتوه": ["محمد أمير الأشرف بن منان", "نوريدة بنت علي", "نور العين نبيلة بنت حسب الله", "رسلي بن أحمد رفاعي", "زبيدة بنت محمد"],
+    "س.ا كلواڠ بارت": ["حليزه بنت ساريمان", "حسليندا بنت غزالي", "مهانوم بنت محمد إقبال", "مسلا بنت حسن", "محمد أنوار بن راؤف", "محمد نقي الدين بن مهد", "محمد نبيل زفري بن رحيم", "محمد شهمي فارس بن مد أيوب", "نور أزليزاواتي بنت حسن", "نور الأميرة بنت محمد زين الدين", "صائمة بنت ع. هادي", "سيتي نور الهداية بنت أبو", "سيتي صالحة بنت رسلاني", "سوريا بنت يوسف", "وان عبد الحكيم بن وان محمد فيصل"],
+    "س.ا لادڠ موتيارا": ["خير العارفين بن سجود", "محمد أسمادي بن سهر", "زيلاواتي بنت شمس الدين", "ذو الأكمال بن خميس"],
+    "س.ا لادڠ ڤامول": ["مسليزاواتي بنت بحرين", "محمد فردوس بن محزان", "نبيلة هدى بنت جسري", "نور شهمينا بنت دنيا", "نورين نادية بنت نوريزت", "سعيدة بنت سعيدين", "سيتي يوسليا بنت يوسف"],
+    "س.ا سري كامڤوڠ تڠه ٠١": ["عظيمة بنت محمد عارف", "بحر الدين بن جعفر", "دانيال عكيف بن شمس الزمان", "عزة فرزانا بنت مد نظام", "ماريا شهداء بنت جيلاني", "مارياالين بنت مد أيوب", "مستورا بنت مرسيدي", "محمد نور عزت بن عبد الرحيم", "محمد أمين نور حفيظ بن عباس", "نظرية بنت مت نادي", "نور حنيفا فيدا بنت محمد عباس", "نور فرحانة بنت توݢيمون", "نور إزياني ناجحة بنت جوهري", "نور الجنة بنت أنوار", "رشيدة بنت تايري", "سيتي فطرية بنت خايرون", "سيتي نور ليانا بنت محمد", "زواوي بن روسدين", "زورينا بنت أحمد"],
+    "س.ا سري كامڤوڠ تڠه ٠٢": ["دانيال فخر الزمان بن عبد الله دين", "هانيم بنت كسلان", "خير الرشيدي بن ڤردي", "محمد بن قهار", "محمد تقي الدين بن محمد جوڤري", "نور حفيظة بنت محمد هيمي", "نور أملينا بنت غزالي", "نور عقيلة عزة بنت قمر الدين", "نور عتيقة بنت رسلان", "نور نزورة بنت رسلي", "روسريديۏي بنت أحمد"],
+    "س.ا سلطان سير إبراهيم": ["جواريين بنت جسمان", "نور حبيبة بنت أمت مسرا", "نور عيني بنت جلال", "نور أزيلة بنت سنتيوڠ", "شعيرة أديبة بنت يعقوب"],
+    "س.ا تامن سري لمبق": ["أحمد نور فهمي بن مرسيد", "عائشة نبيلة بنت محمد", "أمينة بنت اتن حسن", "عفة الإنشيراه بنت بحر الدين", "لقمان الحكيم بن شهوان", "مسني بنت جايس", "محمد زاهين بن رحيم", "نيك محمد حافظ الدين بن نيك أمير الهشام", "نور عين بنت كاسنين", "نور لي بنت أحمد", "نوليانا بنت مغلن", "نور فطينة العفة بنت تاج الدين", "نور شميم مهيرا بنت إسحاق", "نور العين بنت محمد", "نور أسليمة بنت محمد سالم", "نور عوني شهيرة بنت مد يزيد", "نور نزات الشهداء بنت محمد عمران", "روزيتا بنت عبد الرزاق", "شمسية بنت محمد", "شمس الدين بن اوڠ", "سيتي فائزة بنت مارسين", "سيتي حواء بنت أحمد نيزان", "سيتي نور عادلة بنت قمر الزمان", "سيتي زبيدة بنت توفيق", "سوزانا@سيتي سلوى بنت عبد الحميد", "توان نور عزيزان بنت توان مودا", "أمي كلثوم بنت محمد أزهر", "أم الخيرية بنت محمد إدريس", "وان نور فرح هانيس بنت وان حسين"],
+    "س.ا بندر كلواڠ": ["عفيفة نور سعادة بنت عزمي", "عين الفاتحية الإنشيراه بنت يزيد", "أسماء بنت عبد الصمد", "أزحد بن عبد الرزاق", "ديانا بنت عبد العزيز", "إيميليانا عزة بنت عبد الرشيد", "فاتن ناجية بنت مازلي", "حياة السكينة بنت رملي", "إيرزا ميسارا بنت محمد إحسان", "خديجة بنت عمر", "ماشطة بنت بهاروم", "محمد أزهر بن رحيم", "محمد حزوان صفوان بن محمد يونس", "نور أزالينا بنت إدريس", "نور عين بنت مهتيان", "نور حنيزة بنت عبد الوهاب", "نور هداية بنت محمد", "نور صفوانة بنت محمد سالم", "نور عائشة ناجحة بنت هشام", "نور حزلين بنت حسيم", "نور إزيان بنت إسحاق", "نور حميراء بنت حزمان", "سانيسة بنت مورني", "سيتي خديجة بنت مارلان", "سيتي نور عادلة بنت يسري", "شازا أميرة بنت محمد", "تسليمة بنت محمد", "زليخة بنت محمد"],
+    "س.ا بندر ڤالوه": ["مشاهدة بنت هاليدين", "فوزية بنت عبد الجبار", "تسنية بنت هاميل"],
+    "س.ا بندر ڤالوه ٠٢": ["حميدة بنت مسكم", "مسدينا بنت حميد", "محمد إيزاإيزمان بن مد إسماعيل", "نور فرحاني عزة بنت إبراهيم"],
+    "س.ا فيلدا اءير هيتم": ["فاتن عقيلة بنت محمد مصلح", "هسڤاليلا بنت أبو حسن", "مازلين بنت إسماعيل", "محمد نظام الدين بن صوفي", "نعيمة بنت سليمان", "نور الحفيظة بنت زريمي", "نور الشفيقة بنت أحمد عبد مالک", "نور النجوى بنت ألليار @ إلياس", "زارينا بنت أبو طاوسي"],
+    "س.ا ݢونوڠ لمبق": ["أبو عرفان بن زين العابدين", "محمد حافظ بن عمر", "محمد عرفان بن رحيم", "محمد خير الناس بن مد كامل", "مظفر بن بيدين", "نور حسنة الفضيلة بنت اوڠ", "نور حفيظة بنت إسحاق", "نورمه بنت خميس", "نور العقيدة بنت صيهت", "نور الإنشيراه بنت جفري", "سيتي حواء فضيلة بنت عبد الحميد", "سيتي رتنا أمي سلمية بنت شمس الدين", "سيتي شريزة بنت عبد الحميد", "سورياني بنت محمد"],
+    "س.ا كامڤوڠ ملايو چاميق": ["عيني ناجيهة بنت إيبينو هاتوڤ", "فائزة بنت عبد الصمد", "فريزا بنت محمد @ هارون", "نور ليزة بنت محمد كاسه", "أم كلثوم بنت عارفين"],
+    "س.ا كيم مهكوتا": ["عظمة بنت كيار", "فيروز بنت محمد", "جميلة بنت مسجم", "محمد خير بن عبد الرحيم", "محمد عزت أيمن بن روهيزاد", "نور فراهين بنت عمر", "نور النتاشا بنت محمد يسميران", "نور الهدى بنت سايم", "راتينة بنت كمساني", "سيتي نور عوني عميراء بنت سيفول", "سهايدا بنت أبو بكر"],
+    "س.ا لادڠ بوكيت بنوت": ["عبد العظيم بن زيلاني", "حياتي بنت حسن", "روستينا بنت توميران"],
+    "س.ا لادڠ بوكيت ڤالوه": ["عبد الحليم بن كسدر", "حاجة جراينا بنت حاج عثمان", "ليانا مستورينا بنت عبد العزيز", "نوريته بنت رحمة"],
+    "س.ا لادڠ تيريه": ["ميزة النظريفة بنت مهدي", "محمد أنوار بن خنبالي", "روزيتا بنت رملي", "سيتي سلوى بنت مرزوقي"],
+    "س.ا نيور": ["حنيفة بنت أحمد", "روزيماه بنت روحاني", "سيتي فاطمة بنت محمد", "زريدة بنت إسماعيل"],
+    "س.ا سري تامن كلواڠ بارت": ["عبد المطلب بن قمر الدين", "عزيزة بنت رشدي", "حفيظة بنت سلامت", "جليلى بنت دكير", "مهيون بنت ميسني", "مزني بنت محمد مصلح", "محمد نور فطري بن محمد خليل", "نور المليانا بنت اب رحمن", "نور فرح ديانا بنت عبد المالک", "نور فاتن عليا بنت جلال الدين", "نور راضية بنت محمد خمكا", "نور شرافة بنت جوهري", "راتية بنت أبو طالب", "صبرينة بنت صبري", "صالحين بن جسني", "سيتي مصلحة بنت محمد أمين", "سحانا بنت احبية @ حمزة"],
+    "س.ا سري لالڠ": ["عبدة بنت إدريس", "أمير نور أيمن بن رسلان", "أمين الدين بن غزالي", "هداية العزة بنت شريف", "مارني بنت قرمان", "محمد أشرف بن محزان", "نور العيني بنت مد يونس", "نور المودة بنت زريمي", "رازية بنت زينل", "سعيرة بنت عثمان"],
+    "س.ا تامن دليما": ["عين المرضية بنت يحيى", "أنس قسطينا بنت مت سيري", "أسمهاني بنت حميد", "عوني عفيفة بنت محمد مزران", "مصرية بنت إسحاق", "محمد يوسف بن محمد راشد", "محمد علي الدين بن رايمي", "محمد معاذ بن محمد فوزيل", "محمد شهرالزام بن عبد موسى", "نور العلمية بنت أ رحمن", "نورسية بنت رامين", "نور عفيفة بنت محمد جميل", "نور عيني بنت مت ستار", "نور عريسا بنت حزمان", "نور المرحمة بنت جوهري", "نور الجنة بنت مد إسماعيل", "ڤوتري نور فضيلة بنت سقما", "ڤوتري زمزارينا بنت كمال الدين", "روزيتا بنت مسروم", "سوزيليانا بنت أحمد", "شهيدة بنت أبو بكر", "يسري بن أحمد", "زنة نور عفيفة بنت زيهان"],
+    "س.ا تامن ديسا": ["باتريشيا بلقيس بنت عبد الله", "محمد نور فؤاد بن نور الدين", "ناجيهة بنت محمد يزيد", "نجوى بنت روزالي", "نور عزة بنت رميان", "نور هداية بنت محمد تڠ", "رابعة العدوية بنت إسماعيل", "شدة النورا بنت سليمان", "سيتي نور ليانا بنت سيدي", "سيتي رفادة @ سيتي رفيدة بنت مد ساريڠ"],
+    "س.ر.ا.ب كلواڠ": ["فائمة بنت إسماعيل", "محمد عز الدين بن مد روزي", "محمد خير الإقبال بن تاج الدين", "نتاشا نور هازورا بنت محمد بصير", "نور شفيقة بنت سلامت", "نور الهدى بنت محمد خاريس"],
+    "س.ا بندر رڠݢم": ["خيراواتي بنت سليمان", "ميزة الأكمل بنت ريملي", "محمد نظام بن كمال", "نيلاکسوما بنت مد نواوي", "فضيلة بنت رملي", "زارينا بنت سليمان"],
+    "س.ا بوكيت كنعن": ["عبد العزيز بن مناڤ", "نور أزلين بنت شمس الدين", "نور आशقين بنت قاسم", "سري روهايو بنت عبد الحميد"],
+    "س.ا داتو إبراهيم مجيد": ["عينون بنت جميران", "أمين الدين بن محمد درويس", "ألوانيزا بنت يوسوڤ", "فضيلة بنت كريم", "محمد أنيق إكليل بن يسريزان", "نور أزورا بنت مولانا", "نور عيني بنت هاشم", "نور علياء بنت محمد رافي", "صميدة بنت بكر", "ساليناه بنت نواوي", "سيتي نبيلة بنت أمال الدين", "سيتي نور عائشة بنت جمال", "سيتي سانه بنت كوسين", "سيتي سهيلا بنت صائم", "سوزيتا بنت سوكر", "يزيد بن جبار @ ساهيد"],
+    "س.ا فيلدا لايڠ-لايڠ": ["أزله بنت أحمد", "نور أصلينا بنت إسماعيل", "نور مزلينا بنت مرزوقي", "سيتي خديجة بنت غزالي", "سحيلي إيمي بنت عبد الشكور"],
+    "س.ا كومڤليكس ڤڠهولو": ["أزيينا بنت محمد خيري", "إرناواتي بنت عبد الطالب", "فاتن نور الروضة بنت أرازمي", "فاتن نبيلة بنت محمد نور الدين", "جفري بن عبد الصمد@سمات", "ليلى ساري بنت أسموني", "ماريانا بنت عبد الرزاق", "محمد هارون الرشيدين أحمد", "محمد ذو الحلمي بن أبو", "نادية عتيقة بنت إلياس", "نصر الدين بن سيران", "نور إزاتي بنت عزمان", "نور سكينة بنت أحمد شهاب", "أوكتريفيا أريانتي بنت أيدير", "سيتي سلايا بنت ساريڠ"],
+    "س.ا ڤاريت حاج هاشم": ["أبو حفيظ بن محمد كمال", "هدى خالصة بنت محمد نور", "محمد فوزان بن محمد مربت", "نور ألينا بنت أبو بكر", "نور فرحانة بنت رحمة", "روحانا بنت عبد المجيد", "سيتي نور حليمة السعدية بنت محمد رسلان", "وحيدة بنت مرسودي", "يوليزا إيليا بنت مد رملي"],
+    "س.ا ڤاسوكن ݢرقن عام": ["أزواهيزا بنت مد عثمان", "محمد الحفيظ بن سيرت", "محمد إلهان بن عبد المالک", "سيتي حميراء بنت زانودين"],
+    "س.ا ڤكن لايڠ-لايڠ": ["عتيقة زليخة بنت اب قادر", "حاجة مريامة بنت عبد المنان", "محمد إقبال بن شعري", "نور أسليندا بنت يسمين أفندي", "نور الهدى بنت محمد إظهاري", "روسياتيمة بنت سینوڠ", "سيتي أفرينة بنت قمر الزمان", "سيتي ربيعة بنت حمزة", "زكية بنت عبد الحميد"],
+    "س.ا ڤنجارا سيمڤڠ رڠام": ["نور فرحة بنت أ رحيم", "نور شميلة بنت عبد الحفيظ", "روسلينا بنت ڤانات", "سوزيلياناه بنت باني"],
+    "س.ا سيمڤڠ رڠام": ["فائزة بنت داود", "مسنة بنت طالب", "نور ليزار بنت أحمد", "نور عين بنت محمد حسين", "نور أزهم بن مد خيري", "نور حسليندا بنت ݢمن@واݢيمن", "نور ليلاواتي بنت محمد", "نور عائشة بنت مد عيسى", "نور فرح عين بنت عبد الكريم", "نور आशقين بنت حسين", "نور ماشطة بنت محمد جاني", "نور مبشرة بنت محمد", "نور العيني بنت نور عزمي", "نور العين بنت فريد الأطرس", "سيتي ميسرة بنت أمال الدين", "سيتي ميسرة بنت مد بحر الدين", "سيتي نور بلقيس بنت مامي"],
+    "س.ا سري كنچان": ["أحمد شفاء الفواز بن عمر", "أنيس بنت أنوار", "فريدة بنت رملي", "جليحة بنت جميل", "قمر الزوراه بنت أزهر", "نور ليانا بنت ميسڤار", "نور مرهيداواتي بنت مرزوقي", "سيتي زليخة بنت محمد"],
+    "س.ا سري ماچڤ": ["أمني بنت أنوار", "فريداواتي بنت هارون", "محمد فائز بن محمد مربت", "محمد صديق بن نور الدين", "نور आशقين بنت جعفر", "نور هدايت بنت إسحاق", "سيتي سلمى بنت محمد تسليم", "سبحان بن أحمد بندي", "زائدة بنت موكسين"],
+    "س.ا سري ماجو جاي": ["أديبة بنت أ.رحمان", "محمد ثقيف خير الدين", "نور لياني بنت محمد توكيران", "نور أفيقة نزيهة محمد رسلان", "نور الناجيهة بنت محمد سالم", "رسنة بنت توكيمين"],
+    "س.ا سري تڠه رڠݢم": ["أنيتا بنت ڤرمون", "فريزة بنت إسمان", "كرتيني بنت ليمان @ سليمان", "محمد نور عين بن ڠانتيمين"],
+    "س.ا سوڠاي ليناو": ["أنيس شهداء بنت إسحاق", "ماريانا بنت طاهر", "محمد أسلمهان بن مماجان خان", "نور هدايو بنت ميسڤين", "سيتي نور حفيظة بنت محمد جوها", "توميسه بنت جاڤر"]
 };
 
 const rptData = {
-    // ==========================================
-    // 1. SIRAH (Penggal 2 - Dari Minggu 19)
-    // ==========================================
     "Sirah": {
-        "19": { sk: "1. ڤڠرتين دان كڤنتيڠن سيرة", sp: "1.1 ڤڠرتين سيرة\n1.2 سومبر روجوعن سيرة", obj: "1. مپبوت ڤڠرتين سيرة\n2. مپبوت سومبر٢ روجوعن سيرة" },
-        "20": { sk: "1. ڤڠرتين دان كڤنتيڠن سيرة", sp: "1.3 چيري٢ سيرة\n1.4 چيري٢ سجارة", obj: "1. منوليس چيري٢ سيرة\n2. مپناريكن چيري٢ سجارة" },
-        "21": { sk: "1. ڤڠرتين دان كڤنتيڠن سيرة", sp: "1.5 ڤربيذاءن انتارا سيرة دان سجارة\n1.6 حكمه ممڤلاجري سيرة\n1.7 دليل ممڤلاجري سيرة", obj: "1. ممبنديڠ بيذا انتارا سيرة دان سجارة\n2. مپبوت حكمه ممڤلاجري سيرة\n3. ممباچ اية القرءان سورة الأحزاب : 21" },
-        "22": { sk: "2. نسب كتورونن نبي اسماعيل عليه السلام", sp: "2.1 ڤڠرتين نسب\n2.2 معلومت ريڠكس نبي إسماعيل عليه السلام", obj: "1. مپبوت ڤڠرتين نسب\n2. مپبوت كتورونن نبي محمد صلى الله عليه وسلم\n3. منوليس معلومت ريڠكس نبي إسماعيل عليه السلام" },
-        "23": { sk: "2. نسب كتورونن نبي اسماعيل عليه السلام", sp: "2.3 كڤريبادين ايه نبي إسماعيل عليه السلام\n2.4 ڤڠاجرن درڤد قيصه نبي اسماعيل عليه السلام", obj: "1. مپبوت كڤريبادين ايهندا نبي إسماعيل عليه السلام\n2. مپناريكن ڤڠاجرن درڤد قيصه نبي إسماعيل عليه السلام" },
-        "24": { sk: "2. نسب كتورونن نبي اسماعيل عليه السلام", sp: "2.5 كڤريبادين ايبو نبي إسماعيل عليه السلام\n2.6 نسب كتورونن نبي محمد صلى الله عليه وسلام", obj: "1. مپبوت 3 صيفت ڤريبادي ايبو نبي إسماعيل عليه السلام\n2. مپبوت 3 نام موليا درڤد نسب كتورونن نبي محمد صلى الله عليه وسلم" },
-        "25": { sk: "2. نسب كتورونن نبي اسماعيل عليه السلام", sp: "2.7 حكمه نسب ملالوءي ڤرنكاحن", obj: "1. منوليس 3 حكمه نسب ملالوءي ڤرنكاحن\n2. مپناريكن نام ايستري دان انق٢ نبي ابراهيم" },
-        "26": { sk: "3. نسب سبله ايه نبي محمد صلى الله عليه وسلم", sp: "3.1 لاتر بلاكڠ ايه نبي محمد صلى الله عليه وسلم\n3.2 قيصه نذر عبد المطلب", obj: "1. برچريتا مڠناءي لاتر بلاكڠ ايه نبي محمد صلى الله عليه وسلم\n2. ممباچ قيصه نذر عبد المطلب دڠن لنچر\n3. مپبوت نذر عبد المطلب" },
-        "28": { sk: "3. نسب سبله ايه نبي محمد صلى الله عليه وسلم", sp: "3.3 روايت هيدوڤ عبد الله بن عبد المطلب\n3.4 ڤكرجاءن عبد الله بن عبد المطلب\n3.5 صيفت٢ ترڤوجي عبد الله بن عبد المطلب", obj: "1. برچريتا تنتڠ روايت هيدوڤ عبد الله بن عبد المطلب\n2. مپبوت ڤكرجاءن عبد الله بن عبد المطلب\n3. مپناريكن صيفت٢ ترڤوجي عبد الله بن عبد المطلب" },
-        "29": { sk: "3. نسب سبله ايه نبي محمد صلى الله عليه وسلم", sp: "3.6 كوفاتن عبد الله بن عبد المطلب\n3.7 حكمه مڠتاهوءي قيصه عبد الله بن عبد المطلب", obj: "1. برچريتا مڠناءي كوفاتن عبد الله بن عبد المطلب\n2. منوليس حكمه مڠتاهوءي قيصه عبد الله بن عبد المطلب" },
-        "30": { sk: "4. نسب سبله ايبو نبي محمد صلى الله عليه وسلم", sp: "4.1 لاتر بلاكڠ ايبو نبي محمد صلى الله عليه وسلم\n4.2 نسب سبله ايبو نبي محمد صلى الله عليه وسلم", obj: "1. برچريتا مڠناءي لاتر بلاكڠ ايبو نبي محمد صلى الله عليه وسلم\n2. مپبوت نام٢ كتورونن سبله ايبو نبي محمد صلى الله عليه وسلم" },
-        "31": { sk: "4. نسب سبله ايبو نبي محمد صلى الله عليه وسلم", sp: "4.3 نسب ايبودان ايه نبي محمد صلى الله عليه وسلم\n4.4 صيفت٢ ترڤوجي آمنة بنت وهب", obj: "1. مپناريكن سلسيله نسب ايبودان ايه نبي محمد صلى الله عليه وسلم\n2. منوليس صيفت٢ ترڤوجي آمنة بنت وهب" },
-        "32": { sk: "4. نسب سبله ايبو نبي محمد صلى الله عليه وسلم", sp: "4.5 ڤركهوينن ايبو نبي محمد صلى الله عليه وسلم\n4.6 كوفاتن ايبو نبي محمد صلى الله عليه وسلم\n4.7 حكمه مڠتاهوءي نسب سبله ايبو نبي محمد صلى الله عليه وسلم", obj: "1. برچريتا مڠناءي ڤركهوينن ايبو نبي محمد صلى الله عليه وسلم\n2. برچريتا مڠناءي كوفاتن ايبو نبي محمد صلى الله عليه وسلم\n3. مپناريكن حكمه مڠتاهوءي نسب سبله ايبو نبي محمد صلى الله عليه وسلم" },
-        "33": { sk: "5. نسب قوم دان بڠسا نبي محمد صلى الله عليه وسلم", sp: "5.1 لاتر بلاكڠ قوم دان بڠسا نبي محمد صلى الله عليه وسلم\n5.2 كلبيهن بڠسا قريش\n5.3 معلومت ريڠكس نبي محمد صلى الله عليه وسلم", obj: "1. مپبوت چونتوه كجاهيلن مشاركت عرب\n2. مپناريكن كلبيهن مشاركت جاهلية\n3. مپبوت كلبيهن بڠسا قريش\n4. منوليس معلومت اوتام نبي محمد صلى الله عليه وسلم" },
-        "34": { sk: "5. نسب قوم دان بڠسا نبي محمد صلى الله عليه وسلم", sp: "5.4 ڤريبادي نبي محمد صلى الله عليه وسلم\n5.5 حكمه نبي محمد صلى الله عليه وسلم داوتوس كڤد ماءنسي", obj: "1. مپناريكن صيفت ڤريبادي موليا نبي محمد صلى الله عليه وسلم\n2. منوليس حكمه نبي محمد صلى الله عليه وسلم داوتوس كڤد ماءنسي" }
+        "19": { sk: "١. ڤڠرتين دان كڤنتيڠن سيرة", sp: "١.١ ڤڠرتين سيرة\n١.٢ سومبر روجوعن سيرة", obj: "١. مپبوت ڤڠرتين سيرة\n٢. مپبوت سومبر٢ روجوعن سيرة" },
+        "20": { sk: "١. ڤڠرتين دان كڤنتيڠن سيرة", sp: "١.٣ چيري٢ سيرة\n١.٤ چيري٢ سجارة", obj: "١. منوليس چيري٢ سيرة\n٢. مپناريكن چيري٢ سجارة" },
+        "21": { sk: "١. ڤڠرتين دان كڤنتيڠن سيرة", sp: "١.٥ ڤربيذاءن انتارا سيرة دان سجارة\n١.٦ حكمه ممڤلاجري سيرة\n١.٧ دليل ممڤلاجري سيرة", obj: "١. ممبنديڠ بيذا انتارا سيرة دان سجارة\n٢. مپبوت حكمه ممڤلاجري سيرة\n٣. ممباچ اية القرءان سورة الأحزاب : ٢١" },
+        "22": { sk: "٢. نسب كتورونن نبي اسماعيل عليه السلام", sp: "٢.١ ڤڠرتين نسب\n٢.٢ معلومت ريڠكس نبي إسماعيل عليه السلام", obj: "١. مپبوت ڤڠرتين نسب\n٢. مپبوت كتورونن نبي محمد صلى الله عليه وسلم\n٣. منوليس معلومت ريڠكس نبي إسماعيل عليه السلام" },
+        "23": { sk: "٢. نسب كتورونن نبي اسماعيل عليه السلام", sp: "٢.٣ كڤريبادين ايه نبي إسماعيل عليه السلام\n٢.٤ ڤڠاجرن درڤد قيصه نبي اسماعيل عليه السلام", obj: "١. مپبوت كڤريبادين ايهندا نبي إسماعيل عليه السلام\n٢. مپناريكن ڤڠاجرن درڤد قيصه نبي إسماعيل عليه السلام" },
+        "24": { sk: "٢. نسب كتورونن نبي اسماعيل عليه السلام", sp: "٢.٥ كڤريبادين ايبو نبي إسماعيل عليه السلام\n٢.٦ نسب كتورونن نبي محمد صلى الله عليه وسلام", obj: "١. مپبوت ٣ صيفت ڤريبادي ايبو نبي إسماعيل عليه السلام\n٢. مپبوت ٣ نام موليا درڤد نسب كتورونن نبي محمد صلى الله عليه وسلم" },
+        "25": { sk: "٢. نسب كتورونن نبي اسماعيل عليه السلام", sp: "٢.٧ حكمه نسب ملالوءي ڤرنكاحن", obj: "١. منوليس ٣ حكمه نسب ملالوءي ڤرنكاحن\n٢. مپناريكن نام ايستري دان انق٢ نبي ابراهيم" },
+        "26": { sk: "٣. نسب سبله ايه نبي محمد صلى الله عليه وسلم", sp: "٣.١ لاتر بلاكڠ ايه نبي محمد صلى الله عليه وسلم\n٣.٢ قيصه نذر عبد المطلب", obj: "١. برچريتا مڠناءي لاتر بلاكڠ ايه نبي محمد صلى الله عليه وسلم\n٢. ممباچ قيصه نذر عبد المطلب دڠن لنچر\n٣. مپبوت نذر عبد المطلب" },
+        "28": { sk: "٣. نسب سبله ايه نبي محمد صلى الله عليه وسلم", sp: "٣.٣ روايت هيدوڤ عبد الله بن عبد المطلب\n٣.٤ ڤكرجاءن عبد الله بن عبد المطلب\n٣.٥ صيفت٢ ترڤوجي عبد الله بن عبد المطلب", obj: "١. برچريتا تنتڠ روايت هيدوڤ عبد الله بن عبد المطلب\n٢. مپبوت ڤكرجاءن عبد الله بن عبد المطلب\n٣. مپناريكن صيفت٢ ترڤوجي عبد الله بن عبد المطلب" },
+        "29": { sk: "٣. نسب سبله ايه نبي محمد صلى الله عليه وسلم", sp: "٣.٦ كوفاتن عبد الله بن عبد المطلب\n٣.٧ حكمه مڠتاهوءي قيصه عبد الله بن عبد المطلب", obj: "١. برچريتا مڠناءي كوفاتن عبد الله بن عبد المطلب\n٢. منوليس حكمه مڠتاهوءي قيصه عبد الله بن عبد المطلب" },
+        "30": { sk: "٤. نسب سبله ايبو نبي محمد صلى الله عليه وسلم", sp: "٤.١ لاتر بلاكڠ ايبو نبي محمد صلى الله عليه وسلم\n٤.٢ نسب سبله ايبو نبي محمد صلى الله عليه وسلم", obj: "١. برچريتا مڠناءي لاتر بلاكڠ ايبو نبي محمد صلى الله عليه وسلم\n٢. مپبوت نام٢ كتورونن سبله ايبو نبي محمد صلى الله عليه وسلم" },
+        "31": { sk: "٤. نسب سبله ايبو نبي محمد صلى الله عليه وسلم", sp: "٤.٣ نسب ايبودان ايه نبي محمد صلى الله عليه وسلم\n٤.٤ صيفت٢ ترڤوجي آمنة بنت وهب", obj: "١. مپناريكن سلسيله نسب ايبودان ايه نبي محمد صلى الله عليه وسلم\n٢. منوليس صيفت٢ ترڤوجي آمنة بنت وهب" },
+        "32": { sk: "٤. نسب سبله ايبو نبي محمد صلى الله عليه وسلم", sp: "٤.٥ ڤركهوينن ايبو نبي محمد صلى الله عليه وسلم\n٤.٦ كوفاتن ايبو نبي محمد صلى الله عليه وسلم\n٤.٧ حكمه مڠتاهوءي نسب سبله ايبو نبي محمد صلى الله عليه وسلم", obj: "١. برچريتا مڠناءي ڤركهوينن ايبو نبي محمد صلى الله عليه وسلم\n٢. برچريتا مڠناءي كوفاتن ايبو نبي محمد صلى الله عليه وسلم\n٣. مپناريكن حكمه مڠتاهوءي نسب سبله ايبو نبي محمد صلى الله عليه وسلم" },
+        "33": { sk: "٥. نسب قوم دان بڠسا نبي محمد صلى الله عليه وسلم", sp: "٥.١ لاتر بلاكڠ قوم دان بڠسا نبي محمد صلى الله عليه وسلم\n٥.٢ كلبيهن بڠسا قريش\n٥.٣ معلومت ريڠكس نبي محمد صلى الله عليه وسلم", obj: "١. مپبوت چونتوه كجاهيلن مشاركت عرب\n٢. مپناريكن كلبيهن مشاركت جاهلية\n٣. مپبوت كلبيهن بڠسا قريش\n٤. منوليس معلومت اوتام نبي محمد صلى الله عليه وسلم" },
+        "34": { sk: "٥. نسب قوم دان بڠسا نبي محمد صلى الله عليه وسلم", sp: "٥.٤ ڤريبادي نبي محمد صلى الله عليه وسلم\n٥.٥ حكمه نبي محمد صلى الله عليه وسلم داوتوس كڤد ماءنسي", obj: "١. مپناريكن صيفت ڤريبادي موليا نبي محمد صلى الله عليه وسلم\n٢. منوليس حكمه نبي محمد صلى الله عليه وسلم داوتوس كڤد ماءنسي" }
     },
-
-    // ==========================================
-    // 2. TAUHID (Penggal 2 - Dari Minggu 19)
-    // ==========================================
     "Tauhid": {
-        "19": { sk: "ركن إسلام", sp: "1.1 ڤڠرتين ركن إسلام\n1.2 دليل نقلي ركن إسلام\n1.3 حكوم ممڤلاجري ركن إسلام\n1.4 كڤنتيڠن ركن إسلام\n1.5 ركن إسلام اد ليم ڤركارا\n1.6 ڤڠوكوهن", obj: "1. مپبوت ڤڠرتين ركن إسلام دڠن بتول.\n2. ممباچ دليل نقلي ركن إسلام دان ارتين.\n3. مپاتاكن حكوم ممڤلاجري ركن إسلام دڠن تڤت.\n4. مپبوت كڤنتيڠن ركن إسلام دڠن بتول.\n5. مپنارايكن ليم ركن إسلام دالم بوكو توليس دڠن كمس." },
-        "20": { sk: "مڠوچڤ دوا كليمه شهادة", sp: "2.1 لفظ دوا كليمه شهادة\n2.2 دليل نقلي مڠوچڤ دوا كليمه شهادة\n2.3 حكوم مڠوچڤ دوا كليمه شهادة", obj: "1. مپبوت لفظ دوا كليمه شهادة دڠن جلس.\n2. ممباچ دليل نقلي مڠوچڤ دوا كليمه شهادة دان ارتين.\n3. مپاتاكن حكوم مڠوچڤ دوا كليمه شهادة دڠن بتول." },
-        "21": { sk: "مڠوچڤ دوا كليمه شهادة", sp: "2.4 كڤنتيڠن دوا كليمه شهادة\n2.5 تونتوتن دوا كليمه شهادة", obj: "1. مپبوت كڤنتيڠن دوا كليمه شهادة دڠن بتول.\n2. مپنارايكن تونتوتن دوا كليمه شهادة دالم بوكو توليس." },
-        "22": { sk: "منديريكن صلاة", sp: "3.1 ڤڠرتين صلاة\n3.2 دليل نقلي منديريكن صلاة", obj: "1. مپبوت ڤڠرتين صلاة دڠن بتول.\n2. ممباچ دليل نقلي منديريكن صلاة (دڠن بيمبيڠن ݢورو)." },
-        "23": { sk: "منديريكن صلاة", sp: "3.3 حكوم منديريكن صلاة\n3.4 كڤنتيڠن صلاة", obj: "1. مپبوت حكوم منديريكن صلاة دڠن بتول.\n2. مپاتاكن كڤنتيڠن ملاكوكن صلاة دڠن تڤت." },
-        "24": { sk: "مڠلواركن زكاة", sp: "4.1 ڤڠرتين زكاة\n4.2 دليل نقلي مڠلواركن زكاة\n4.3 حكوم مڠلواركن زكاة\n4.4 حكمه مڠلواركن زكاة\n4.5 تونتوتن مڠلواركن زكاة", obj: "1. مپبوت ڤڠرتين زكاة دڠن بتول.\n2. ممباچ دليل نقلي مڠلواركن زكاة (دڠن بيمبيڠن ݢورو).\n3. مپبوت حكوم مڠلواركن زكاة دڠن بتول.\n4. مپاتاكن حكمه مڠلواركن زكاة.\n5. مپنارايكن تونتوتن مڠلواركن زكاة." },
-        "25": { sk: "برڤواسا دبولن رمضان", sp: "5.1 ڤڠرتين برڤواسا دبولن رمضان\n5.2 دليل نقلي مڠرجاكن ڤواسا\n5.3 حكوم مڠرجاكن ڤواسا\n5.4 كڤنتيڠن برڤواسا دبولن رمضان\n5.5 تونتوتن مڠرجاكن ڤواسا\n5.6 ڤڠوكوهن", obj: "1. مپبوت ڤڠرتين برڤواسا دڠن بتول.\n2. ممباچ دليل نقلي مڠرجاكن ڤواسا دان ارتين.\n3. مپبوت حكوم مڠرجاكن ڤواسا دڠن بتول.\n4. منجلسكن كڤنتيڠن برڤواسا دبولن رمضان.\n5. منوليس تونتوتن مڠرجاكن ڤواسا دڠن توليسن چنتيق.\n6. مپبوت لفظ نية ڤواسا دڠن بتول." },
-        "26": { sk: "منونايكن حج", sp: "6.1 ڤڠرتين حج\n6.2 دليل نقلي منونايكن حج\n6.3 حكوم منونايكن حج\n6.4 حكمه منونايكن حج\n6.5 تونتوتن ڤلقساناءن حج", obj: "1. مپبوت ڤڠرتين حج دڠن بتول.\n2. ممباچ دليل نقلي منونايكن حج دان ارتين (دڠن بيمبيڠن ݢورو).\n3. مپاتاكن حكوم منونايكن حج دڠن بتول.\n4. مپبوت حكمه منونايكن حج دڠن جلس.\n5. مپنارايكن تونتوتن ڤلقساناءن حج." },
-        "28": { sk: "ركن ايمان", sp: "7.1 ڤڠرتين ركن ايمان\n7.2 دليل نقلي ركن ايمان\n7.3 حكوم ممڤلاجري ركن ايمان\n7.4 كڤنتيڠن ركن ايمان\n7.5 تونتوتن ركن ايمان\n7.6 ڤڠوكوهن", obj: "1. مپبوت ڤڠرتين ايمان دڠن بتول.\n2. ممباچ دليل نقلي ركن ايمان دان ارتين (دڠن بيمبيڠن ݢورو).\n3. مپبوت حكوم ممڤلاجري ركن ايمان دڠن تڤت.\n4. منوليس كڤنتيڠن ركن ايمان دڠن كمس.\n5. مپنارايكن تونتوتن ركن ايمان دڠن بتول.\n6. مپبوت ڤڠوكوهن سموا ركن ايمان دڠن بتول." },
-        "29": { sk: "برايمان كڤد الله تعالى", sp: "8.1 ارتي برايمان كڤد الله تعالى\n8.2 دليل نقلي برايمان كڤد الله تعالى\n8.3 حكوم برايمان كڤد الله تعالى\n8.4 كڤنتيڠن برايمان كڤد الله تعالى\n8.5 تونتوتن برايمان كڤد الله تعالى", obj: "1. مپبوت ارتي برايمان كڤد الله دڠن بتول.\n2. ممباچ دليل نقلي برايمان كڤد الله تعالى دان ارتين (دڠن بيمبيڠن ݢورو).\n3. مپبوت حكوم برايمان كڤد الله تعالى دڠن بتول.\n4. مپاتاكن كڤنتيڠن برايمان كڤد الله تعالى.\n5. مپنارايكن تونتوتن برايمان كڤد الله تعالى." },
-        "30": { sk: "برايمان كڤد ملائكة", sp: "9.1 برايمان كڤد ملائكة\n9.2 ڤڠرتين ملائكة\n9.3 نام ملائكة دان توݢسن\n9.4 دليل نقلي برايمان كڤد ملائكة\n9.5 حكوم برايمان كڤد ملائكة\n9.6 كڤنتيڠن برايمان كڤد ملائكة\n9.7 تونتوتن برايمان كڤد ملائكة", obj: "1. مپبوت ڤڠرتين ملائكة دڠن بتول.\n2. مپبوت 10 نام ملائكة دان توݢسن دڠن بتول.\n3. ممباچ دليل نقلي برايمان كڤد ملائكة دان ارتين (دڠن بيمبيڠن ݢورو).\n4. مپاتاكن حكوم برايمان كڤد ملائكة دڠن تڤت.\n5. مپبوت كڤنتيڠن برايمان كڤد ملائكة.\n6. مپنارايكن تونتوتن برايمان كڤد ملائكة." },
-        "31": { sk: "برايمان كڤد كتاب٢", sp: "10.1 ڤڠرتين كتاب\n10.2 نام كتاب\n10.3 دليل نقلي برايمان كڤد كتاب٢\n10.4 حكوم برايمان كڤد كتاب٢\n10.5 كڤنتيڠن برايمان كڤد كتاب٢\n10.6 تونتوتن برايمان كڤد كتاب٢\n10.7 ڤڠوكوهن", obj: "1. مپبوت ڤڠرتين كتاب دڠن بتول.\n2. مننتوكن نام كتاب دان نام نبيڽ دڠن بتول.\n3. ممباچ دليل نقلي برايمان كڤد كتاب دان ارتين (دڠن بيمبيڠن ݢورو).\n4. مپاتاكن حكوم برايمان كڤد كتاب٢.\n5. مپبوت كڤنتيڠن برايمان كڤد كتاب٢.\n6. مپنارايكن تونتوتن برايمان كڤد كتاب٢.\n7. مپبوت نام كتاب دڠن بتول." },
-        "32": { sk: "برايمان كڤد رسول٢", sp: "11.1 ڤڠرتين رسول\n11.2 نام نبي دان رسول يڠ واجب دكتاهوءي\n11.3 دليل نقلي برايمان كڤد نبي دان رسول\n11.4 حكوم برايمان كڤد نبي دان رسول\n11.5 كڤنتيڠن برايمان كڤد رسول٢\n11.6 تونتوتن برايمان كڤد رسول٢", obj: "1. مپبوت ڤڠرتين رسول دڠن بتول.\n2. مپبوت نام نبي دان رسول عليهم الصلاة والسلام يڠ واجب دكتاهوءي.\n3. ممباچ دليل نقلي برايمان كڤد رسول٢ دان ارتين (دڠن بيمبيڠن ݢورو).\n4. مپاتاكن حكوم برايمان كڤد ڤارا رسول عليهم الصلاة والسلام.\n5. مپبوت كڤنتيڠن برايمان كڤد ڤارا رسول عليهم الصلاة والسلام.\n6. مپنارايكن تونتوتن برايمان كڤد رسول٢ عليهم الصلاة والسلام." },
-        "33": { sk: "برايمان كڤد هاري قيامة", sp: "12.1 ڤڠرتين هاري قيامة\n12.2 دليل نقلي برايمان كڤد هاري قيامة\n12.3 حكوم برايمان كڤد هاري قيامة\n12.4 كڤنتيڠن برايمان كڤد هاري قيامة\n12.5 ڤڠاجرن هاري قيامة\n12.6 ڤڠوكوهن", obj: "1. مپبوت ڤڠرتين هاري قيامة دڠن بتول.\n2. ممباچ دليل نقلي برايمان كڤد هاري قيامة دان ارتين (دڠن بيمبيڠن ݢورو).\n3. مپاتاكن حكوم برايمان كڤد هاري قيامة.\n4. مپبوت كڤنتيڠن برايمان كڤد هاري قيامة.\n5. مپنارايكن ڤڠاجرن هاري قيامة.\n6. مپبوت نام هاري قيامة دڠن بتول." },
-        "34": { sk: "برايمان كڤد قضاء دان قدر", sp: "13.1 ڤڠرتين قضاء دان قدر\n13.2 دليل نقلي برايمان كڤد قضاء دان قدر\n13.3 حكوم برايمان كڤد قضاء دان قدر\n13.4 كڤنتيڠن برايمان كڤد قضاء دان قدر\n13.5 تونتوتن برايمان كڤد قضاء دان قدر", obj: "1. مپبوت ڤڠرتين قضاء دان قدر دڠن بتول.\n2. ممباچ دليل نقلي برايمان كڤد قضاء دان قدر دان ارتين (دڠن بيمبيڠن ݢورو).\n3. مپاتاكن حكوم برايمان كڤد قضاء دان قدر.\n4. مپبوت كڤنتيڠن برايمان كڤد قضاء دان قدر.\n5. مپنارايكن تونتوتن برايمان كڤد قضاء دان قدر." }
+        "19": { sk: "ركن إسلام", sp: "١.١ ڤڠرتين ركن إسلام\n١.٢ دليل نقلي ركن إسلام\n١.٣ حكوم ممڤلاجري ركن إسلام\n١.٤ كڤنتيڠن ركن إسلام\n١.٥ ركن إسلام اد ليم ڤركارا\n١.٦ ڤڠوكوهن", obj: "١. مپبوت ڤڠرتين ركن إسلام دڠن بتول.\n٢. ممباچ دليل نقلي ركن إسلام دان ارتين.\n٣. مپاتاكن حكوم ممڤلاجري ركن إسلام دڠن تڤت.\n٤. مپبوت كڤنتيڠن ركن إسلام دڠن بتول.\n٥. مپنارايكن ليم ركن إسلام دالم بوكو توليس دڠن كمس." },
+        "20": { sk: "مڠوچڤ دوا كليمه شهادة", sp: "٢.١ لفظ دوا كليمه شهادة\n٢.٢ دليل نقلي مڠوچڤ دوا كليمه شهادة\n٢.٣ حكوم مڠوچڤ دوا كليمه شهادة", obj: "١. مپبوت لفظ دوا كليمه شهادة دڠن جلس.\n٢. ممباچ دليل نقلي مڠوچڤ دوا كليمه شهادة دان ارتين.\n٣. مپاتاكن حكوم مڠوچڤ دوا كليمه شهادة دڠن بتول." },
+        "21": { sk: "مڠوچڤ دوا كليمه شهادة", sp: "٢.٤ كڤنتيڠن دوا كليمه شهادة\n٢.٥ تونتوتن دوا كليمه شهادة", obj: "١. مپبوت كڤنتيڠن دوا كليمه شهادة دڠن بتول.\n٢. مپنارايكن تونتوتن دوا كليمه شهادة دالم بوكو توليس." },
+        "22": { sk: "منديريكن صلاة", sp: "٣.١ ڤڠرتين صلاة\n٣.٢ دليل نقلي منديريكن صلاة", obj: "١. مپبوت ڤڠرتين صلاة دڠن بتول.\n٢. ممباچ دليل نقلي منديريكن صلاة (دڠن بيمبيڠن ݢورو)." },
+        "23": { sk: "منديريكن صلاة", sp: "٣.٣ حكوم منديريكن صلاة\n٣.٤ كڤنتيڠن صلاة", obj: "١. مپبوت حكوم منديريكن صلاة دڠن بتول.\n٢. مپاتاكن كڤنتيڠن ملاكوكن صلاة دڠن تڤت." },
+        "24": { sk: "مڠلواركن زكاة", sp: "٤.١ ڤڠرتين زكاة\n٤.٢ دليل نقلي مڠلواركن زكاة\n٤.٣ حكوم مڠلواركن زكاة\n٤.٤ حكمه مڠلواركن زكاة\n٤.٥ تونتوتن مڠلواركن زكاة", obj: "١. مپبوت ڤڠرتين زكاة دڠن بتول.\n٢. ممباچ دليل نقلي مڠلواركن زكاة (دڠن بيمبيڠن ݢورو).\n٣. مپبوت حكوم مڠلواركن زكاة دڠن بتول.\n٤. مپاتاكن حكمه مڠلواركن زكاة.\n٥. مپنارايكن تونتوتن مڠلواركن زكاة." },
+        "25": { sk: "برڤواسا دبولن رمضان", sp: "٥.١ ڤڠرتين برڤواسا دبولن رمضان\n٥.٢ دليل نقلي مڠرجاكن ڤواسا\n٥.٣ حكوم مڠرجاكن ڤواسا\n٥.٤ كڤنتيڠن برڤواسا دبولن رمضان\n٥.٥ تونتوتن مڠرجاكن ڤواسا\n٥.٦ ڤڠوكوهن", obj: "١. مپبوت ڤڠرتين برڤواسا دڠن بتول.\n٢. ممباچ دليل نقلي مڠرجاكن ڤواسا دان ارتين.\n٣. مپبوت حكوم مڠرجاكن ڤواسا دڠن بتول.\n٤. منجلسكن كڤنتيڠن برڤواسا دبولن رمضان.\n٥. منوليس تونتوتن مڠرجاكن ڤواسا دڠن توليسن چنتيق.\n٦. مپبوت لفظ نية ڤواسا دڠن بتول." },
+        "26": { sk: "منونايكن حج", sp: "٦.١ ڤڠرتين حج\n٦.٢ دليل نقلي منونايكن حج\n٦.٣ حكوم منونايكن حج\n٦.٤ حكمه منونايكن حج\n٦.٥ تونتوتن ڤلقساناءن حج", obj: "١. مپبوت ڤڠرتين حج دڠن بتول.\n٢. ممباچ دليل نقلي منونايكن حج دان ارتين (دڠن بيمبيڠن ݢورو).\n٣. مپاتاكن حكوم منونايكن حج دڠن بتول.\n٤. مپبوت حكمه منونايكن حج دڠن جلس.\n٥. مپنارايكن تونتوتن ڤلقساناءن حج." },
+        "28": { sk: "ركن ايمان", sp: "٧.١ ڤڠرتين ركن ايمان\n٧.٢ دليل نقلي ركن ايمان\n٧.٣ حكوم ممڤلاجري ركن ايمان\n٧.٤ كڤنتيڠن ركن ايمان\n٧.٥ تونتوتن ركن ايمان\n٧.٦ ڤڠوكوهن", obj: "١. مپبوت ڤڠرتين ايمان دڠن بتول.\n٢. ممباچ دليل نقلي ركن ايمان دان ارتين (دڠن بيمبيڠن ݢورو).\n٣. مپبوت حكوم ممڤلاجري ركن ايمان دڠن تڤت.\n٤. منوليس كڤنتيڠن ركن ايمان دڠن كمس.\n٥. مپنارايكن تونتوتن ركن ايمان دڠن بتول.\n٦. مپبوت ڤڠوكوهن سموا ركن ايمان دڠن بتول." },
+        "29": { sk: "برايمان كڤد الله تعالى", sp: "٨.١ ارتي برايمان كڤد الله تعالى\n٨.٢ دليل نقلي برايمان كڤد الله تعالى\n٨.٣ حكوم برايمان كڤد الله تعالى\n٨.٤ كڤنتيڠن برايمان كڤد الله تعالى\n٨.٥ تونتوتن برايمان كڤد الله تعالى", obj: "١. مپبوت ارتي برايمان كڤد الله دڠن بتول.\n٢. ممباچ دليل نقلي برايمان كڤد الله تعالى دان ارتين (دڠن بيمبيڠن ݢورو).\n٣. مپبوت حكوم برايمان كڤد الله تعالى دڠن بتول.\n٤. مپاتاكن كڤنتيڠن برايمان كڤد الله تعالى.\n٥. مپنارايكن تونتوتن برايمان كڤد الله تعالى." },
+        "30": { sk: "برايمان كڤد ملائكة", sp: "٩.١ برايمان كڤد ملائكة\n٩.٢ ڤڠرتين ملائكة\n٩.٣ نام ملائكة دان توݢسن\n٩.٤ دليل نقلي برايمان كڤد ملائكة\n٩.٥ حكوم برايمان كڤد ملائكة\n٩.٦ كڤنتيڠن برايمان كڤد ملائكة\n٩.٧ تونتوتن برايمان كڤد ملائكة", obj: "١. مپبوت ڤڠرتين ملائكة دڠن بتول.\n٢. مپبوت ١٠ نام ملائكة دان توݢسن دڠن بتول.\n٣. ممباچ دليل نقلي برايمان كڤد ملائكة دان ارتين (دڠن بيمبيڠن ݢورو).\n٤. مپاتاكن حكوم برايمان كڤد ملائكة دڠن تڤت.\n٥. مپبوت كڤنتيڠن برايمان كڤد ملائكة.\n٦. مپنارايكن تونتوتن برايمان كڤد ملائكة." },
+        "31": { sk: "برايمان كڤد كتاب٢", sp: "١٠.١ ڤڠرتين كتاب\n١٠.٢ نام كتاب\n١٠.٣ دليل نقلي برايمان كڤد كتاب٢\n١٠.٤ حكوم برايمان كڤد كتاب٢\n١٠.٥ كڤنتيڠن برايمان كڤد كتاب٢\n١٠.٦ تونتوتن برايمان كڤد كتاب٢\n١٠.٧ ڤڠوكوهن", obj: "١. مپبوت ڤڠرتين كتاب دڠن بتول.\n٢. مننتوكن نام كتاب دان نام نبيڽ دڠن بتول.\n٣. ممباچ دليل نقلي برايمان كڤد كتاب دان ارتين (دڠن بيمبيڠن ݢورو).\n٤. مپاتاكن حكوم برايمان كڤد كتاب٢.\n٥. مپبوت كڤنتيڠن برايمان كڤد كتاب٢.\n٦. مپنارايكن تونتوتن برايمان كڤد كتاب٢.\n٧. مپبوت نام كتاب دڠن بتول." },
+        "32": { sk: "برايمان كڤد رسول٢", sp: "١١.١ ڤڠرتين رسول\n١١.٢ نام نبي دان رسول يڠ واجب دكتاهوءي\n١١.٣ دليل نقلي برايمان كڤد نبي دان رسول\n١١.٤ حكوم برايمان كڤد نبي دان رسول\n١١.٥ كڤنتيڠن برايمان كڤد رسول٢\n١١.٦ تونتوتن برايمان كڤد رسول٢", obj: "١. مپبوت ڤڠرتين رسول دڠن بتول.\n٢. مپبوت نام نبي دان رسول عليهم الصلاة والسلام يڠ واجب دكتاهوءي.\n٣. ممباچ دليل نقلي برايمان كڤد رسول٢ دان ارتين (دڠن بيمبيڠن ݢورو).\n٤. مپاتاكن حكوم برايمان كڤد ڤارا رسول عليهم الصلاة والسلام.\n٥. مپبوت كڤنتيڠن برايمان كڤد ڤارا رسول عليهم الصلاة والسلام.\n٦. مپنارايكن تونتوتن برايمان كڤد رسول٢ عليهم الصلاة والسلام." },
+        "33": { sk: "برايمان كڤد هاري قيامة", sp: "١٢.١ ڤڠرتين هاري قيامة\n١٢.٢ دليل نقلي برايمان كڤد هاري قيامة\n١٢.٣ حكوم برايمان كڤد هاري قيامة\n١٢.٤ كڤنتيڠن برايمان كڤد هاري قيامة\n١٢.٥ ڤڠاجرن هاري قيامة\n١٢.٦ ڤڠوكوهن", obj: "١. مپبوت ڤڠرتين هاري قيامة دڠن بتول.\n٢. ممباچ دليل نقلي برايمان كڤد هاري قيامة دان ارتين (دڠن بيمبيڠن ݢورو).\n٣. مپاتاكن حكوم برايمان كڤد هاري قيامة.\n٤. مپبوت كڤنتيڠن برايمان كڤد هاري قيامة.\n٥. مپنارايكن ڤڠاجرن هاري قيامة.\n٦. مپبوت نام هاري قيامة دڠن بتول." },
+        "34": { sk: "برايمان كڤد قضاء دان قدر", sp: "١٣.١ ڤڠرتين قضاء دان قدر\n١٣.٢ دليل نقلي برايمان كڤد قضاء دان قدر\n١٣.٣ حكوم برايمان كڤد قضاء دان قدر\n١٣.٤ كڤنتيڠن برايمان كڤد قضاء دان قدر\n١٣.٥ تونتوتن برايمان كڤد قضاء دان قدر", obj: "١. مپبوت ڤڠرتين قضاء دان قدر دڠن بتول.\n٢. ممباچ دليل نقلي برايمان كڤد قضاء دان قدر دان ارتين (دڠن بيمبيڠن ݢورو).\n٣. مپاتاكن حكوم برايمان كڤد قضاء دان قدر.\n٤. مپبوت كڤنتيڠن برايمان كڤد قضاء دان قدر.\n٥. مپنارايكن تونتوتن برايمان كڤد قضاء دان قدر." }
     },
-
-    // ==========================================
-    // 3. AKHLAK (Penggal 2 - Dari Minggu 19)
-    // ==========================================
     "Akhlak": {
-        "19": { sk: "1. ادب تيدور", sp: "1.1 ڤڠنلن\n1.2 ادب سبلوم تيدور", obj: "موريد داڤت:\n1. منجلسكن مقصود تيدور دڠن ريڠكس.\n2. مپنارايكن ادب سبلوم تيدور دڠن بتول." },
-        "20": { sk: "1. ادب تيدور", sp: "1.3 ڤوسيسي تيدور رسول الله صلى الله عليه وسلم\n1.4 حكمه تيدور مڠيكوت چارا رسول الله", obj: "1. مپاتاكن ڤوسيسي تيدور رسول الله صلى الله عليه وسلم دڠن جلس.\n2. منوليس حكمه تيدور مڠيكوت چارا رسول الله صلى الله عليه وسلم دڠن بتول." },
-        "21": { sk: "1. ادب تيدور", sp: "1.5 توجوان تيدور منوروت إسلام\n1.6 ذيكير سبلوم تيدور", obj: "1. منجلسكن توجوان تيدور منوروت إسلام دڠن بتول.\n2. ممباچ ذيكير سبلوم تيدور دڠن لنچر." },
-        "22": { sk: "1. ادب تيدور", sp: "1.7 برميمڤي دالم تيدور\n1.8 ادب باڠون تيدور", obj: "1. مپاتاكن ادب جک برميمڤي دالم تيدور دڠن جلس.\n2. مپنارايكن ادب باڠون تيدور دڠن بتول." },
-        "23": { sk: "1. ادب تيدور", sp: "1.9 عاقبت تيدور تيدق مڠيكوت سنة رسول الله", obj: "1. مپاتاكن عاقبت تيدور تيدق مڠيكوت سنة رسول الله صلى الله عليه وسلم دڠن جلس." },
-        "24": { sk: "2. منجاݢ كبرسيهن ديري", sp: "2.1 ڤڠنلن\n2.2 عملن ممبرسيهكن ديري\n2.3 چارا دان وقتو برسوݢي اتاو مڠݢوسوق ݢيݢي", obj: "1. مپاتاكن هوبوڠن كبرسيهن ديري دڠن عبادة سچارا جلس.\n2. مپنارايكن عملن كبرسيهن ديري دڠن ريڠكس.\n3. ملاكوكن سيمولاسي دان منجلسكن چارا برسوݢي اتاو مڠݢوسوق ݢيݢي دڠن بتول." },
-        "25": { sk: "2. منجاݢ كبرسيهن ديري", sp: "2.4 ادب مندي\n2.5 ڤاءيده برسوݢي دان مندي", obj: "1. منوليس سمولا ادب مندي دڠن بتول.\n2. مپاتاكن ڤاءيده برسوݢي دان مندي دڠن جلس." },
-        "26": { sk: "3. ادب بروضوء", sp: "3.1 ڤڠنلن\n3.2 حكوم بروضوء\n3.3 ادب سبلوم بروضوء", obj: "1. مپاتاكن ڤڠرتين بروضوء دڠن جلس.\n2. منجلسكن ڤمبهاݢين حكوم بروضوء دڠن تڤت.\n3. مپنارايكن ادب سبلوم بروضوء دڠن تڤت." },
-        "28": { sk: "3. ادب بروضوء", sp: "3.4 ادب٢ سماس بروضوء\n3.5 ادب سلفس بروضوء\n3.6 ڤركارا مكروه كتيك بروضوء", obj: "1. منوليس سمولا ادب سماس بروضوء دڠن بتول.\n2. ممباچ دعاء دان ارتين سلفس بروضوء دڠن بتول.\n3. مپنارايكن ڤركارا مكروه كتيك بروضوء دڠن بتول." },
-        "29": { sk: "4. ادب ماكن", sp: "4.1 ادب سبلوم ماكن\n4.2 ادب سماس ماكن", obj: "1. مپاتاكن ادب سبلوم ماكن دڠن جلس.\n2. مپنارايكن ادب سماس ماكن دڠن بتول." },
-        "30": { sk: "4. ادب ماكن", sp: "4.3 ادب سلفس ماكن\n4.4 ڤاءيده ماكن دڠن برادب\n4.5 لارڠن كتيك ماكن", obj: "1. منجلسكن سمولا ادب٢ سلفس ماكن دڠن بتول.\n2. منرڠكن سمولا ڤاءيده برادب كتيك ماكن دڠن جلس.\n3. مپاتاكن چونتوه لارڠن كتيك ماكن دڠن بتول." },
-        "31": { sk: "5. ادب دڠن ايبو باڤ", sp: "5.1 ڤڠنلن\n5.2 حكوم بربقتي كڤد ايبو باڤ\n5.3 ادب بركاءول دڠن ايبو باڤ", obj: "1. منجلسكن ڤڠرتين ايبو باڤ دڠن جلس.\n2. مپاتاكن حكوم بربقتي كڤد ايبو باڤ دڠن تڤت.\n3. مڠنل ڤستي ادب بركاءول دڠن ايبو باڤ دڠن بتول." },
-        "32": { sk: "5. ادب دڠن ايبو باڤ", sp: "5.4 كلبيهن بربقتي كڤد ايبو باڤ\n5.5 عاقبت مڠابايكن ادب ترهادڤ ايبو باڤ", obj: "1. مپنارايكن كلبيهن بربقتي كڤد ايبو باڤ دڠن جلس.\n2. مڠهورايكن عاقبت مڠابايكن ادب ترهادڤ ايبو باڤ دڠن ريڠكس." },
-        "33": { sk: "6. ادب دڠن ݢورو", sp: "6.1 ڤڠنلن\n6.2 ادب بركاءول دڠن ݢورو\n6.3 كلبيهن برادب دڠن ݢورو\n6.4 كلاكوان يڠ تيدق دبنركن ترهادڤ ݢورو", obj: "1. مپاتاكن ڤرانن ݢورو دڠن جلس.\n2. منجلسكن ادب بركاءول دڠن ݢورو دڠن بتول.\n3. مپنارايكن كلبيهن برادب دڠن ݢورو دڠن بتول.\n4. مپاتاكن كلاكوان يڠ تيدق دبنركن ترهادڤ ݢورو دڠن جلس." },
-        "34": { sk: "7. ادب دڠن كاون", sp: "7.1 ڤڠنلن\n7.2 ادب دڠن كاون\n7.3 ڤركارا يڠ تيدق واجر دلاكوكن ترهادڤ كاون\n7.4 كلبيهن برادب دڠن كاون", obj: "1. منرڠكن ڤڠرتين كاون يڠ باءيق دڠن ريڠكس.\n2. ملاكوكن دان منرڤكن ادب دڠن كاون دڠن بتول.\n3. مپاتاكن ڤركارا يڠ تيدق واجر دلاكوكن ترهادڤ كاون دڠن جلس.\n4. مپنارايكن كلبيهن برادب دڠن كاون دڠن بتول." }
+        "19": { sk: "١. ادب تيدور", sp: "١.١ ڤڠنلن\n١.٢ ادب سبلوم تيدور", obj: "موريد داڤت:\n١. منجلسكن مقصود تيدور دڠن ريڠكس.\n٢. مپنارايكن ادب سبلوم تيدور دڠن بتول." },
+        "20": { sk: "١. ادب تيدور", sp: "١.٣ ڤوسيسي تيدور رسول الله صلى الله عليه وسلم\n١.٤ حكمه تيدور مڠيكوت چارا رسول الله", obj: "١. مپاتاكن ڤوسيسي تيدور رسول الله صلى الله عليه وسلم دڠن جلس.\n٢. منوليس حكمه تيدور مڠيكوت چارا رسول الله صلى الله عليه وسلم دڠن بتول." },
+        "21": { sk: "١. ادب تيدور", sp: "١.٥ توجوان تيدور منوروت إسلام\n١.٦ ذيكير سبلوم تيدور", obj: "١. منجلسكن توجوان تيدور منوروت إسلام دڠن بتول.\n٢. ممباچ ذيكير سبلوم تيدور دڠن لنچر." },
+        "22": { sk: "١. ادب تيدور", sp: "١.٧ برميمڤي دالم تيدور\n١.٨ ادب باڠون تيدور", obj: "١. مپاتاكن ادب جک برميمڤي دالم تيدور دڠن جلس.\n٢. مپنارايكن ادب باڠون تيدور دڠن بتول." },
+        "23": { sk: "١. ادب تيدور", sp: "١.٩ عاقبت تيدور تيدق مڠيكوت سنة رسول الله", obj: "١. مپاتاكن عاقبت تيدور تيدق مڠيكوت سنة رسول الله صلى الله عليه وسلم دڠن جلس." },
+        "24": { sk: "٢. منجاݢ كبرسيهن ديري", sp: "٢.١ ڤڠنلن\n٢.٢ عملن ممبرسيهكن ديري\n٢.٣ چارا دان وقتو برسوݢي اتاو مڠݢوسوق ݢيݢي", obj: "١. مپاتاكن هوبوڠن كبرسيهن ديري دڠن عبادة سچارا جلس.\n٢. مپنارايكن عملن كبرسيهن ديري دڠن ريڠكس.\n٣. ملاكوكن سيمولاسي دان منجلسكن چارا برسوݢي اتاو مڠݢوسوق ݢيݢي دڠن بتول." },
+        "25": { sk: "٢. منجاݢ كبرسيهن ديري", sp: "٢.٤ ادب مندي\n٢.٥ ڤاءيده برسوݢي دان مندي", obj: "١. منوليس سمولا ادب مندي دڠن بتول.\n٢. مپاتاكن ڤاءيده برسوݢي دان مندي دڠن جلس." },
+        "26": { sk: "٣. ادب بروضوء", sp: "٣.١ ڤڠنلن\n٣.٢ حكوم بروضوء\n٣.٣ ادب سبلوم بروضوء", obj: "١. مپاتاكن ڤڠرتين بروضوء دڠن جلس.\n٢. منجلسكن ڤمبهاݢين حكوم بروضوء دڠن تڤت.\n٣. مپنارايكن ادب سبلوم بروضوء دڠن تڤت." },
+        "28": { sk: "٣. ادب بروضوء", sp: "٣.٤ ادب٢ سماس بروضوء\n٣.٥ ادب سلفس بروضوء\n٣.٦ ڤركارا مكروه كتيك بروضوء", obj: "١. منوليس سمولا ادب سماس بروضوء دڠن بتول.\n٢. ممباچ دعاء دان ارتين سلفس بروضوء دڠن بتول.\n٣. مپنارايكن ڤركارا مكروه كتيك بروضوء دڠن بتول." },
+        "29": { sk: "٤. ادب ماكن", sp: "٤.١ ادب سبلوم ماكن\n٤.٢ ادب سماس ماكن", obj: "١. مپاتاكن ادب سبلوم ماكن دڠن جلس.\n٢. مپنارايكن ادب سماس ماكن دڠن بتول." },
+        "30": { sk: "٤. ادب ماكن", sp: "٤.٣ ادب سلفس ماكن\n٤.٤ ڤاءيده ماكن دڠن برادب\n٤.٥ لارڠن كتيك ماكن", obj: "١. منجلسكن سمولا ادب٢ سلفس ماكن دڠن بتول.\n٢. منرڠكن سمولا ڤاءيده برادب كتيك ماكن دڠن جلس.\n٣. مپاتاكن چونتوه لارڠن كتيك ماكن دڠن بتول." },
+        "31": { sk: "٥. ادب دڠن ايبو باڤ", sp: "٥.١ ڤڠنلن\n٥.٢ حكوم بربقتي كڤد ايبو باڤ\n٥.٣ ادب بركاءول دڠن ايبو باڤ", obj: "١. منجلسكن ڤڠرتين ايبو باڤ دڠن جلس.\n٢. مپاتاكن حكوم بربقتي كڤد ايبو باڤ دڠن تڤت.\n٣. مڠنل ڤستي ادب بركاءول دڠن ايبو باڤ دڠن بتول." },
+        "32": { sk: "٥. ادب دڠن ايبو باڤ", sp: "٥.٤ كلبيهن بربقتي كڤد ايبو باڤ\n٥.٥ عاقبت مڠابايكن ادب ترهادڤ ايبو باڤ", obj: "١. مپنارايكن كلبيهن بربقتي كڤد ايبو باڤ دڠن جلس.\n٢. مڠهورايكن عاقبت مڠابايكن ادب ترهادڤ ايبو باڤ دڠن ريڠكس." },
+        "33": { sk: "٦. ادب دڠن ݢورو", sp: "٦.١ ڤڠنلن\n٦.٢ ادب بركاءول دڠن ݢورو\n٦.٣ كلبيهن برادب دڠن ݢورو\n٦.٤ كلاكوان يڠ تيدق دبنركن ترهادڤ ݢورو", obj: "١. مپاتاكن ڤرانن ݢورو دڠن جلس.\n٢. منجلسكن ادب بركاءول دڠن ݢورو دڠن بتول.\n٣. مپنارايكن كلبيهن برادب دڠن ݢورو دڠن بتول.\n٤. مپاتاكن كلاكوان يڠ تيدق دبنركن ترهادڤ ݢورو دڠن جلس." },
+        "34": { sk: "٧. ادب دڠن كاون", sp: "٧.١ ڤڠنلن\n٧.٢ ادب دڠن كاون\n٧.٣ ڤركارا يڠ تيدق واجر دلاكوكن ترهادڤ كاون\n٧.٤ كلبيهن برادب دڠن كاون", obj: "١. منرڠكن ڤڠرتين كاون يڠ باءيق دڠن ريڠكس.\n٢. ملاكوكن دان منرڤكن ادب دڠن كاون دڠن بتول.\n٣. مپاتاكن ڤركارا يڠ تيدق واجر دلاكوكن ترهادڤ كاون دڠن جلس.\n٤. مپنارايكن كلبيهن برادب دڠن كاون دڠن بتول." }
     },
-
-    // ==========================================
-    // 4. BAHASA ARAB (Penggal 2 - Dari Minggu 19)
-    // ==========================================
     "BahasaArab": {
-        "19": { sk: "الدَّرْسُ الأَوَّلُ: التَّعَارُفُ وَالتَّحِيَّاتُ", sp: "1.3 اقْرَأْ وَتَكَلَّمْ\n1.4 اسْتَمِعْ وَرَدّدْ\n1.5 اقْرَأْ وَتَكَلَّمْ ثُمَّ اكْتُبْ", obj: "1. ممباچ ڤربوالن موده دڠن جلس دان لنچر.\n2. مپبوت لفظ اوچڤن سلامت دڠن بتول.\n3. منوليس ڤركاتاءن يڠ دبريكن." },
-        "20": { sk: "الدَّرْسُ الثَّانِي : أَعْضَاءُ الْجِسْمِ", sp: "2.1 اقْرَأْ وَاحْفَظْ\n2.2 تَأَمَّلْ وَانْطِقْ\n2.3 اقْرَأْ وَتَكَلَّمْ", obj: "1. مپبوت نام اڠݢوتا بادن دڠن جلس.\n2. مپمبوڠكن سوكو كات نام اڠݢوتا بادن دڠن بتول.\n3. ممباچ ڤربوالن يڠ ڤركاتاءن دڠن ضمير (هذا) دان (هذه) دڠن بتول." },
-        "21": { sk: "الدَّرْسُ الثَّانِي : أَعْضَاءُ الْجِسْمِ", sp: "2.4 اسْتَمِعْ وَرَدَدْ\n2.5 اقْرَأْ وَتَكَلَّمْ ثُمَّ اكْتُبْ", obj: "1. ممباچ فوڠسي اڠݢوتا بادن دڠن بتول.\n2. منوليس ڤركاتاءن يڠ دبريكن دڠن قاعده." },
-        "22": { sk: "الدَّرْسُ الثَّالِثُ : أَعْضَاءُ الْأَسْرَةِ", sp: "3.1 اقرأْ وَاحْفَظْ\n3.2 تَأَمَّلْ وَانْطِقْ\n3.3 اقْرَأْ وَتَكَلَّمْ", obj: "1. مپبوت نام اهلي ددالم كلوارݢ دڠن جلس.\n2. مڠيجا نام اهلي كلوارݢ دڠن بتول.\n3. ممباچ ايسي ڤلاجرن يڠ ڤركاتاءن دڠن ضمير (هذا) دان (هذه) دڠن بتول." },
-        "23": { sk: "الدَّرْسُ الثَّالِثُ : أَعْضَاءُ الْأَسْرَةِ", sp: "3.4 اسْتَمِعْ وَرَدَدْ\n3.5 تَأَمَّلْ وَتَكَلَّمْ\n3.6 اقْرَأْ وَتَكَلَّمْ ثُمَّ اكْتُبْ", obj: "1. ممباچ ڤركاتاءن يڠ بركاءيتن دڠن ضمير (هو) دان (هي) دڠن بتول.\n2. مپاتاكن ڤركاتاءن ددالم تيك‌س ڤربوالن دڠن بتول.\n3. منوليس ڤركاتاءن يڠ دبريكن دڠن قاعده ڤنوليسن يڠ بتول." },
-        "24": { sk: "الدَّرْسُ الرَّابِعُ : هَيَّا نَعُدُّ", sp: "4.1 اقْرَأْ وَاحْفَظْ\n4.2 تَأَمَّلْ وَانْطِقْ", obj: "1. مپبوت بيلڠن ددالم بهاس عرب دڠن بتول.\n2. منوليس سوكو كات بيلڠن ددالم بهاس عرب دڠن بتول." },
-        "25": { sk: "الدَّرْسُ الرَّابِعُ : هَيَّا نَعُدُّ", sp: "4.3 تَأَمَّلْ وَتَكَلَّمْ\n4.4 اقْرَأْثُمَّ اكْتُبْ", obj: "1. ممباچ كلمة دڠن جلس دان لنچر.\n2. منوليس بيلڠن ددالم بهاس عرب دڠن بتول." },
-        "26": { sk: "الدَّرْسُ الخَامِسُ : لُغَةُ الْفَصْلِ", sp: "5.1 اقرأْ وَاحْفَظْ\n5.2 اسْتَمِعْ وَاقْرأْ\n5.3 تَأَمَّلْ وَانْطِقْ", obj: "1. ممباچ كات ڤربواتن برداسركن ݢامبر دڠن بتول.\n2. منوليس اكتيۏيتي هارين ددالم كلس دڠن بتول.\n3. مڠيجا ڤرالتن ددالم كلس دڠن بتول." },
-        "28": { sk: "الدَّرْسُ الخَامِسُ : لُغَةُ الْفَصْلِ", sp: "5.4 اسْتَمِعْ وَرَدَدْ\n5.5 اقْرَأْ وَتَكَلَّمْ\n5.6 اقْرَأْ ثُمَّ اكْتُبْ", obj: "1. مپبوت اكتيۏيتي بلاجر ددالم بيليق كومڤوتر دڠن بتول.\n2. ممباچ ڤربوالن دڠن جلس دان لنچر.\n3. منوليس ڤركاتان يڠ دبريكن دڠن قاعده ڤنوليسن يڠ بتول." },
-        "29": { sk: "الدَّرْسُ السَّادِسُ : الأَدَوَاتُ الدِّرَاسِيَّةُ", sp: "6.1 اقْرَأْ وَتَكَلَّمْ\n6.2 اسْتَمِعْ وَرَدَدْ", obj: "1. مپبوت ڤرالتن سكوله دڠن تڤت.\n2. مڠنل ڤستي ڤركاتاءن يڠ بركاءيتن دڠن ضمير (هذا) دان (هذه) دڠن بتول." },
-        "30": { sk: "الدَّرْسُ السَّادِسُ : الأَدَوَاتُ الدِّرَاسِيَّةُ", sp: "6.3 تَأَمَّلْ وَانْطِقْ\n6.4 تَأَمَّلْ وَتَكَلَّمْ", obj: "1. مڠيجا سوكو كات كليمه ڤلاجرن دڠن بتول.\n2. مڠنل ڤستي ڤركاتاءن يڠ بركاءيتن دڠن ضمير (ذَلِكَ ) دان (تلك) دڠن بتول." },
-        "31": { sk: "الدَّرْسُ السَّادِسُ : الأَدَوَاتُ الدِّرَاسِيَّةُ", sp: "6.5 اقْرَأْ وَاحْفَظْ\n6.6 اقْرَأْ ثَمَّ اكْتُبْ", obj: "1. ممباچ ايسي ڤلاجرن دڠن باءيق.\n2. منوليس ڤركاتاءن يڠ دبريكن دڠن قاعده يڠ بتول." },
-        "32": { sk: "الدَّرْسُ السَّابِعِ : مَدْرَسَتِي", sp: "7.1 تَأَمَّلْ وَتَكَلَّمْ", obj: "1. مپبوت ڤركاتاءن دڠن بتول." },
-        "33": { sk: "الدَّرْسُ السَّابِعِ : مَدْرَسَتِي", sp: "7.2 تَأَمَّلْ وَانْطِقْ", obj: "1. منچرايكن حروف دڠن بتول." },
-        "34": { sk: "الدَّرْسُ السَّابِعِ : مَدْرَسَتِي", sp: "7.3 اسْتَمِعْ وَرَدَّدْ\n7.4 اقْرَأْ ثُمَّ اكْتُبْ", obj: "1. ممباچ ڤربوالن دڠن جلس دان لنچر.\n2. منوليس ڤركاتاءن دڠن بتول." }
+        "19": { sk: "الدَّرْسُ الأَوَّلُ: التَّعَارُفُ وَالتَّحِيَّاتُ", sp: "١.٣ اقْرَأْ وَتَكَلَّمْ\n١.٤ اسْتَمِعْ وَرَدّدْ\n١.٥ اقْرَأْ وَتَكَلَّمْ ثُمَّ اكْتُبْ", obj: "١. ممباچ ڤربوالن موده دڠن جلس دان لنچر.\n٢. مپبوت لفظ اوچڤن سلامت دڠن بتول.\n٣. منوليس ڤركاتاءن يڠ دبريكن." },
+        "20": { sk: "الدَّرْسُ الثَّانِي : أَعْضَاءُ الْجِسْمِ", sp: "٢.١ اقْرَأْ وَاحْفَظْ\n٢.٢ تَأَمَّلْ وَانْطِقْ\n٢.٣ اقْرَأْ وَتَكَلَّمْ", obj: "١. مپبوت نام اڠݢوتا بادن دڠن جلس.\n٢. مپمبوڠكن سوكو كات نام اڠݢوتا بادن دڠن بتول.\n٣. ممباچ ڤربوالن يڠ ڤركاتاءن دڠن ضمير (هذا) دان (هذه) دڠن بتول." },
+        "21": { sk: "الدَّرْسُ الثَّانِي : أَعْضَاءُ الْجِسْمِ", sp: "٢.٤ اسْتَمِعْ وَرَدَدْ\n٢.٥ اقْرَأْ وَتَكَلَّمْ ثُمَّ اكْتُبْ", obj: "١. ممباچ فوڠسي اڠݢوتا بادن دڠن بتول.\n٢. منوليس ڤركاتاءن يڠ دبريكن دڠن قاعده." },
+        "22": { sk: "الدَّرْسُ الثَّالِثُ : أَعْضَاءُ الْأَسْرَةِ", sp: "٣.١ اقرأْ وَاحْفَظْ\n٣.٢ تَأَمَّلْ وَانْطِقْ\n٣.٣ اقْرَأْ وَتَكَلَّمْ", obj: "١. مپبوت نام اهلي ددالم كلوارݢ دڠن جلس.\n٢. مڠيجا نام اهلي كلوارݢ دڠن بتول.\n٣. ممباچ ايسي ڤلاجرن يڠ ڤركاتاءن دڠن ضمير (هذا) دان (هذه) دڠن بتول." },
+        "23": { sk: "الدَّرْسُ الثَّالِثُ : أَعْضَاءُ الْأَسْرَةِ", sp: "٣.٤ اسْتَمِعْ وَرَدَدْ\n٣.٥ تَأَمَّلْ وَتَكَلَّمْ\n٣.٦ اقْرَأْ وَتَكَلَّمْ ثُمَّ اكْتُبْ", obj: "١. ممباچ ڤركاتاءن يڠ بركاءيتن دڠن ضمير (هو) دان (هي) دڠن بتول.\n٢. مپاتاكن ڤركاتاءن ددالم تيك‌س ڤربوالن دڠن بتول.\n٣. منوليس ڤركاتاءن يڠ دبريكن دڠن قاعده ڤنوليسن يڠ بتول." },
+        "24": { sk: "الدَّرْسُ الرَّابِعُ : هَيَّا نَعُدُّ", sp: "٤.١ اقْرَأْ وَاحْفَظْ\n٤.٢ تَأَمَّلْ وَانْطِقْ", obj: "١. مپبوت بيلڠن ددالم بهاس عرب دڠن بتول.\n٢. منوليس سوكو كات بيلڠن ددالم بهاس عرب دڠن بتول." },
+        "25": { sk: "الدَّرْسُ الرَّابِعُ : هَيَّا نَعُدُّ", sp: "٤.٣ تَأَمَّلْ وَتَكَلَّمْ\n٤.٤ اقْرَأْثُمَّ اكْتُبْ", obj: "١. ممباچ كلمة دڠن جلس دان لنچر.\n٢. منوليس بيلڠن ددالم بهاس عرب دڠن بتول." },
+        "26": { sk: "الدَّرْسُ الخَامِسُ : لُغَةُ الْفَصْلِ", sp: "٥.١ اقرأْ وَاحْفَظْ\n٥.٢ اسْتَمِعْ وَاقْرأْ\n٥.٣ تَأَمَّلْ وَانْطِقْ", obj: "١. ممباچ كات ڤربواتن برداسركن ݢامبر دڠن بتول.\n٢. منوليس اكتيۏيتي هارين ددالم كلس دڠن بتول.\n٣. مڠيجا ڤرالتن ددالم كلس دڠن بتول." },
+        "28": { sk: "الدَّرْسُ الخَامِسُ : لُغَةُ الْفَصْلِ", sp: "٥.٤ اسْتَمِعْ وَرَدَدْ\n٥.٥ اقْرَأْ وَتَكَلَّمْ\n٥.٦ اقْرَأْ ثُمَّ اكْتُبْ", obj: "١. مپبوت اكتيۏيتي بلاجر ددالم بيليق كومڤوتر دڠن بتول.\n٢. ممباچ ڤربوالن دڠن جلس دان لنچر.\n٣. منوليس ڤركاتان يڠ دبريكن دڠن قاعده ڤنوليسن يڠ بتول." },
+        "29": { sk: "الدَّرْسُ السَّادِسُ : الأَدَوَاتُ الدِّرَاسِيَّةُ", sp: "٦.١ اقْرَأْ وَتَكَلَّمْ\n٦.٢ اسْتَمِعْ وَرَدَدْ", obj: "١. مپبوت ڤرالتن سكوله دڠن تڤت.\n٢. مڠنل ڤستي ڤركاتاءن يڠ بركاءيتن دڠن ضمير (هذا) دان (هذه) دڠن بتول." },
+        "30": { sk: "الدَّرْسُ السَّادِسُ : الأَدَوَاتُ الدِّرَاسِيَّةُ", sp: "٦.٣ تَأَمَّلْ وَانْطِقْ\n٦.٤ تَأَمَّلْ وَتَكَلَّمْ", obj: "١. مڠيجا سوكو كات كليمه ڤلاجرن دڠن بتول.\n٢. مڠنل ڤستي ڤركاتاءن يڠ بركاءيتن دڠن ضمير (ذَلِكَ ) دان (تلك) دڠن بتول." },
+        "31": { sk: "الدَّرْسُ السَّادِسُ : الأَدَوَاتُ الدِّرَاسِيَّةُ", sp: "٦.٥ اقْرَأْ وَاحْفَظْ\n٦.٦ اقْرَأْ ثَمَّ اكْتُبْ", obj: "١. ممباچ ايسي ڤلاجرن دڠن باءيق.\n٢. منوليس ڤركاتاءن يڠ دبريكن دڠن قاعده يڠ بتول." },
+        "32": { sk: "الدَّرْسُ السَّابِعِ : مَدْرَسَتِي", sp: "٧.١ تَأَمَّلْ وَتَكَلَّمْ", obj: "١. مپبوت ڤركاتاءن دڠن بتول." },
+        "33": { sk: "الدَّرْسُ السَّابِعِ : مَدْرَسَتِي", sp: "٧.٢ تَأَمَّلْ وَانْطِقْ", obj: "١. منچرايكن حروف دڠن بتول." },
+        "34": { sk: "الدَّرْسُ السَّابِعِ : مَدْرَسَتِي", sp: "٧.٣ اسْتَمِعْ وَرَدَّدْ\n٧.٤ اقْرَأْ ثُمَّ اكْتُبْ", obj: "١. ممباچ ڤربوالن دڠن جلس دان لنچر.\n٢. منوليس ڤركاتاءن دڠن بتول." }
     },
-
-    // ==========================================
-    // 5. AL-QURAN (Penggal 2 - Dari Minggu 19)
-    // ==========================================
     "AlQuran": {
-        "19": { sk: "3.3 مد يڠ ملبيهي 2 حركة", sp: "1. مپبوت كليمه يڠ مڠاندوڠي مد ملبيهي 2 حركة\n2. منوليس كليمه يڠ مڠاندوڠي مد ملبيهي 2 حركة", obj: "موريد داڤت ممباچ دان منوليس كليمه مد يڠ ملبيهي 2 حركة دڠن بتول." },
-        "20": { sk: "3.4 حكوم نون دان ميم برسبدو", sp: "3.4.1 نون برسبدو (نّ)\n3.4.2 ميم برسبدو (مّ)", obj: "1. ممبوپيكن كليمه نون برسبدو دڠن بتول.\n2. ملفظكن كليمه ميم برسبدو دڠن بتول.\n3. ممباچ حكوم نون دان ميم برسبدو دڠن بتول." },
-        "21": { sk: "3.5 حكوم ادغام مع الغنة دان ادغام بلا غنة", sp: "1. ممبيذاكن حكوم ادغام مع الغنة دان ادغام بلا غنة دڠن بتول.", obj: "موريد داڤت ممباچ دان ممبيذاكن كدوا-دوا حكوم ادغام دڠن تڤت." },
-        "22": { sk: "3.6 حروف مقطعة دڤرمولاءن سورة", sp: "1. مميليه حروف٢ مقطعة دڤرمولاءن سورة.", obj: "موريد داڤت ممباچ حروف مقطعة دڤرمولاءن سورة دڠن بتول دان تڤت." },
-        "23": { sk: "3.7 ال شمسية دان ال قمرية", sp: "3.7.1 ال شمسية (اد تندا سبدو)\n3.7.2 ال قمرية (اد تندا ماتي)", obj: "1. منوليس حروف ال شمسية دان القمرية دڠن بتول.\n2. ملفظكن چونتوه باچاءن دڠن تڤت." },
-        "24": { sk: "3.8 تندا٢ وقف", sp: "3.8.1 وقف لازم\n3.8.2 وقف برتينديه\n3.8.3 وقف أول", obj: "1. ممباچ آيات يڠ مڠاندوڠي تندا٢ وقف دڠن بتول." },
-        "25": { sk: "3.8 تندا٢ وقف\n4. باچاءن: جزء 1 (سورة الفاتحة)", sp: "3.8.4 وقف جائز\n3.8.5 وقف أولى\n3.8.6 وقف ممنوع", obj: "1. ممبولتكن تندا وقف ڤد آيات يڠ دبري دڠن بتول.\n2. ممباچ سورة الفاتحة دڠن بيمبيڠن ݢورو.\n3. ملفظكن باچاءن دڠن باچاءن وقف يڠ بتول." },
-        "26": { sk: "4. باچاءن: جزء 1 (اية 1 هيڠݢ 48)", sp: "1. ممباچ اية 1 هيڠݢ 48 برسام بيمبيڠن ݢورو.\n2. ممباچ قدر حركة دڠن بتول.", obj: "موريد داڤت ممباچ اية 1-48 دڠن لنچر سرتا منجاݢ قدر حركة." },
-        "28": { sk: "4. باچاءن: جزء 1 (ايات 49 هيڠݢ 93)", sp: "1. ممباچ آيات 49 هيڠݢ 93 دڠن لنچر.\n2. ملفظكن باچاءن برحركة دڠن تڤت.", obj: "موريد داڤت ممباچ اية 49-93 دڠن لنچر سرتا منجاݢ باچاءن برحركة." },
-        "29": { sk: "4. باچاءن: جزء 1 (ايات 94 هيڠݢ 119)", sp: "1. ممباچ آيات 94 هيڠݢ 119 سچارا برݢيلير دڠن بيمبيڠن ݢورو.\n2. ملفظكن باچاءن حروف مد دڠن تڤت.", obj: "موريد داڤت ممباچ اية 94-119 دڠن لنچر سرتا منجاݢ باچاءن حروف مد." },
-        "30": { sk: "4. باچاءن: جزء 1 (ايات 120 هيڠݢ 141)", sp: "1. ممباچ آيات 120 هيڠݢ 141 سچارا برݢيلير دڠن بيمبيڠن ݢورو.\n2. ملفظكن باچاءن مد عوض دڠن بتول.", obj: "موريد داڤت ممباچ اية 120-141 دڠن لنچر سرتا منجاݢ باچاءن مد عوض." },
-        "31": { sk: "4. باچاءن: جزء 2 (آيات 142 هيڠݢ 186)", sp: "1. ممباچ آيات 142 هيڠݢ 186 سچارا برݢيلير دڠن بيمبيڠن ݢورو.\n2. ملفظكن باچاءن مد عارض للسكون دڠن تڤت.", obj: "موريد داڤت ممباچ اية 142-186 دڠن لنچر سرتا منجاݢ مد عارض للسكون." },
-        "32": { sk: "4. باچاءن: جزء 2 (ايات 187 هيڠݢ 224)", sp: "1. ممباچ آيات 187 هيڠݢ 224 سچارا برݢيلير دڠن بيمبيڠن ݢورو.\n2. ملفظكن باچاءن نون برسبدو دڠن بتول.", obj: "موريد داڤت ممباچ اية 187-224 دڠن لنچر سرتا منجاݢ باچاءن نون برسبدو." },
-        "33": { sk: "4. باچاءن: جزء 2 (ايات 225 هيڠݢ 252)", sp: "1. ممباچ آيات 225 هيڠݢ 252 سچارا برݢيلير دڠن بيمبيڠن ݢورو.\n2. ملفظكن باچاءن ميم برسبدو دڠن تڤت.", obj: "موريد داڤت ممباچ اية 225-252 دڠن لنچر سرتا منجاݢ باچاءن ميم برسبدو." },
-        "34": { sk: "سورة٢ ڤيليهن", sp: "سورة النصر\nسورة المسد\nسورة الاخلاص\nسورة الفلق\nسورة الناس", obj: "1. ممباچ سورة برسام بيمبيڠن ݢورو.\n2. ممباچ قدر حركة دڠن بتول.\n3. ملفظكن باچاءن بروقف دڠن تڤت." }
+        "19": { sk: "٣.٣ مد يڠ ملبيهي ٢ حركة", sp: "١. مپبوت كليمه يڠ مڠاندوڠي مد ملبيهي ٢ حركة\n٢. منوليس كليمه يڠ مڠاندوڠي مد ملبيهي ٢ حركة", obj: "موريد داڤت ممباچ دان منوليس كليمه مد يڠ ملبيهي ٢ حركة دڠن بتول." },
+        "20": { sk: "٣.٤ حكوم نون دان ميم برسبدو", sp: "٣.٤.١ نون برسبدو (نّ)\n٣.٤.٢ ميم برسبدو (مّ)", obj: "١. ممبوپيكن كليمه نون برسبدو دڠن بتول.\n٢. ملفظكن كليمه ميم برسبدو دڠن بتول.\n٣. ممباچ حكوم نون دان ميم برسبدو دڠن بتول." },
+        "21": { sk: "٣.٥ حكوم ادغام مع الغنة دان ادغام بلا غنة", sp: "١. ممبيذاكن حكوم ادغام مع الغنة دان ادغام بلا غنة دڠن بتول.", obj: "موريد داڤت ممباچ دان ممبيذاكن كدوا-دوا حكوم ادغام دڠن تڤت." },
+        "22": { sk: "٣.٦ حروف مقطعة دڤرمولاءن سورة", sp: "١. مميليه حروف٢ مقطعة دڤرمولاءن سورة.", obj: "موريد داڤت ممباچ حروف مقطعة دڤرمولاءن سورة دڠن بتول دان تڤت." },
+        "23": { sk: "٣.٧ ال شمسية دان ال قمرية", sp: "٣.٧.١ ال شمسية (اد تندا سبدو)\n٣.٧.٢ ال قمرية (اد تندا ماتي)", obj: "١. منوليس حروف ال شمسية دان القمرية دڠن بتول.\n٢. ملفظكن چونتوه باچاءن دڠن تڤت." },
+        "24": { sk: "٣.٨ تندا٢ وقف", sp: "٣.٨.١ وقف لازم\n٣.٨.٢ وقف برتينديه\n٣.٨.٣ وقف أول", obj: "١. ممباچ آيات يڠ مڠاندوڠي تندا٢ وقف دڠن بتول." },
+        "25": { sk: "٣.٨ تندا٢ وقف\n٤. باچاءن: جزء ١ (سورة الفاتحة)", sp: "٣.٨.٤ وقف جائز\n٣.٨.٥ وقف أولى\n٣.٨.٦ وقف ممنوع", obj: "١. ممبولتكن تندا وقف ڤد آيات يڠ دبري دڠن بتول.\n٢. ممباچ سورة الفاتحة دڠن بيمبيڠن ݢورو.\n٣. ملفظكن باچاءن دڠن باچاءن وقف يڠ بتول." },
+        "26": { sk: "٤. باچاءن: جزء ١ (اية ١ هيڠݢ ٤٨)", sp: "١. ممباچ اية ١ هيڠݢ ٤٨ برسام بيمبيڠن ݢورو.\n٢. ممباچ قدر حركة دڠن بتول.", obj: "موريد داڤت ممباچ اية ١-٤٨ دڠن لنچر سرتا منجاݢ قدر حركة." },
+        "28": { sk: "٤. باچاءن: جزء ١ (ايات ٤٩ هيڠݢ ٩٣)", sp: "١. ممباچ آيات ٤٩ هيڠݢ ٩٣ دڠن لنچر.\n٢. ملفظكن باچاءن برحركة دڠن تڤت.", obj: "موريد داڤت ممباچ اية ٤٩-٩٣ دڠن لنچر سرتا منجاݢ باچاءن برحركة." },
+        "29": { sk: "٤. باچاءن: جزء ١ (ايات ٩٤ هيڠݢ ١١٩)", sp: "١. ممباچ آيات ٩٤ هيڠݢ ١١٩ سچارا برݢيلير دڠن بيمبيڠن ݢورو.\n٢. ملفظكن باچاءن حروف مد دڠن تڤت.", obj: "موريد داڤت ممباچ اية ٩٤-١١٩ دڠن لنچر سرتا منجاݢ باچاءن حروف مد." },
+        "30": { sk: "٤. باچاءن: جزء ١ (ايات ١٢٠ هيڠݢ ١٤١)", sp: "١. ممباچ آيات ١٢٠ هيڠݢ ١٤١ سچارا برݢيلير دڠن بيمبيڠن ݢورو.\n٢. ملفظكن باچاءن مد عوض دڠن بتول.", obj: "موريد داڤت ممباچ اية ١٢٠-١٤١ دڠن لنچر سرتا منجاݢ باچاءن مد عوض." },
+        "31": { sk: "٤. باچاءن: جزء ٢ (آيات ١٤٢ هيڠݢ ١٨٦)", sp: "١. ممباچ آيات ١٤٢ هيڠݢ ١٨٦ سچارا برݢيلير دڠن بيمبيڠن ݢورو.\n٢. ملفظكن باچاءن مد عارض للسكون دڠن تڤت.", obj: "موريد داڤت ممباچ اية ١٤٢-١٨٦ دڠن لنچر سرتا منجاݢ مد عارض للسكون." },
+        "32": { sk: "٤. باچاءن: جزء ٢ (ايات ١٨٧ هيڠݢ ٢٢٤)", sp: "١. ممباچ آيات ١٨٧ هيڠݢ ٢٢٤ سچارا برݢيلير دڠن بيمبيڠن ݢورو.\n٢. ملفظكن باچاءن نون برسبدو دڠن بتول.", obj: "موريد داڤت ممباچ اية ١٨٧-٢٢٤ دڠن لنچر سرتا منجاݢ باچاءن نون برسبدو." },
+        "33": { sk: "٤. باچاءن: جزء ٢ (ايات ٢٢٥ هيڠݢ ٢٥٢)", sp: "١. ممباچ آيات ٢٢٥ هيڠݢ ٢٥٢ سچارا برݢيلير دڠن بيمبيڠن ݢورو.\n٢. ملفظكن باچاءن ميم برسبدو دڠن تڤت.", obj: "موريد داڤت ممباچ اية ٢٢٥-٢٥٢ دڠن لنچر سرتا منجاݢ باچاءن ميم برسبدو." },
+        "34": { sk: "سورة٢ ڤيليهن", sp: "سورة النصر\nسورة المسد\nسورة الاخلاص\nسورة الفلق\nسورة الناس", obj: "١. ممباچ سورة برسام بيمبيڠن ݢورو.\n٢. ممباچ قدر حركة دڠن بتول.\n٣. ملفظكن باچاءن بروقف دڠن تڤت." }
     },
-
-    // ==========================================
-    // 6. IBADAT (Penggal 2 - Dari Minggu 19)
-    // ==========================================
     "Ibadat": {
-        "19": { sk: "ڤلاجرن دوا: طهارة", sp: "2.1 ڤڠرتين طهارة\n2.2 حكوم طهارة\n2.3 دليل طهارة\n2.4 توجوان طهارة", obj: "موريد٢ داڤت:\n1. مپبوت ڤڠرتين طهارة.\n2. منجلسكن حكوم طهارة.\n3. ممبوپيكن ڤتيقن آيات القرءان دان حديث بركاءيتن دليل طهارة.\n4. مپبوت توجوان٢ طهارة." },
-        "20": { sk: "ڤلاجرن دوا: طهارة", sp: "2.5 حكوم دان بهاݢين اءير:\n- اءير مطلق\n- اءير مُسْتَعْمَل\n- اءير مُتَنَجِّس\n- اءير مُشَمَّس", obj: "1. مڠنل ڤستي جومله بهاݢين اءير.\n2. منجلسكن ڤڠرتين دان حكوم مڠݢوناكن اءير مطلق، مُسْتَعْمَل، مُتَنَجِّس دان مُشَمَّس." },
-        "21": { sk: "ڤلاجرن دوا: طهارة", sp: "2.6 چونتوه٢ اءير مطلق", obj: "1. مپاتاكن جومله چونتوه اءير مطلق.\n2. مپبوت چونتوه٢ اءير مطلق.\n3. مپبوت ساتو تونتوتن منجاݢ كبرسيهن ديري." },
-        "22": { sk: "ڤلاجرن تيݢ: استنجاء", sp: "3.1 ڤڠرتين استنجاء\n3.2 حكوم استنجاء\n3.3 دليل استنجاء", obj: "1. منرڠكن ڤڠرتين استنجاء.\n2. مپبوت حكوم براستنجاء.\n3. ممبوپيكن ڤتيقن حديث دان مقصودڽ بركاءيتن دليل استنجاء." },
-        "23": { sk: "ڤلاجرن تيݢ: استنجاء\nڤلاجرن امڤت: وضوء", sp: "3.4 الت٢ استنجاء\n3.5 الت يڠ تيدق بوليه دݢوناكن اونتوق براستنجاء\n3.6 چارا٢ استنجاء\n4.1 ڤڠرتين وضوء\n4.2 حكوم وضوء", obj: "1. مپبوت چونتوه الت٢ استنجاء دان يڠ تيدق بوليه دݢوناكن.\n2. منرڠكن چارا٢ براستنجاء دڠن مڠݢوناكن اءير دان باتو.\n3. مپبوت ڤڠرتين دان حكوم بروضوء." },
-        "24": { sk: "ڤلاجرن امڤت: وضوء", sp: "4.3 دليل وضوء\n4.4 ركن٢ وضوء", obj: "1. ممبوپيكن ڤتيقن آيات القرءان بسرتا ڤڠرتينڽ مڠناءي دليل وضوء.\n2. مپبوت جومله ركن٢ وضوء دان منجلسكن 2 درڤد 6 ركن وضوء.\n3. ممبوپيكن لفظ نية وضوء بسرتا ارتينڽ." },
-        "25": { sk: "ڤلاجرن امڤت: وضوء", sp: "4.4 ركن٢ وضوء\n4.5 اڠݢوتا وضوء", obj: "1. مپبوت سمولا ركن٢ وضوء.\n2. مپبوت جومله اڠݢوتا وضوء يڠ واجب كتيك بروضوء.\n3. مڠنل ڤستي اڠݢوتا وضوء يڠ واجب كتيك بروضوء." },
-        "26": { sk: "ڤلاجرن امڤت: وضوء", sp: "4.6 شرط٢ صح وضوء\n4.7 سنة٢ وضوء", obj: "1. مپبوت شرط٢ صح بروضوء.\n2. منونجوقكن چونتوه بندا٢ يڠ مڠهالڠ اءير كتيك بروضوء.\n3. مپاتاكن جومله سنة٢ وضوء دان مپبوت 13 سنة٢ وضوء." },
-        "28": { sk: "ڤلاجرن امڤت: وضوء", sp: "4.8 ڤركارا٢ يڠ ممبطلكن وضوء\n4.9 ڤركارا٢ يڠ مواجبكن وضوء", obj: "1. مڠنل ڤستي دان منجلسكن جومله ڤركارا يڠ ممبطلكن وضوء.\n2. مڠنل ڤستي عملن٢ يڠ مواجبكن وضوء." },
-        "29": { sk: "ڤلاجرن امڤت: وضوء", sp: "4.10 دعاء سلفس وضوء", obj: "1. ممبوپيكن لفظ دعاء سلفس بروضوء بسرتا مقصودڽ.\n2. مپبوت ارتي دعاء سلفس بروضوء." },
-        "30": { sk: "ڤلاجرن امڤت: وضوء", sp: "4.11 ڤلقساناءن وضوء", obj: "1. مپبوت سمولا ركن٢ وضوء.\n2. منجلسكن چارا٢ بروضوء.\n3. منديموستراسي چارا٢ بروضوء." },
-        "31": { sk: "ڤلاجرن ليم: صلاة", sp: "5.1 ڤڠرتين صلاة\n5.2 حكوم صلاة", obj: "1. مڠنل ڤستي كدودوقن عبادة صلاة دالم ركن إسلام.\n2. منجلسكن ڤڠرتين صلاة.\n3. مپبوت حكوم منديريكن صلاة كأتس ستياڤ مكلف." },
-        "32": { sk: "ڤلاجرن ليم: صلاة", sp: "5.5 دليل صلاة\n5.6 وقتو صلاة", obj: "1. ممبوپيكن ڤتيقن آيات القرءان دان مقصودڽ مڠناءي دليل صلاة.\n2. مپبوت جومله وقتو صلاة فرض.\n3. مپاتاكن نام٢ وقتو صلاة فرض." },
-        "33": { sk: "ڤلاجرن ليم: صلاة", sp: "5.7 ركن٢ صلاة\n5.8 چارا ڤلقساناءن صلاة", obj: "1. مپبوت جومله ركن صلاة دان منجلسكن 13 ركن صلاة.\n2. منونجوقكن چارا ملقساناكن صلاة باݢي للاكي دان ڤرمڤوان.\n3. ممبوپيكن باچاءن٢ ددالم صلاة (نية، الفاتحة)." },
-        "34": { sk: "ڤلاجرن ليم: صلاة", sp: "5.6 چارا ڤلقساناءن صلاة\n5.7 توجوان صلاة", obj: "1. منونجوقكن چونتوه چارا ڤلقساناءن صلاة.\n2. ممبوپيكن باچاءن٢ ددالم صلاة (دعاء دودوق انتارا 2 سوجود، تحية اول & اخير).\n3. مپبوت توجوان٢ منديريكن صلاة." }
+        "19": { sk: "ڤلاجرن دوا: طهارة", sp: "٢.١ ڤڠرتين طهارة\n٢.٢ حكوم طهارة\n٢.٣ دليل طهارة\n٢.٤ توجوان طهارة", obj: "موريد٢ داڤت:\n١. مپبوت ڤڠرتين طهارة.\n٢. منجلسكن حكوم طهارة.\n٣. ممبوپيكن ڤتيقن آيات القرءان دان حديث بركاءيتن دليل طهارة.\n٤. مپبوت توجوان٢ طهارة." },
+        "20": { sk: "ڤلاجرن دوا: طهارة", sp: "٢.٥ حكوم دان بهاݢين اءير:\n- اءير مطلق\n- اءير مُسْتَعْمَل\n- اءير مُتَنَجِّس\n- اءير مُشَمَّس", obj: "١. مڠنل ڤستي جومله بهاݢين اءير.\n٢. منجلسكن ڤڠرتين دان حكوم مڠݢوناكن اءير مطلق، مُسْتَعْمَل، مُتَنَجِّس دان مُشَمَّس." },
+        "21": { sk: "ڤلاجرن دوا: طهارة", sp: "٢.٦ چونتوه٢ اءير مطلق", obj: "١. مپاتاكن جومله چونتوه اءير مطلق.\n٢. مپبوت چونتوه٢ اءير مطلق.\n٣. مپبوت ساتو تونتوتن منجاݢ كبرسيهن ديري." },
+        "22": { sk: "ڤلاجرن تيݢ: استنجاء", sp: "٣.١ ڤڠرتين استنجاء\n٣.٢ حكوم استنجاء\n٣.٣ دليل استنجاء", obj: "١. منرڠكن ڤڠرتين استنجاء.\n٢. مپبوت حكوم براستنجاء.\n٣. ممبوپيكن ڤتيقن حديث دان مقصودڽ بركاءيتن دليل استنجاء." },
+        "23": { sk: "ڤلاجرن تيݢ: استنجاء\nڤلاجرن امڤت: وضوء", sp: "٣.٤ الت٢ استنجاء\n٣.٥ الت يڠ تيدق بوليه دݢوناكن اونتوق براستنجاء\n٣.٦ چارا٢ استنجاء\n٤.١ ڤڠرتين وضوء\n٤.٢ حكوم وضوء", obj: "١. مپبوت چونتوه الت٢ استنجاء دان يڠ تيدق بوليه دݢوناكن.\n٢. منرڠكن چارا٢ براستنجاء دڠن مڠݢوناكن اءير دان باتو.\n٣. مپبوت ڤڠرتين دان حكوم بروضوء." },
+        "24": { sk: "ڤلاجرن امڤت: وضوء", sp: "٤.٣ دليل وضوء\n٤.٤ ركن٢ وضوء", obj: "١. ممبوپيكن ڤتيقن آيات القرءان بسرتا ڤڠرتينڽ مڠناءي دليل وضوء.\n٢. مپبوت جومله ركن٢ وضوء دان منجلسكن ٢ درڤد ٦ ركن وضوء.\n٣. ممبوپيكن لفظ نية وضوء بسرتا ارتينڽ." },
+        "25": { sk: "ڤلاجرن امڤت: وضوء", sp: "٤.٤ ركن٢ وضوء\n٤.٥ اڠݢوتا وضوء", obj: "١. مپبوت سمولا ركن٢ وضوء.\n٢. مپبوت جومله اڠݢوتا وضوء يڠ واجب كتيك بروضوء.\n٣. مڠنل ڤستي اڠݢوتا وضوء يڠ واجب كتيك بروضوء." },
+        "26": { sk: "ڤلاجرن امڤت: وضوء", sp: "٤.٦ شرط٢ صح وضوء\n٤.٧ سنة٢ وضوء", obj: "١. مپبوت شرط٢ صح بروضوء.\n٢. منونجوقكن چونتوه بندا٢ يڠ مڠهالڠ اءير كتيك بروضوء.\n٣. مپاتاكن جومله سنة٢ وضوء دان مپبوت ١٣ سنة٢ وضوء." },
+        "28": { sk: "ڤلاجرن امڤت: وضوء", sp: "٤.٨ ڤركارا٢ يڠ ممبطلكن وضوء\n٤.٩ ڤركارا٢ يڠ مواجبكن وضوء", obj: "١. مڠنل ڤستي دان منجلسكن جومله ڤركارا يڠ ممبطلكن وضوء.\n٢. مڠنل ڤستي عملن٢ يڠ مواجبكن وضوء." },
+        "29": { sk: "ڤلاجرن امڤت: وضوء", sp: "٤.١٠ دعاء سلفس وضوء", obj: "١. ممبوپيكن لفظ دعاء سلفس بروضوء بسرتا مقصودڽ.\n٢. مپبوت ارتي دعاء سلفس بروضوء." },
+        "30": { sk: "ڤلاجرن امڤت: وضوء", sp: "٤.١١ ڤلقساناءن وضوء", obj: "١. مپبوت سمولا ركن٢ وضوء.\n٢. منجلسكن چارا٢ بروضوء.\n٣. منديموستراسي چارا٢ بروضوء." },
+        "31": { sk: "ڤلاجرن ليم: صلاة", sp: "٥.١ ڤڠرتين صلاة\n٥.٢ حكوم صلاة", obj: "١. مڠنل ڤستي كدودوقن عبادة صلاة دالم ركن إسلام.\n٢. منجلسكن ڤڠرتين صلاة.\n٣. مپبوت حكوم منديريكن صلاة كأتس ستياڤ مكلف." },
+        "32": { sk: "ڤلاجرن ليم: صلاة", sp: "٥.٥ دليل صلاة\n٥.٦ وقتو صلاة", obj: "١. ممبوپيكن ڤتيقن آيات القرءان دان مقصودڽ مڠناءي دليل صلاة.\n٢. مپبوت جومله وقتو صلاة فرض.\n٣. مپاتاكن نام٢ وقتو صلاة فرض." },
+        "33": { sk: "ڤلاجرن ليم: صلاة", sp: "٥.٧ ركن٢ صلاة\n٥.٨ چارا ڤلقساناءن صلاة", obj: "١. مپبوت جومله ركن صلاة دان منجلسكن ١٣ ركن صلاة.\n٢. منونجوقكن چارا ملقساناكن صلاة باݢي للاكي دان ڤرمڤوان.\n٣. ممبوپيكن باچاءن٢ ددالم صلاة (نية، الفاتحة)." },
+        "34": { sk: "ڤلاجرن ليم: صلاة", sp: "٥.٦ چارا ڤلقساناءن صلاة\n٥.٧ توجوان صلاة", obj: "١. منونجوقكن چونتوه چارا ڤلقساناءن صلاة.\n٢. ممبوپيكن باچاءن٢ ددالم صلاة (دعاء دودوق انتارا ٢ سوجود، تحية اول & اخير).\n٣. مپبوت توجوان٢ منديريكن صلاة." }
     }
 };
 
+const cadanganTajuk = {
+    "AlQuran": ["حروف هجائية", "تندا باچاءن", "سورة الفاتحة", "سورة الاخلاص", "سورة الفلق", "سورة الناس", "مد اصلي", "حكوم نون ساكنة", "حكوم ميم ساكنة", "تجويد"],
+    "Tauhid": ["ركن اسلام", "ركن ايمان", "صيفت ٢ الله", "برايمان كڤد ملائكة", "برايمان كڤد رسول", "برايمان كڤد كتاب", "برايمان كڤد هاري قيامة", "برايمان كڤد قضاء دان قدر", "نام٢ ملائكة", "نام٢ رسول"],
+    "Ibadat": ["طهارة (برسوجي)", "استنجاء", "وضوء", "صلاة", "ڤواسا", "زكاة", "حج", "نية وضوء", "ركن صلاة", "بطل صلاة"],
+    "Sirah": ["كلوارݢ نبي", "كلاهيرن نبي", "زمان كانق٢ نبي", "كراسولن نبي", "هجرة نبي", "صيفت نبي", "موءجيزة نبي", "ڤڤرڠن دالم اسلام", "خلفاء الراشدين", "اخلاق رسول الله"],
+    "Akhlak": ["ادب تيدور", "ادب ماكن", "ادب دڠن ايبو باڤ", "ادب دڠن ݢورو", "ادب دڠن راكن", "منجاݢ كبرسيهن ديري", "ادب مسجيد", "ادب مناءيقي كندراءن", "ادب برجيرن", "ادب منزيارهي ڤساكيت"],
+    "BahasaArab": ["اڠݢوتا بادن", "كلوارݢ ساي", "ددالم كلس", "ڤرالتن سكوله", "نومبور دان بيلڠن", "وارنا", "بواه-بواهن", "حيوان", "هاري دالم سمیڠݢو", "اوچڤن سلامت"],
+    "JawiKhat": ["حروف جاوي توڠݢل", "حروف برسامبوڠ", "سوكو كات تربوک", "سوكو كات ترتوتوڤ", "خط نسخ", "خط رقعة", "مڠيجا ڤركاتاءن", "ممبينا ايات", "ايمبوهن", "ڤينجامن بهاس ايڠݢريس"],
+    "Tajwid": ["مخرج حروف", "حكوم نون ساكنة دان تنوين", "حكوم ميم ساكنة", "مد اصلي", "مد فرعي", "قلقلة", "وقف", "ادغام", "اظهار", "اخفاء"]
+};
+
+let baseSK = "";
 let baseSP = "";
 let baseObj = "";
 
-// Fungsi untuk menggabungkan teks asas (RPT) dengan kotak pilihan (Cadangan Tambahan)
 function rebuildTextareas() {
+    const skChecked = Array.from(document.querySelectorAll('.sk-cb')).filter(cb => cb.checked).map(cb => "- " + cb.value);
     const spChecked = Array.from(document.querySelectorAll('.sp-cb')).filter(cb => cb.checked).map(cb => "- " + cb.value);
     const objChecked = Array.from(document.querySelectorAll('.obj-cb')).filter(cb => cb.checked).map(cb => "- " + cb.value);
+
+    let finalSK = baseSK;
+    if(skChecked.length > 0) {
+        finalSK += (finalSK !== "-" && finalSK !== "" ? "\n\nتمبهن:\n" : "") + skChecked.join("\n");
+    }
+    document.getElementById('sk').value = finalSK;
+    autoResize.call(document.getElementById('sk'));
 
     let finalSP = baseSP;
     if(spChecked.length > 0) {
         finalSP += (finalSP !== "-" && finalSP !== "" ? "\n\nتمبهن:\n" : "") + spChecked.join("\n");
     }
     document.getElementById('sp').value = finalSP;
+    autoResize.call(document.getElementById('sp'));
 
     let finalObj = baseObj;
     if(objChecked.length > 0) {
         finalObj += (finalObj !== "-" && finalObj !== "" ? "\n\nتمبهن:\n" : "") + objChecked.join("\n");
     }
     document.getElementById('objektif').value = finalObj;
+    autoResize.call(document.getElementById('objektif'));
+}
+
+function updateTajukList() {
+    const subjek = document.getElementById('subjek').value;
+    const datalist = document.getElementById('tajuk_list');
+    datalist.innerHTML = "";
+    if(subjek && cadanganTajuk[subjek]) {
+        cadanganTajuk[subjek].forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            datalist.appendChild(opt);
+        });
+    }
+}
+
+function tukarNomborJawi(teks) {
+    if (!teks) return "";
+    const jawiDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    return teks.toString().replace(/\d/g, x => jawiDigits[x]);
+}
+
+function autoResize() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Populate Sekolah Dropdown
+    
+    document.querySelectorAll('textarea').forEach(el => {
+        el.addEventListener('input', autoResize, false);
+    });
+
     const sekolahSelect = document.getElementById('sekolahSelect');
     const guruSelect = document.getElementById('guruSelect');
 
-    // Initialize Select2 for better searching (optional, but good for many options)
-    $(sekolahSelect).select2({
-        theme: "default",
-        dir: "rtl"
-    });
-    $(guruSelect).select2({
-        theme: "default",
-        dir: "rtl"
-    });
+    $(sekolahSelect).select2({ theme: "default", dir: "rtl" });
+    $(guruSelect).select2({ theme: "default", dir: "rtl" });
 
-
-    // Populate Sekolah options alphabetically
     const senaraiNamaSekolah = Object.keys(senaraiSekolahGuru).sort();
     senaraiNamaSekolah.forEach(sekolah => {
         const option = new Option(sekolah, sekolah);
         sekolahSelect.add(option);
     });
 
-    // Event listener when Sekolah is changed
     $(sekolahSelect).on('change', function() {
         const selectedSekolah = this.value;
-        
-        // Clear current Guru options
         guruSelect.innerHTML = '<option value="">-- ڤيليه نام ݢورو --</option>';
-        
         if (selectedSekolah && senaraiSekolahGuru[selectedSekolah]) {
             guruSelect.disabled = false;
-            // Populate Guru based on selected Sekolah
             senaraiSekolahGuru[selectedSekolah].forEach(guru => {
                 const option = new Option(guru, guru);
                 guruSelect.add(option);
             });
-            // Re-initialize select2 if used
             $(guruSelect).select2({ dir: "rtl" });
         } else {
             guruSelect.disabled = true;
@@ -1081,58 +855,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // ... existing setup logic ...
     const subjekEl = document.getElementById('subjek');
     const darjahEl = document.getElementById('darjah');
     const mingguEl = document.getElementById('minggu');
-    const skEl = document.getElementById('sk');
-    const spEl = document.getElementById('sp');
-    const objEl = document.getElementById('objektif');
     const tarikhEl = document.getElementById('tarikh');
 
-    // Default tarikh (24 Ogos 2026 - Konteks Hari Ini adalah Minggu 30)
-    tarikhEl.value = '2026-08-24';
-    subjekEl.value = 'Sirah'; // Default subjek
+    tarikhEl.value = '2026-08-25';
+    subjekEl.value = 'Sirah';
     darjahEl.value = '1'; 
     mingguEl.value = '30';
 
-    // Helper untuk tukar nombor rumi ke nombor jawi
-    function tukarNomborJawi(teks) {
-        if (!teks) return "";
-        const jawiDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-        return teks.toString().replace(/\d/g, x => jawiDigits[x]);
-    }
-
     function autoFillDSKP() {
+        updateTajukList(); 
+
         const subjek = subjekEl.value;
         const darjah = darjahEl.value.toString().trim();
-        const minggu = mingguEl.value.toString();
+        const minggu = tukarNomborJawi(mingguEl.value.toString());
 
-        if (subjek && darjah === '1' && rptData[subjek] && rptData[subjek][minggu]) {
-            const data = rptData[subjek][minggu];
-            // Tukar nombor dlm DSKP ke format Jawi
-            skEl.value = tukarNomborJawi(data.sk);
+        if (subjek === "JawiKhat" || subjek === "Tajwid") {
+             baseSK = "";
+             baseSP = "";
+             baseObj = "";
+        } else if (subjek && darjah === '1' && rptData[subjek] && rptData[subjek][mingguEl.value.toString()]) {
+            const data = rptData[subjek][mingguEl.value.toString()];
+            baseSK = tukarNomborJawi(data.sk);
             baseSP = tukarNomborJawi(data.sp);
             baseObj = tukarNomborJawi(data.obj);
-        } else if (subjek && darjah === '1' && minggu && (!rptData[subjek] || !rptData[subjek][minggu])) {
-            // Minggu peperiksaan / ulang kaji / cuti sekolah / di luar silibus PDF yg disuap
-            skEl.value = "اولڠكاجي / ڤنيلاين / چوتي سكوله";
+        } else if (subjek && darjah === '1' && mingguEl.value && (!rptData[subjek] || !rptData[subjek][mingguEl.value.toString()])) {
+            baseSK = "اولڠكاجي / ڤنيلاين / چوتي سكوله";
             baseSP = "-";
             baseObj = "-";
         } else {
-            // Kosongkan ruangan jika Darjah selain 1 dipilih (kerana data auto-isi belum ada)
-            skEl.value = "";
+            baseSK = "";
             baseSP = "";
             baseObj = "";
         }
         
-        // Buang tanda (uncheck) semua kotak cadangan tambahan apabila subjek/minggu bertukar
-        document.querySelectorAll('.sp-cb, .obj-cb').forEach(cb => cb.checked = false);
+        document.querySelectorAll('.sk-cb, .sp-cb, .obj-cb').forEach(cb => cb.checked = false);
         rebuildTextareas();
     }
 
     subjekEl.addEventListener('change', autoFillDSKP);
-    darjahEl.addEventListener('input', autoFillDSKP);
+    darjahEl.addEventListener('change', autoFillDSKP);
     mingguEl.addEventListener('change', autoFillDSKP);
     mingguEl.addEventListener('keyup', autoFillDSKP);
 
@@ -1142,76 +906,17 @@ document.addEventListener('DOMContentLoaded', function() {
 function setupMultiSelect(checkboxClass, displayId) {
     const checkboxes = document.querySelectorAll('.' + checkboxClass);
     const displayInput = document.getElementById(displayId);
-
     checkboxes.forEach(cb => {
         cb.addEventListener('change', () => {
-            const selected = Array.from(checkboxes)
-                .filter(i => i.checked)
-                .map(i => i.value);
-            // Menggabungkan array dengan koma Jawi (،)
+            const selected = Array.from(checkboxes).filter(i => i.checked).map(i => i.value);
             displayInput.value = selected.join('، '); 
         });
     });
 }
 
-// Aktifkan fungsi multi-pilihan selepas borang dimuatkan
 document.addEventListener('DOMContentLoaded', function() {
     setupMultiSelect('bbm-cb', 'bbm_display');
-    setupMultiSelect('nilai-cb', 'nilai_display');
 
-    // ==========================================
-    // 20 Set Cadangan Standard Pembelajaran (Jawi)
-    // ==========================================
-    const senaraiSP = [
-        "ممباچ دان مپبوت كلمة دڠن بتول",
-        "منوليس حروف دان ڤركاتاءن دڠن خط يڠ كمس",
-        "مڠحفل سورة اتاو دعاء دڠن لنچر",
-        "منجلسكن ڤڠرتين دان مقصود تاجوک",
-        "مپناريكن ركن، شرط، اتاو بهاݢين",
-        "ممبيذاكن انتارا يڠ حلال دان حرام",
-        "مڠهورايكن حكمه دان ڤڠاجرن",
-        "مڠتراڤكن نيلاي مورني دالم كهيدوڤن هارين",
-        "ملاكوكن سيمولاسي اتاو عملي",
-        "ممبينا ايات موده برداسركن ݢامبر",
-        "مڠنل ڤستي حكوم تجويد دالم ايات",
-        "مپبوت دليل نقلي دان عقلي",
-        "برچريتا تنتڠ قيصه نبي دان رسول",
-        "مپوسون ڤركاتاءن منجادي ايات يڠ لڠكڤ",
-        "ممادنكن ڤركاتاءن اتاو ݢامبر دڠن بتول",
-        "ملاكونكن ايسي ڤلاجرن دالم كومڤولن",
-        "منجواب سوءالن كفهمن سچارا ليسن",
-        "مڠلوركن ايديا ملالوءي سومبڠسارن",
-        "ممباچ تيك‌س دڠن فصيح دان برتجويد",
-        "منرڠكن چارا ملقساناكن عبادة"
-    ];
-
-    // ==========================================
-    // 20 Set Cadangan Objektif Pembelajaran (Jawi)
-    // ==========================================
-    const senaraiObj = [
-        "ممباچ تيك‌س اتاو ايات دڠن مخرج يڠ بتول",
-        "منوليس ڤركاتاءن جاوي دڠن ايجاءن يڠ تڤت",
-        "مڠحفل دعاء اتاو سورة دڠن لنچر",
-        "منرڠكن مقصود تاجوک ڤلاجرن دڠن جلس",
-        "مپناريكن سكورڠ-كورڠڽ ٣ ايسي ڤنتيڠ",
-        "منونجوقكن چارا عملي دڠن سمڤورنا",
-        "ممبيذاكن حق دان باطل دڠن تڤت",
-        "مپبوت دليل يڠ بركاءيتن دڠن تاجوک",
-        "منجواب ٤ درڤد ٥ سوءالن دڠن بتول",
-        "ممبينا ٣ ايات موده دڠن ستروكتور يڠ بتول",
-        "مڠنل ڤستي ڤركارا يڠ ممبطلكن عبادة",
-        "مپوسون كد اتاو ݢامبر مڠيكوت اوروتن",
-        "برچريتا سمولا قيصه يڠ دڤلاجري",
-        "مڠلوركن حكمه اتاو ڤڠاجرن درڤد قيصه",
-        "ملاكوكن سيمولاسي دالم كومڤولن دڠن باءيق",
-        "ممادنكن ٥ ڤركاتاءن دڠن ارتيڽ يڠ بتول",
-        "ملابلكن باهݢين اتاو اڠݢوتا دڠن تڤت",
-        "مپبوت نام دان توݢس ملائكة دڠن بتول",
-        "مڠلوركن حكوم تجويد درڤد ايات",
-        "مڠعڤليكاسيكن نيلاي مورني دالم اكتيۏيتي هارين"
-    ];
-
-    // Fungsi untuk membina senarai checkbox (Multi-pilihan)
     function binaCheckbox(list, containerId, checkboxClass) {
         const container = document.getElementById(containerId);
         list.forEach((text, index) => {
@@ -1219,19 +924,45 @@ document.addEventListener('DOMContentLoaded', function() {
             li.innerHTML = `<div class="form-check"><input class="form-check-input float-end ms-2 ${checkboxClass}" type="checkbox" value="${text}" id="${containerId}_${index}"><label class="form-check-label w-100" for="${containerId}_${index}" style="cursor: pointer;">${text}</label></div>`;
             container.appendChild(li);
         });
-        
-        // Memautkan sebarang perubahan klik kepada fungsi rebuildTextareas
         document.querySelectorAll('.' + checkboxClass).forEach(cb => {
             cb.addEventListener('change', rebuildTextareas); 
         });
     }
 
+    const senaraiSK = [
+        "ممهمي دان مڠعملكن ركن اسلام", "ممهمي دان مڠعملكن ركن ايمان", "مڠتاهوءي دان مڠحياتي سيرة نبي",
+        "ممهمي دان مڠعملكن ادب دالم كهيدوڤن", "ممهمي دان مڠحياتي نيلاي٢ مورني", "مڠتاهوءي دان ممهمي اسس عبادات",
+        "ممهمي دان ملقساناكن شرط صح عبادات", "مڠنل دان منوليس حروف جاوي", "ممباچ دان ممهمي تيكس جاوي",
+        "مڠتاهوءي دان ممهمي اسس بهاس عرب", "ممباچ دان منوليس ڤركاتاءن بهاس عرب", "مڠتاهوءي سجارة نبي محمد",
+        "ممهمي دان مڠعملكن سنة رسول الله", "مڠتاهوءي دان ممهمي صيفت٢ الله", "ممهمي دان مڠحياتي قيصه ڤارا انبياء",
+        "ممهمي دان مڠعملكن ادب دالم كلوارݢ", "ممهمي دان ملقساناكن عملن فرض عين", "ممهمي دان مڠحياتي اخلاق محمودة",
+        "ممباچ دان مڠحفل اية القرءان", "مڠتاهوءي دان ممهمي حكوم تجويد"
+    ];
+
+    const senaraiSP = [
+        "ممباچ دان مپبوت كلمة دڠن بتول", "منوليس حروف دان ڤركاتاءن دڠن خط يڠ كمس", "مڠحفل سورة اتاو دعاء دڠن لنچر",
+        "منجلسكن ڤڠرتين دان مقصود تاجوک", "مپناريكن ركن، شرط، اتاو بهاݢين", "ممبيذاكن انتارا يڠ حلال دان حرام",
+        "مڠهورايكن حكمه دان ڤڠاجرن", "مڠتراڤكن نيلاي مورني دالم كهيدوڤن هارين", "ملاكوكن سيمولاسي اتاو عملي",
+        "ممبينا ايات موده برداسركن ݢامبر", "مڠنل ڤستي حكوم تجويد دالم ايات", "مپبوت دليل نقلي دان عقلي",
+        "برچريتا تنتڠ قيصه نبي دان رسول", "مپوسون ڤركاتاءن منجادي ايات يڠ لڠكڤ", "ممادنكن ڤركاتاءن اتاو ݢامبر دڠن بتول",
+        "ملاكونكن ايسي ڤلاجرن دالم كومڤولن", "منجواب سوءالن كفهمن سچارا ليسن", "مڠلوركن ايديا ملالوءي سومبڠسارن",
+        "ممباچ تيك‌س دڠن فصيح دان برتجويد", "منرڠكن چارا ملقساناكن عبادة"
+    ];
+
+    const senaraiObj = [
+        "ممباچ تيك‌س اتاو ايات دڠن مخرج يڠ بتول", "منوليس ڤركاتاءن جاوي دڠن ايجاءن يڠ تڤت", "مڠحفل دعاء اتاو سورة دڠن لنچر",
+        "منرڠكن مقصود تاجوک ڤلاجرن دڠن جلس", "مپناريكن سكورڠ-كورڠڽ ٣ ايسي ڤنتيڠ", "منونجوقكن چارا عملي دڠن سمڤورنا",
+        "ممبيذاكن حق دان باطل دڠن تڤت", "مپبوت دليل يڠ بركاءيتن دڠن تاجوک", "منجواب ٤ درڤد ٥ سوءالن دڠن بتول",
+        "ممبينا ٣ ايات موده دڠن ستروكتور يڠ بتول", "مڠنل ڤستي ڤركارا يڠ ممبطلكن عبادة", "مپوسون كد اتاو ݢامبر مڠيكوت اوروتن",
+        "برچريتا سمولا قيصه يڠ دڤلاجري", "مڠلوركن حكمه اتاو ڤڠاجرن درڤد قيصه", "ملاكوكن سيمولاسي دالم كومڤولن دڠن باءيق",
+        "ممادنكن ٥ ڤركاتاءن دڠن ارتيڽ يڠ بتول", "ملابلكن باهݢين اتاو اڠݢوتا دڠن تڤت", "مپبوت نام دان توݢس ملائكة دڠن بتول",
+        "مڠلوركن حكوم تجويد درڤد ايات", "مڠعڤليكاسيكن نيلاي مورني دالم اكتيۏيتي هارين"
+    ];
+
+    binaCheckbox(senaraiSK, 'sk_options', 'sk-cb');
     binaCheckbox(senaraiSP, 'sp_options', 'sp-cb');
     binaCheckbox(senaraiObj, 'obj_options', 'obj-cb');
 
-    // ==========================================
-    // 20 Set Cadangan Aktiviti (Jawi)
-    // ==========================================
     const senaraiAktiviti = [
         "١. سيت ايندوکسي: ݢورو منونجوقكن ݢامبر دان برسوءال جواب دڠن موريد.\n٢. لڠكه اوتام: ݢورو منرڠكن تاجوک ڤلاجرن.\n٣. لڠكه كدوا: موريد منجواب لامبرن كرجا.\n٤. ڤنوتوڤ: ݢورو ممروموسكن ڤلاجرن هاري اين.",
         "١. سيت ايندوکسي: ݢورو ممبوات اوجيكاجي ريڠكس / ديمونستراسي.\n٢. لڠكه اوتام: موريد مليهت دان منچاتت ڤمرهاتين.\n٣. لڠكه كدوا: ڤربينچڠن دالم كومڤولن.\n٤. ڤنوتوڤ: ݢورو ممبوات كسيمڤولن.",
@@ -1255,9 +986,6 @@ document.addEventListener('DOMContentLoaded', function() {
         "١. سيت ايندوکسي: ݢورو مماءينكن ڤرماءينن (Role-play).\n٢. لڠكه اوتام: موريد برلقون سيتواسي يڠ دبري.\n٣. لڠكه كدوا: موريد لاءين ممبري ڤنداڤت دان ڤمرهاتين.\n٤. ڤنوتوڤ: ݢورو ممروموسكن دان منرڤكن نيلاي مورني."
     ];
 
-    // ==========================================
-    // 20 Set Cadangan Refleksi (Jawi)
-    // ==========================================
     const senaraiRefleksi = [
         "_____ / _____ موريد مڠواساءي اوبجيكتيف ڤمبلاجرن هاري اين. موريد يڠ بلوم مڠواساءي اكن دبريكن بيمبيڠن لبيه.",
         "ڤمبلاجرن برجاي مناڤت ڤرهاتين موريد. _____ / _____ موريد داڤت ممهمي ايسي ڤلاجرن دڠن باءيق.",
@@ -1278,21 +1006,14 @@ document.addEventListener('DOMContentLoaded', function() {
         "_____ / _____ موريد برمعنا دالم مناجواب كوءيز دان ممبري تومڤوان يڠ ڤنوه.",
         "_____ / _____ موريد داڤت منچريتاكن سمولا قيصه دان مڠلوركن ڤڠاجرن درڤدڽ.",
         "موريد ڤرلو باڽق لاتيهن باچاءن. _____ / _____ موريد بلوم مڠواساءي فصيحن ممباچ.",
-        "_____ / _____ موريد داڤت مڠعڤليكاسيكن نيلاي مورني دالم سيتواسي هارين يڠ دبري."
+        "_____ / _____ موريد داڤت مڠعڤليكاسيكن نيلاي مورني دالم سيتواسي هارين يڠ دبري.",
+        "ڤمبلاجرن دتڠݢوهكن كران ݢورو مڠحاضيري كورسوس / مشوارت.",
+        "ڤمبلاجرن دتڠݢوهكن كران ݢورو مڠمبيل چوتي ريهت خاص (CRK).",
+        "ڤمبلاجرن دتڠݢوهكن كران ݢورو مڠمبيل چوتي ساكيت (MC)."
     ];
 
-    const dropdownAktiviti = document.getElementById('cadangan_aktiviti');
-    senaraiAktiviti.forEach(aktiviti => {
-        let option = new Option(aktiviti.substring(0, 50) + '...', aktiviti);
-        dropdownAktiviti.add(option);
-    });
-
-    const dropdownRefleksi = document.getElementById('cadangan_refleksi');
-    senaraiRefleksi.forEach(refleksi => {
-        let option = new Option(refleksi.substring(0, 50) + '...', refleksi);
-        dropdownRefleksi.add(option);
-    });
-
+    binaDropdownList(senaraiAktiviti, 'cadangan_aktiviti');
+    binaDropdownList(senaraiRefleksi, 'cadangan_refleksi');
 });
 </script>
 </body>
