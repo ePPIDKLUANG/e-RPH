@@ -9,6 +9,7 @@
     <!-- Memanggil fon Khat Nasakh (Amiri) dari Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     
+    <style id="print-page-config"></style>
     <style>
         body { 
             background-color: #f0fdf4; 
@@ -98,6 +99,15 @@
                 display: none !important; 
             }
             
+            .table-maklumat {
+                table-layout: auto !important;
+                width: 100% !important;
+            }
+            
+            .table-maklumat tr {
+                page-break-inside: avoid !important;
+            }
+
             .table-maklumat td, .table-maklumat th {
                 border: 1px solid #000 !important;
             }
@@ -440,15 +450,34 @@
                     </div>
                 </div>
 
-                <div class="text-center mt-5 pt-3 no-print">
-                    <button type="button" class="btn btn-success btn-lg px-5 shadow-sm ms-2" onclick="window.print()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-printer ms-2" viewBox="0 0 16 16">
-                            <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
-                            <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/>
-                        </svg>
-                        چيتق / سيمڤن PDF
-                    </button>
-                    <button type="button" class="btn btn-outline-danger btn-lg shadow-sm" onclick="location.reload();">كوسوڠكن بورڠ</button>
+                <div class="card border-success mt-5 pt-3 no-print shadow-sm" style="background-color: #f8f9fa;">
+                    <div class="card-body text-center">
+                        <h5 class="text-success fw-bold mb-4">تتفن چيتقن (Tetapan Cetakan)</h5>
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">ساءيز قرتس</label>
+                                <select class="form-select border-success text-center" id="print-size">
+                                    <option value="A4">A4</option>
+                                    <option value="A3">A3</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">اورينتاسي</label>
+                                <select class="form-select border-success text-center" id="print-orientation">
+                                    <option value="portrait">منکق (Portrait)</option>
+                                    <option value="landscape">ملينتغ (Landscape)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-success btn-lg px-5 shadow-sm ms-2" onclick="laksanaCetak()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-printer ms-2" viewBox="0 0 16 16">
+                                <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
+                                <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/>
+                            </svg>
+                            چيتق / سيمڤن PDF
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-lg shadow-sm" onclick="location.reload();">كوسوڠكن بورڠ</button>
+                    </div>
                 </div>
             </form>
 
@@ -1015,6 +1044,26 @@ document.addEventListener('DOMContentLoaded', function() {
     binaDropdownList(senaraiAktiviti, 'cadangan_aktiviti');
     binaDropdownList(senaraiRefleksi, 'cadangan_refleksi');
 });
+
+function laksanaCetak() {
+    const size = document.getElementById('print-size').value;
+    const orientation = document.getElementById('print-orientation').value;
+    const styleEl = document.getElementById('print-page-config');
+    
+    // Menetapkan CSS @page secara dinamik
+    styleEl.innerHTML = `@page { size: ${size} ${orientation}; margin: 12mm; }`;
+    
+    // Pastikan semua textarea di-resize dengan betul sebelum cetak
+    document.querySelectorAll('textarea').forEach(el => {
+        el.style.height = 'auto';
+        el.style.height = el.scrollHeight + 'px';
+    });
+    
+    // Beri masa sekejap (300ms) untuk pelayar menukar susun atur, kemudian cetak
+    setTimeout(() => {
+        window.print();
+    }, 300);
+}
 </script>
 </body>
 </html>
