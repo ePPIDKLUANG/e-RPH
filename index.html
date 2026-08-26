@@ -276,14 +276,22 @@
         }
 
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 1.5cm; /* Menambah margin untuk A4 supaya jadual tidak terpotong */
+            }
             body { 
                 background-color: #fff; 
                 padding: 0;
+                margin: 0;
+                font-size: 14pt; /* Saiz font mesra cetakan A4 */
             }
             .container { 
                 box-shadow: none; 
                 padding: 0; 
+                margin: 0;
                 max-width: 100%; 
+                width: 100%;
             }
             .panel-cetakan, .btn-group, .no-print { 
                 display: none !important; 
@@ -291,9 +299,10 @@
             textarea { 
                 border: none; 
                 resize: none; 
-                overflow: hidden; 
+                overflow: visible; 
                 background-color: transparent; 
                 padding: 0;
+                height: auto !important;
             }
             input, select { 
                 border: none; 
@@ -301,10 +310,40 @@
                 -webkit-appearance: none; 
                 background: transparent; 
                 padding: 0;
+                white-space: normal;
+                /* Mengelakkan input melebihi ruang dalam jadual cetakan */
+                width: auto;
+                max-width: 100%;
             }
-            table { border: 2px solid #000 !important; }
-            table, th, td { border: 1px solid #000 !important; color: #000; }
-            th { background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; color-adjust: exact; }
+            /* Susunan khas untuk bahagian masa supaya tidak terkeluar kotak */
+            input[type="time"] {
+                width: 40%;
+                display: inline-block;
+            }
+            table { 
+                border: 2px solid #000 !important; 
+                width: 100% !important;
+                table-layout: auto; /* Mengubah kepada auto supaya lajur masa boleh menyesuaikan saiz dengan lebih baik */
+                margin-bottom: 0;
+            }
+            table, th, td { 
+                border: 1px solid #000 !important; 
+                color: #000; 
+            }
+            th, td {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                padding: 8px !important;
+            }
+            tr {
+                page-break-inside: avoid; /* Mengelakkan baris terpotong ke muka surat lain */
+            }
+            th { 
+                background-color: #f0f0f0 !important; 
+                -webkit-print-color-adjust: exact; 
+                color-adjust: exact; 
+                width: 25%;
+            }
             /* Hide empty checkboxes when printing, only show checked */
             input[type="checkbox"]:not(:checked) + span,
             input[type="checkbox"]:not(:checked) {
@@ -461,6 +500,17 @@
             </tr>
         </table>
     </form>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 50px; padding: 0 20px; font-family: 'Amiri', 'Lateef', serif; font-size: var(--font-size-base); page-break-inside: avoid;">
+        <div style="flex: 1;">
+            <p style="font-weight: bold; margin-bottom: 70px;">دسمق اوليه :</p>
+            <p style="margin: 15px 0 0 0;">تاريخ : </p>
+        </div>
+        <div style="flex: 1;">
+            <p style="font-weight: bold; margin-bottom: 70px;">دصحكن اوليه :</p>
+            <p style="margin: 15px 0 0 0;">تاريخ : </p>
+        </div>
+    </div>
 
     <div class="panel-cetakan no-print">
         <h3 style="margin-top:0; color: var(--primary-color);">تتڤن چيتقن / سيستم (Sistem & Cetakan)</h3>
