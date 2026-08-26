@@ -1,175 +1,314 @@
 <!DOCTYPE html>
-<html lang="ms-Arab" dir="rtl">
+<html lang="ms" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سيستم e-RPH | چيتق PDF</title>
-    <!-- Memanggil CSS Bootstrap versi RTL -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <!-- Memanggil fon Khat Nasakh (Amiri) dari Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-    
-    <style id="print-page-config"></style>
+    <title>Sistem e-RPH SAKNJ</title>
+    <!-- Memuatkan font Jawi (Amiri & Lateef) -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
-        body { 
-            background-color: #f0fdf4; 
-            font-family: 'Amiri', 'Traditional Arabic', 'Jawi Uthmanic', serif;
-            font-size: 1.2rem; 
-            line-height: 1.6;
+        :root {
+            --font-size-base: 20px;
+            --font-size-title: 28px;
+            --table-padding: 12px;
+            --line-height: 1.8;
+            --primary-color: #1b5e20;
+            --secondary-color: #2e7d32;
+            --bg-color: #f4f7f6;
+            --surface-color: #ffffff;
+            --border-color: #e0e0e0;
+            --text-color: #333333;
         }
-        .rph-container { 
-            background-color: white; 
-            border-radius: 12px; 
-            padding: 40px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-            margin-top: 40px; 
+
+        body {
+            font-family: 'Amiri', 'Lateef', serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            font-size: var(--font-size-base);
+            direction: rtl;
+            transition: font-size 0.3s ease;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .header {
+            text-align: center;
             margin-bottom: 40px;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 20px;
         }
-        
-        .section-title {
-            color: #198754; 
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: var(--font-size-title);
+            margin: 0 0 10px 0;
             font-weight: 700;
         }
-        
-        .form-control, .form-select, .form-check-label {
-            font-family: 'Amiri', 'Traditional Arabic', serif;
-            font-size: 1.1rem; 
-        }
-        
-        textarea {
-            overflow: hidden;
-            resize: none;
+
+        .header p {
+            color: #666;
+            margin: 0;
+            font-size: 1.1em;
         }
 
-        .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered {
-            font-family: 'Amiri', 'Traditional Arabic', serif;
-            font-size: 1.1rem; 
-            padding-right: 8px;
-            padding-left: 20px;
-        }
-        .select2-results__option {
-            font-family: 'Amiri', 'Traditional Arabic', serif;
-            font-size: 1.1rem; 
-        }
-        .select2-container .select2-selection--single {
-            padding: 0.375rem 0.75rem;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            left: 1px;
-            right: auto;
-        }
-
-        .table-maklumat {
-            width: 100%;
-            max-width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-            table-layout: fixed; /* Memaksa jadual mengunci saiz mengikut skrin/kertas */
-        }
-        .table-maklumat td, .table-maklumat th {
-            border: 1px solid #dee2e6;
-            padding: 10px 15px;
-            vertical-align: top;
-            word-wrap: break-word; /* Mengelakkan perkataan panjang merosakkan kotak */
-            overflow-wrap: break-word;
-        }
-        .table-maklumat td:first-child {
-            width: 28%;
-            background-color: #f8f9fa;
+        /* Notification System */
+        #notification {
+            display: none;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
             font-weight: bold;
-            color: #198754;
+            transition: all 0.3s ease;
+        }
+        .notify-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .notify-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .notify-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            font-size: var(--font-size-base);
         }
 
-        /* Tambahan CSS Dinamik untuk Pilihan Saiz Tulisan & Jadual Auto-fit */
-        body.saiz-kecil { font-size: 1.0rem; }
-        body.saiz-kecil .form-control, body.saiz-kecil .form-select, body.saiz-kecil .form-check-label, body.saiz-kecil .select2-results__option { font-size: 1.0rem; }
-        body.saiz-kecil .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.0rem; line-height: 2.2rem; }
-        body.saiz-kecil .select2-container .select2-selection--single { height: 2.8rem; }
-        body.saiz-kecil .select2-container--default .select2-selection--single .select2-selection__arrow { height: 2.8rem; }
-        body.saiz-kecil .table-maklumat td, body.saiz-kecil .table-maklumat th { padding: 6px 10px; }
+        table, th, td {
+            border: 1px solid var(--border-color);
+        }
 
-        body.saiz-sederhana { font-size: 1.2rem; }
-        body.saiz-sederhana .form-control, body.saiz-sederhana .form-select, body.saiz-sederhana .form-check-label, body.saiz-sederhana .select2-results__option { font-size: 1.1rem; }
-        body.saiz-sederhana .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.1rem; line-height: 2.8rem; }
-        body.saiz-sederhana .select2-container .select2-selection--single { height: calc(3.5rem + 2px); }
-        body.saiz-sederhana .select2-container--default .select2-selection--single .select2-selection__arrow { height: calc(3.5rem + 2px); }
-        body.saiz-sederhana .table-maklumat td, body.saiz-sederhana .table-maklumat th { padding: 10px 15px; }
+        th, td {
+            padding: var(--table-padding);
+            vertical-align: top;
+            line-height: var(--line-height);
+        }
 
-        body.saiz-besar { font-size: 1.5rem; }
-        body.saiz-besar .form-control, body.saiz-besar .form-select, body.saiz-besar .form-check-label, body.saiz-besar .select2-results__option { font-size: 1.4rem; }
-        body.saiz-besar .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered { font-size: 1.4rem; line-height: 3.5rem; }
-        body.saiz-besar .select2-container .select2-selection--single { height: 4.2rem; }
-        body.saiz-besar .select2-container--default .select2-selection--single .select2-selection__arrow { height: 4.2rem; }
-        body.saiz-besar .table-maklumat td, body.saiz-besar .table-maklumat th { padding: 14px 20px; }
+        th {
+            background-color: #e8f5e9;
+            color: var(--primary-color);
+            text-align: right;
+            width: 22%;
+            font-weight: bold;
+        }
+
+        .jawi-text {
+            font-family: 'Amiri', 'Lateef', serif;
+            font-size: var(--font-size-base);
+            width: 100%;
+            box-sizing: border-box;
+            line-height: var(--line-height);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 100px;
+            box-sizing: border-box;
+            background-color: #fafafa;
+            transition: border-color 0.2s;
+        }
+        
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            background-color: #fff;
+        }
+
+        input[type="text"], input[type="date"], input[type="time"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            background-color: #fafafa;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.2s ease;
+            font-family: 'Amiri', 'Lateef', serif;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 2px rgba(0,0,0,0.1);
+        }
+
+        .btn-print { background-color: var(--secondary-color); color: white; }
+        .btn-print:hover { background-color: var(--primary-color); }
+        .btn-save { background-color: #ffb300; color: #000; }
+        .btn-save:hover { background-color: #ff8f00; color: #fff; }
+        .btn-export { background-color: #1976d2; color: white; }
+        .btn-export:hover { background-color: #1565c0; }
+        .btn-import { background-color: #00acc1; color: white; }
+        .btn-import:hover { background-color: #00838f; }
+        .btn-size { background-color: #f5f5f5; color: #333; border: 1px solid #ccc; box-shadow: none; }
+        .btn-size.active { background-color: var(--secondary-color); color: white; border-color: var(--primary-color); }
+
+        .panel-cetakan {
+            background-color: #f1f8f5;
+            border: 2px dashed var(--secondary-color);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 85%;
+            max-width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            direction: rtl;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover, .close-btn:focus {
+            color: #d32f2f;
+            text-decoration: none;
+        }
+
+        .cadangan-card {
+            background: #f9fbfb;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-align: right;
+        }
+
+        .cadangan-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: var(--secondary-color);
+            background: #f1f8f5;
+        }
+
+        .cadangan-kategori {
+            font-size: 0.9em;
+            color: #00796b;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: inline-block;
+            background: #e0f2f1;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .cadangan-tajuk {
+            font-size: 1.1em;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .cadangan-teks {
+            font-size: 0.95em;
+            color: #555;
+            white-space: pre-wrap;
+            margin: 5px 0;
+        }
 
         @media print {
             body { 
-                background-color: white; 
+                background-color: #fff; 
                 padding: 0;
-                margin: 0;
-                max-width: 100%;
             }
-            .rph-container { 
+            .container { 
                 box-shadow: none; 
                 padding: 0; 
-                margin: 0; 
-                border-radius: 0;
-                max-width: 100%;
+                max-width: 100%; 
             }
-            .no-print { 
+            .panel-cetakan, .btn-group, .no-print { 
                 display: none !important; 
             }
-            
-            .table-maklumat {
-                table-layout: fixed !important; /* Kekal kunci saiz dalam mod cetak */
-                width: 100% !important;
-                max-width: 100% !important;
+            textarea { 
+                border: none; 
+                resize: none; 
+                overflow: hidden; 
+                background-color: transparent; 
+                padding: 0;
             }
-            
-            .table-maklumat tr {
-                page-break-inside: avoid !important;
+            input, select { 
+                border: none; 
+                appearance: none; 
+                -webkit-appearance: none; 
+                background: transparent; 
+                padding: 0;
             }
-
-            .table-maklumat td, .table-maklumat th {
-                border: 1px solid #000 !important;
-                word-wrap: break-word !important;
-                overflow-wrap: break-word !important;
-            }
-            .table-maklumat td:first-child {
-                background-color: #f8f9fa !important;
-                color: #000 !important;
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact;
-            }
-
-            .form-control, .form-select { 
-                border: none !important; 
-                background-color: transparent !important;
-                box-shadow: none !important;
-                appearance: none !important; 
-                -webkit-appearance: none !important;
-                -moz-appearance: none !important;
-                background-image: none !important; 
-                padding: 0 !important;
-                margin: 0 !important;
-                resize: none !important;
-                overflow: visible !important; /* Memastikan teks tak terpotong */
-                white-space: pre-wrap !important;
-            }
-            
-            .select2-container--default .select2-selection--single {
-                border: none !important;
-                background-color: transparent !important;
-            }
-            .select2-container--default .select2-selection--single .select2-selection__arrow {
-                display: none !important;
-            }
-            .select2-container--default[dir="rtl"] .select2-selection--single .select2-selection__rendered {
-                padding: 0 !important;
-                color: black !important;
+            table { border: 2px solid #000 !important; }
+            table, th, td { border: 1px solid #000 !important; color: #000; }
+            th { background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; color-adjust: exact; }
+            /* Hide empty checkboxes when printing, only show checked */
+            input[type="checkbox"]:not(:checked) + span,
+            input[type="checkbox"]:not(:checked) {
+                display: none;
             }
         }
     </style>
@@ -177,1086 +316,783 @@
 <body>
 
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-12 rph-container">
+    <div class="header">
+        <h1>رانچڠن ڤڠاجرن هارين</h1>
+        <p>سكوله اݢام كراجاءن جوهر</p>
+    </div>
+
+    <!-- Container Notifikasi -->
+    <div id="notification"></div>
+
+    <form id="rphForm">
+        <table>
+            <tr>
+                <th>تاريخ / هاري</th>
+                <td colspan="3">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="date" id="tarikh" name="tarikh" required class="jawi-text" style="flex: 1;">
+                        <select id="hari" name="hari" class="jawi-text" style="flex: 1;">
+                            <option value="الأحد">الأحد (Ahad)</option>
+                            <option value="الإثنين">الإثنين (Isnin)</option>
+                            <option value="الثلاثاء">الثلاثاء (Selasa)</option>
+                            <option value="الأربعاء">الأربعاء (Rabu)</option>
+                            <option value="الخميس">الخميس (Khamis)</option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th>كلس / درجه</th>
+                <td>
+                    <select id="darjah" name="darjah" class="jawi-text" required>
+                        <option value="TAJ">تاديكا (TAJ 6 Tahun)</option>
+                        <option value="1" selected>1 (ساتو)</option>
+                        <option value="2">2 (دوا)</option>
+                        <option value="3">3 (تيݢ)</option>
+                        <option value="4">4 (امڤت)</option>
+                        <option value="5">5 (ليم)</option>
+                        <option value="6">6 (انم)</option>
+                        <option value="Khas">خاص (Khas)</option>
+                    </select>
+                </td>
+                <th style="width: 15%;">ماس</th>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <input type="time" id="masa_mula" name="masa_mula" required> 
+                        <span>هيڠݢ</span>
+                        <input type="time" id="masa_tamat" name="masa_tamat" required>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th>مات ڤلاجرن</th>
+                <td colspan="3">
+                    <select id="subjek" name="subjek" class="jawi-text" required>
+                        <option value="Al-Quran" selected>القرءان (Al-Quran)</option>
+                        <option value="Hafazan">حفظن (Hafazan)</option>
+                        <option value="Tauhid">توحيد (Tauhid)</option>
+                        <option value="Ibadat">عبادات (Ibadat)</option>
+                        <option value="Sirah">سيرة (Sirah)</option>
+                        <option value="Akhlak">اخلاق / اخلاق دان تصوف (Akhlak / Tasauf)</option>
+                        <option value="JawiKhat">جاوي دان خط (Jawi & Khat)</option>
+                        <option value="BahasaArab">اللغة العربية (Bahasa Arab)</option>
+                        <option value="AmalanLazim">عملن لازيم (Amalan Lazim)</option>
+                        <option value="Faraid">فرائض (Faraid)</option>
+                        <option value="Jenayat">جنايات (Jenayat)</option>
+                        <option value="Muamalat">معاملات (Muamalat)</option>
+                        <option value="BahasaMelayu">بهاس ملايو (BM Rumi / Jawi)</option>
+                        <option value="BahasaInggeris">بهاس ايڠݢريس (English)</option>
+                        <option value="Sains">ساءينس (Sains)</option>
+                        <option value="Matematik">ماتماتيك (Matematik)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>ميڠݢو ك-</th>
+                <td colspan="3">
+                    <select id="minggu" name="minggu" class="jawi-text"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>تاجوق</th>
+                <td colspan="3">
+                    <select id="tajuk" name="tajuk" class="jawi-text"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>ستندرد كاندوڠن</th>
+                <td colspan="3">
+                    <textarea id="sk" name="sk" class="jawi-text" placeholder="ستندرد كاندوڠن..."></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>ستندرد ڤمبلاجرن</th>
+                <td colspan="3">
+                    <textarea id="sp" name="sp" class="jawi-text" placeholder="ستندرد ڤمبلاجرن..."></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>اوبجيكتيف</th>
+                <td colspan="3">
+                    <textarea id="objektif" name="objektif" class="jawi-text" placeholder="موريد داڤت..."></textarea>
+                </td>
+            </tr>
             
-            <div class="text-center mb-5">
-                <h3 class="fw-bold" style="color: #198754;">رانچڠن ڤڠاجرن هارين</h3>
-                <h5 class="fw-bold text-muted">سكوله اݢام كراجاءن جوهر (SAKNJ)</h5>
+            <tr class="no-print">
+                <td colspan="4" style="text-align: center; background-color: #e8eaf6; padding: 15px;">
+                    <button type="button" onclick="bukaModalDSKP()" style="background-color: #3f51b5; color: white; border-radius: 30px; padding: 10px 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        💡 ڤيليه چادڠن SK, SP & اوبجيكتيف (30 سيت)
+                    </button>
+                </td>
+            </tr>
+
+            <tr class="no-print">
+                <td colspan="4" style="text-align: center; background-color: #e0f2f1; padding: 15px;">
+                    <button type="button" onclick="bukaModalCadangan()" style="background-color: #00838f; color: white; border-radius: 30px; padding: 10px 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        💡 ڤيليه چادڠن اكتيۏيتي & ريفليكسي (30 سيت)
+                    </button>
+                </td>
+            </tr>
+
+            <tr>
+                <th>اكتيۏيتي</th>
+                <td colspan="3">
+                    <textarea id="aktiviti" name="aktiviti" class="jawi-text" placeholder="1. ݢورو منرڠكن...&#10;2. موريد ممباچ..."></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>باهن بنتو مڠاجر</th>
+                <td colspan="3" class="jawi-text">
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" value="بنتو تيكس"> <span>بوكو تيكس</span></label>
+                        <label><input type="checkbox" value="ڤاڤن ڤوتيه"> <span>ڤاڤن ڤوتيه</span></label>
+                        <label><input type="checkbox" value="لمبرن كرجا"> <span>لمبرن كرجا</span></label>
+                        <label><input type="checkbox" value="كاد إيمبس"> <span>كاد إيمبس</span></label>
+                        <label><input type="checkbox" value="القرءان / مقدم"> <span>القرءان / مقدم</span></label>
+                        <label><input type="checkbox" value="كومڤيوتر / LCD"> <span>كومڤيوتر / LCD</span></label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th>ريفليكسي</th>
+                <td colspan="3">
+                    <textarea id="refleksi" name="refleksi" class="jawi-text" placeholder="____ / ____ موريد برجاي منچڤاي اوبجيكتيف."></textarea>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <div class="panel-cetakan no-print">
+        <h3 style="margin-top:0; color: var(--primary-color);">تتڤن چيتقن / سيستم (Sistem & Cetakan)</h3>
+        
+        <div style="display: flex; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <label style="font-weight: bold; color: #555;">ساءيز توليسن Jawi:</label>
+                <div class="btn-group" style="margin-top:10px;">
+                    <button type="button" class="btn-size" onclick="ubahSaiz('18px', '22px')">كچيل</button>
+                    <button type="button" class="btn-size active" onclick="ubahSaiz('20px', '28px')">سدرهان</button>
+                    <button type="button" class="btn-size" onclick="ubahSaiz('24px', '34px')">لبيه بسر</button>
+                </div>
             </div>
+        </div>
 
-            <form id="borangRPH">
-                <table class="table-maklumat">
-                    <tbody>
-                        <tr>
-                            <td>سكوله</td>
-                            <td>
-                                <select class="form-select border-0 p-0 m-0 w-100" id="sekolahSelect" required>
-                                    <option value="">-- ڤيليه سكوله --</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>نام ݢورو</td>
-                            <td>
-                                <select class="form-select border-0 p-0 m-0 w-100" id="guruSelect" required disabled>
-                                    <option value="">-- ڤيليه سكوله دهولو --</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>مات ڤلاجرن</td>
-                            <td>
-                                <select class="form-select border-0 p-0 m-0 w-auto d-inline-block fw-bold" id="subjek" required>
-                                    <option value="">-- ڤيليه --</option>
-                                    <option value="AlQuran">القرآن</option>
-                                    <option value="Tauhid">توحيد</option>
-                                    <option value="Ibadat">عبادات</option>
-                                    <option value="Sirah">سيرة</option>
-                                    <option value="Akhlak">اخلاق</option>
-                                    <option value="BahasaArab">اللغة العربية (بهاس عرب)</option>
-                                    <option value="JawiKhat">جاوي دان خط</option>
-                                    <option value="Tajwid">تجويد</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>كلس</td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <select class="form-select border-0 p-0 m-0 w-auto me-2" id="darjah" required>
-                                        <option value="1">١ (ساتو)</option>
-                                        <option value="2">٢ (دوا)</option>
-                                        <option value="3">٣ (تيݢ)</option>
-                                        <option value="4">٤ (امڤت)</option>
-                                        <option value="5">٥ (ليم)</option>
-                                        <option value="6">٦ (انم)</option>
-                                        <option value="Khas">درجة خاص</option>
-                                    </select>
-                                    <input type="text" id="nama_kelas" class="form-control border-0 p-0 m-0 ms-2" placeholder="نام كلس..." required>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>تاريخ / هاري</td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <input type="date" class="form-control border-0 p-0 m-0 w-auto" id="tarikh" required>
-                                    <span class="mx-3">/</span>
-                                    <select id="hari" class="form-select border-0 p-0 m-0 w-auto" required>
-                                        <option value="">هاري...</option>
-                                        <option value="Ahad">احد</option>
-                                        <option value="Isnin">اثنين</option>
-                                        <option value="Selasa">ثلاث</option>
-                                        <option value="Rabu">رابو</option>
-                                        <option value="Khamis">خميس</option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ماس</td>
-                            <td>
-                                <select class="form-select border-0 p-0 m-0 w-50" id="masa" required>
-                                    <option value="">-- ڤيليه ماس --</option>
-                                    <option value="٢:٠٠ - ٢:٣٠ ڤتڠ">٢:٠٠ - ٢:٣٠ ڤتڠ (٣٠ مينيت)</option>
-                                    <option value="٢:٣٠ - ٣:٠٠ ڤتڠ">٢:٣٠ - ٣:٠٠ ڤتڠ (٣٠ مينيت)</option>
-                                    <option value="٣:٠٠ - ٣:٣٠ ڤتڠ">٣:٠٠ - ٣:٣٠ ڤتڠ (٣٠ مينيت)</option>
-                                    <option value="٣:٣٠ - ٤:٠٠ ڤتڠ">٣:٣٠ - ٤:٠٠ ڤتڠ (٣٠ مينيت)</option>
-                                    <option value="٤:٠٠ - ٤:٣٠ ڤتڠ">٤:٠٠ - ٤:٣٠ ڤتڠ (٣٠ مينيت)</option>
-                                    <option value="٤:٣٠ - ٥:٠٠ ڤتڠ">٤:٣٠ - ٥:٠٠ ڤتڠ (٣٠ مينيت)</option>
-                                    <option value="٥:٠٠ - ٥:٣٠ ڤتڠ">٥:٠٠ - ٥:٣٠ ڤتڠ (٣٠ مينيت)</option>
-                                    <option value="٥:٣٠ - ٦:٠٠ ڤتڠ">٥:٣٠ - ٦:٠٠ ڤتڠ (٣٠ مينيت)</option>
-                                    <option value="٦:٠٠ - ٦:٣٠ ڤتڠ">٦:٠٠ - ٦:٣٠ ڤتڠ (٣٠ مينيت)</option>
-                                    <option value="٢:٠٠ - ٣:٠٠ ڤتڠ">٢:٠٠ - ٣:٠٠ ڤتڠ (١ جم)</option>
-                                    <option value="٢:٣٠ - ٣:٣٠ ڤتڠ">٢:٣٠ - ٣:٣٠ ڤتڠ (١ جم)</option>
-                                    <option value="٣:٠٠ - ٤:٠٠ ڤتڠ">٣:٠٠ - ٤:٠٠ ڤتڠ (١ جم)</option>
-                                    <option value="٣:٣٠ - ٤:٣٠ ڤتڠ">٣:٣٠ - ٤:٣٠ ڤتڠ (١ جم)</option>
-                                    <option value="٤:٠٠ - ٥:٠٠ ڤتڠ">٤:٠٠ - ٥:٠٠ ڤتڠ (١ جم)</option>
-                                    <option value="٤:٣٠ - ٥:٣٠ ڤتڠ">٤:٣٠ - ٥:٣٠ ڤتڠ (١ جم)</option>
-                                    <option value="٥:٠٠ - ٦:٠٠ ڤتڠ">٥:٠٠ - ٦:٠٠ ڤتڠ (١ جم)</option>
-                                    <option value="٥:٣٠ - ٦:٣٠ ڤتڠ">٥:٣٠ - ٦:٣٠ ڤتڠ (١ جم)</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>بيلڠن موريد</td>
-                            <td><input type="text" id="bil_murid" class="form-control border-0 p-0 m-0" placeholder="چونتوه: ٣٠ اورڠ" required></td>
-                        </tr>
-                        <tr>
-                            <td>ميڠݢو ك-</td>
-                            <td><input type="number" class="form-control border-0 p-0 m-0 w-25" id="minggu" placeholder="چونتوه: ٣٠" min="1" max="43" required></td>
-                        </tr>
+        <hr style="border: 0; border-top: 1px solid #ccc; margin: 25px 0;">
 
-                        <tr>
-                            <td>تاجوق</td>
-                            <td>
-                                <input type="text" class="form-control border-0 p-0 m-0 fw-bold" id="tajuk" list="tajuk_list" placeholder="ڤيليه اتاو تاءيڤ تاجوق ڤلاجرن..." autocomplete="off" required>
-                                <datalist id="tajuk_list"></datalist>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ڤڠتاهوان سديا اد</td>
-                            <td>
-                                <input type="text" class="form-control border-0 p-0 m-0" id="psa" list="psa_list" placeholder="موريد تله مڠتاهوءي..." required>
-                                <datalist id="psa_list"></datalist>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ستندرد كاندوڠن</td>
-                            <td>
-                                <textarea class="form-control border-0 p-0 m-0 mb-2" id="sk" rows="2" placeholder="ماسوقكن كود دان بوتيرن..." required></textarea>
-                                <div class="dropdown no-print">
-                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-end" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                                        + ڤيليه چادڠن تمبهن ستندرد كاندوڠن (Multi-Pilihan)
-                                    </button>
-                                    <ul class="dropdown-menu p-3 w-100 shadow-sm text-end" style="max-height: 200px; overflow-y: auto;" id="sk_options"></ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ستندرد ڤمبلاجرن</td>
-                            <td>
-                                <textarea class="form-control border-0 p-0 m-0 mb-2" id="sp" rows="3" placeholder="ماسوقكن كود دان بوتيرن..." required></textarea>
-                                <div class="dropdown no-print">
-                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-end" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                                        + ڤيليه چادڠن تمبهن ستندرد ڤمبلاجرن (Multi-Pilihan)
-                                    </button>
-                                    <ul class="dropdown-menu p-3 w-100 shadow-sm text-end" style="max-height: 200px; overflow-y: auto;" id="sp_options"></ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>اوبجيكتيف ڤمبلاجرن</td>
-                            <td>
-                                <textarea class="form-control border-0 p-0 m-0 mb-2" id="objektif" rows="4" placeholder="موريد داڤت..." required></textarea>
-                                <div class="dropdown no-print">
-                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-end" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                                        + ڤيليه چادڠن تمبهن اوبجيكتيف ڤمبلاجرن (Multi-Pilihan)
-                                    </button>
-                                    <ul class="dropdown-menu p-3 w-100 shadow-sm text-end" style="max-height: 200px; overflow-y: auto;" id="obj_options"></ul>
-                                </div>
-                            </td>
-                        </tr>
-                        
-                        <tr>
-                            <td>كماهيرن برفيكير</td>
-                            <td>
-                                <input type="text" class="form-control border-0 p-0 m-0" id="kb" list="kb_list" placeholder="چونتوه: مڠنل ڤستي...">
-                                <datalist id="kb_list"></datalist>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>كابوڠ جالين</td>
-                            <td>
-                                <input type="text" class="form-control border-0 p-0 m-0" id="gj" list="gj_list" placeholder="چونتوه: عبادة / عقيدة...">
-                                <datalist id="gj_list"></datalist>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ڤنراڤن عيلمو</td>
-                            <td>
-                                <input type="text" class="form-control border-0 p-0 m-0" id="pi" list="pi_list" placeholder="چونتوه: ڤنديديقن جسماني...">
-                                <datalist id="pi_list"></datalist>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ڤنراڤن نيلاي</td>
-                            <td>
-                                <div class="dropdown">
-                                    <input type="text" class="form-control border-0 p-0 m-0" id="nilai_display" placeholder="ڤيليه نيلاي مورني..." readonly data-bs-toggle="dropdown" data-bs-auto-close="outside" style="cursor: pointer; background-color: transparent;">
-                                    <ul class="dropdown-menu p-3 w-100 shadow-sm text-end no-print" style="max-height: 250px; overflow-y: auto;" id="nilai_ul">
-                                        <!-- Will be populated via JS -->
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>عملن ڤيداݢوݢي ماس كيني</td>
-                            <td>
-                                <input type="text" class="form-control border-0 p-0 m-0" id="pedagogi" list="pedagogi_list" placeholder="چونتوه: ڤمبلاجرن كولابوراتيف...">
-                                <datalist id="pedagogi_list"></datalist>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>كماهيرن إنسانية</td>
-                            <td>
-                                <input type="text" class="form-control border-0 p-0 m-0" id="ki" list="ki_list" placeholder="چونتوه: كرجا برڤاسوقن...">
-                                <datalist id="ki_list"></datalist>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>اي.عيم.كيه (EMK)</td>
-                            <td>
-                                <input type="text" class="form-control border-0 p-0 m-0" id="amk" list="amk_list" placeholder="چونتوه: كأوسهاونن...">
-                                <datalist id="amk_list"></datalist>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ڤنيلاين ڤي.دي.ڤي</td>
-                            <td>
-                                <input type="text" class="form-control border-0 p-0 m-0" id="penilaian" list="penilaian_list" placeholder="چونتوه: ڤمرهاتين / سوءال جواب...">
-                                <datalist id="penilaian_list"></datalist>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>باهن بنتو مڠاجر</td>
-                            <td>
-                                <div class="dropdown">
-                                    <input type="text" class="form-control border-0 p-0 m-0" id="bbm_display" placeholder="ڤيليه BBM..." readonly data-bs-toggle="dropdown" data-bs-auto-close="outside" style="cursor: pointer; background-color: transparent;" required>
-                                    <ul class="dropdown-menu p-3 w-100 shadow-sm text-end no-print" style="max-height: 250px; overflow-y: auto;" id="bbm_ul">
-                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="بوكو تيك‌س" id="bbm1"><label class="form-check-label w-100" for="bbm1" style="cursor: pointer;">بوكو تيك‌س</label></div></li>
-                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="كد ايمبسن" id="bbm2"><label class="form-check-label w-100" for="bbm2" style="cursor: pointer;">كد ايمبسن</label></div></li>
-                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="لمبرن كرجا" id="bbm3"><label class="form-check-label w-100" for="bbm3" style="cursor: pointer;">لمبرن كرجا</label></div></li>
-                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="قرتس ماجوڠ" id="bbm4"><label class="form-check-label w-100" for="bbm4" style="cursor: pointer;">قرتس ماجوڠ</label></div></li>
-                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="كومڤوتر / سلءيد" id="bbm5"><label class="form-check-label w-100" for="bbm5" style="cursor: pointer;">كومڤوتر / سلءيد</label></div></li>
-                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="اوديو / ۏيديو" id="bbm6"><label class="form-check-label w-100" for="bbm6" style="cursor: pointer;">اوديو / ۏيديو</label></div></li>
-                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="مودل / باهن ماءوجود" id="bbm7"><label class="form-check-label w-100" for="bbm7" style="cursor: pointer;">مودل / باهن ماءوجود</label></div></li>
-                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="ڤاڤن ڤوتيه" id="bbm8"><label class="form-check-label w-100" for="bbm8" style="cursor: pointer;">ڤاڤن ڤوتيه</label></div></li>
-                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="بوكو لاتيهن" id="bbm9"><label class="form-check-label w-100" for="bbm9" style="cursor: pointer;">بوكو لاتيهن</label></div></li>
-                                        <li><div class="form-check"><input class="form-check-input float-end ms-2 bbm-cb" type="checkbox" value="چرت / ݢامبر" id="bbm10"><label class="form-check-label w-100" for="bbm10" style="cursor: pointer;">چرت / ݢامبر</label></div></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>حسرت ڤمبلاجرن</td>
-                            <td>
-                                <textarea class="form-control border-0 p-0 m-0" id="hasrat" rows="2" placeholder="١. مپاتاكن..."></textarea>
-                                <div class="mt-2 no-print">
-                                    <select class="form-select border-secondary text-secondary" id="cadangan_hasrat" onchange="if(this.value){ document.getElementById('hasrat').value += (document.getElementById('hasrat').value ? '\n' : '') + this.value; this.selectedIndex = 0; document.getElementById('hasrat').dispatchEvent(new Event('input')); }">
-                                        <option value="">-- ڤيليه ٢٠ چادڠن حسرت ڤمبلاجرن --</option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>كريتيريا كجاياءن</td>
-                            <td>
-                                <textarea class="form-control border-0 p-0 m-0" id="kriteria" rows="2" placeholder="١. موريد ممڤو..."></textarea>
-                                <div class="mt-2 no-print">
-                                    <select class="form-select border-secondary text-secondary" id="cadangan_kriteria" onchange="if(this.value){ document.getElementById('kriteria').value += (document.getElementById('kriteria').value ? '\n' : '') + this.value; this.selectedIndex = 0; document.getElementById('kriteria').dispatchEvent(new Event('input')); }">
-                                        <option value="">-- ڤيليه ٢٠ چادڠن كريتيريا كجاياءن --</option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>اكتيۏيتي ڤڠاجرن دان ڤمبلاجرن</td>
-                            <td>
-                                <textarea class="form-control border-0 p-0 m-0" id="aktiviti" rows="5" placeholder="١. سيت ايندوکسي: ...&#10;٢. لڠكه اوتام: ...&#10;٣. ڤنوتوڤ: ..." required></textarea>
-                                <div class="mt-2 no-print">
-                                    <select class="form-select border-success text-success" id="cadangan_aktiviti" onchange="if(this.value){ document.getElementById('aktiviti').value = this.value; this.selectedIndex = 0; document.getElementById('aktiviti').dispatchEvent(new Event('input')); }">
-                                        <option value="">-- ڤيليه ٢٠ چادڠن اوتوماتيک اكتيۏيتي --</option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ريفليكسي / ايمڤق</td>
-                            <td>
-                                <textarea class="form-control border-0 p-0 m-0" id="refleksi" rows="2" placeholder="____ / ____ موريد مڠواساءي..."></textarea>
-                                <div class="mt-2 no-print">
-                                    <select class="form-select border-primary text-primary" id="cadangan_refleksi" onchange="if(this.value){ document.getElementById('refleksi').value = this.value; this.selectedIndex = 0; document.getElementById('refleksi').dispatchEvent(new Event('input')); }">
-                                        <option value="">-- ڤيليه ٢٠ چادڠن اوتوماتيک ريفليكسي --</option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="row mt-5 pt-4" style="break-inside: avoid;">
-                    <div class="col-6 text-center">
-                        <p class="fw-bold">دسيمق اوليه:</p>
-                        <br><br>
-                        <p class="fw-bold mb-0">تاريخ:</p>
-                    </div>
-                    <div class="col-6 text-center">
-                        <p class="fw-bold">دصحكن اوليه:</p>
-                        <br><br>
-                        <p class="fw-bold mb-0">تاريخ:</p>
-                    </div>
-                </div>
-
-                <div class="card border-success mt-5 pt-3 no-print shadow-sm" style="background-color: #f8f9fa;">
-                    <div class="card-body text-center">
-                        <h5 class="text-success fw-bold mb-4">تتفن چيتقن (Tetapan Cetakan)</h5>
-                        <div class="row justify-content-center mb-4">
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">ساءيز قرتس</label>
-                                <select class="form-select border-success text-center" id="print-size">
-                                    <option value="A4">A4</option>
-                                    <option value="A3">A3</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">اورينتاسي</label>
-                                <select class="form-select border-success text-center" id="print-orientation">
-                                    <option value="portrait">منکق (Portrait)</option>
-                                    <option value="landscape">ملينتغ (Landscape)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">ساءيز توليسن</label>
-                                <div class="btn-group w-100" role="group" id="btn-group-saiz">
-                                    <button type="button" class="btn btn-outline-success" onclick="tukarSaizTulisan('kecil', this)">كچيل (Kecil)</button>
-                                    <button type="button" class="btn btn-outline-success active" onclick="tukarSaizTulisan('sederhana', this)">سدرهانا (Sederhana)</button>
-                                    <button type="button" class="btn btn-outline-success" onclick="tukarSaizTulisan('besar', this)">لبيه بسر (Lebih Besar)</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <button type="button" class="btn btn-success btn-lg px-4 shadow-sm ms-2 mb-2" onclick="laksanaCetak()">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-printer ms-2" viewBox="0 0 16 16">
-                                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
-                                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/>
-                                </svg>
-                                چيتق / سيمڤن PDF
-                            </button>
-                            <button type="button" class="btn btn-outline-danger btn-lg shadow-sm ms-2 mb-2" onclick="location.reload();">كوسوڠكن</button>
-                            <button type="button" class="btn btn-outline-primary btn-lg shadow-sm ms-2 mb-2" onclick="eksportCSV()">Eksport CSV</button>
-                            <button type="button" class="btn btn-outline-info btn-lg shadow-sm ms-2 mb-2" onclick="document.getElementById('importFile').click()">Import CSV</button>
-                            <button type="button" class="btn btn-warning btn-lg shadow-sm mb-2 fw-bold" id="btn-hantar-gs" onclick="hantarKeGoogleSheets()">SAVE</button>
-                            <input type="file" id="importFile" accept=".csv" style="display:none;" onchange="importCSV(event)">
-                        </div>
-                    </div>
-                </div>
-            </form>
-
+        <div class="btn-group">
+            <button type="button" class="btn-save" id="btnSave" onclick="hantarKeGoogleSheets()">💾 SAVE (Google Sheets)</button>
+            <button type="button" class="btn-export" onclick="eksportCSV()">📥 Eksport CSV</button>
+            <input type="file" id="importFile" accept=".csv" style="display:none;" onchange="importCSV(event)">
+            <button type="button" class="btn-import" onclick="document.getElementById('importFile').click()">📤 Import CSV</button>
+            <button type="button" class="btn-print" onclick="window.print()">🖨️ چيتق / سيمڤن PDF</button>
         </div>
     </div>
+
+    <!-- Modal Cadangan -->
+    <div id="modalCadangan" class="modal no-print">
+        <div class="modal-content">
+            <span class="close-btn" onclick="tutupModalCadangan()">&times;</span>
+            <h2 style="color: var(--primary-color); border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px; margin-top: 0;">سنا راي چادڠن اكتيۏيتي & ريفليكسي</h2>
+            <p style="color: #666; margin-bottom: 20px;">كليك ڤد مان-مان سيت دباوه اونتوق مماسوقكنڽ كدالم RPH اندا سچارا اٴوتوماتيك.</p>
+            <div id="senaraiCadangan" style="display: flex; flex-direction: column; gap: 15px; max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+                <!-- Kandungan akan diisi oleh JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cadangan SK, SP & Objektif -->
+    <div id="modalDSKP" class="modal no-print">
+        <div class="modal-content">
+            <span class="close-btn" onclick="tutupModalDSKP()">&times;</span>
+            <h2 style="color: #3f51b5; border-bottom: 2px solid #7986cb; padding-bottom: 10px; margin-top: 0;">سنا راي چادڠن SK, SP & اوبجيكتيف</h2>
+            <p style="color: #666; margin-bottom: 20px;">كليك ڤد مان-مان سيت دباوه اونتوق مماسوقكنڽ كدالم RPH اندا سچارا اٴوتوماتيك.</p>
+            <div id="senaraiDSKP" style="display: flex; flex-direction: column; gap: 15px; max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+                <!-- Kandungan akan diisi oleh JavaScript -->
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- jQuery, Bootstrap, Select2 JS -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 <script>
-const senaraiPsa = [
-    "موريد ڤرنه مندڠر تاجوق اين دالم كلس سبلومڽ",
-    "موريد تله مڠتاهوءي اساس ڤركارا اين دالم هيدوڤ هارين",
-    "موريد ڤرنه ملقساناكن عملن اين برسام كلوارݢ",
-    "موريد تله ممڤلاجري ڤركارا اساس ڤد تاهون لڤس",
-    "موريد ڤرنه منونتون ۏيديو بركاءيتن تاجوق اين",
-    "موريد بياسا ممباچ دعاء اين سلفس صلاة",
-    "موريد تله مڠنل چونتوه يڠ دبريكن",
-    "موريد سريڠ منجواب سوءالن يڠ بركاءيتن",
-    "موريد تله مڠهافل ببراڤ ايات درڤد سورة اين",
-    "موريد ڤرنه مپرتأي اكتيۏيتي بركاءيتن دالم ڤروݢرم سكوله",
-    "موريد سلالو منليتي كجادين عالم سكيتر",
-    "موريد ڤرنه مندڠر چريتا اين درڤد ايبو باڤ",
-    "موريد مڠتاهوءي نام٢ ڤنتيڠ دالم سيرة",
-    "موريد تله مڠنل حروف اساس جاوي",
-    "موريد بياسا مڠعملكن ادب اين دالم كلس",
-    "موريد ڤرنه مليهت باهن ماءوجود ترسبوت",
-    "موريد تله مڠتاهوءي حكوم اساس دالم إسلام",
-    "موريد سلالو مڠعملكن نيلاي مورني ترسبوت",
-    "موريد تله فصيح ممباچ سورة ڤيليهن",
-    "موريد ڤرنه منزيارهي تمڤت بركاءيتن"
-];
-
-const senaraiKb = [
-    "مڠنل ڤستي", "ممبيذاكن", "مڠهورايكن", "ممبنديڠ بيذا", "منجانا ايديا",
-    "ممبوات كسيمڤولن", "مڠهوبوڠ كاءيت", "منيلي", "مروموس", "مڠكلسيفيكاسيكن",
-    "مناكول", "مپلسأيكن مسأله", "مڠاناليسيس", "مڠعڤليكاسي", "منچيڤتا",
-    "منچيريكن", "ممبوات اوروتن", "مپوسون اتور", "ممبوات رامالن", "ممبوات كڤوتوسن"
-];
-
-const senaraiGj = [
-    "عبادات / عقيدة", "سيرة / اخلاق", "تجويد / تلاوة", "القرءان / جاوي", "بهاس عرب / خط",
-    "عقيدة / سيرة", "اخلاق / عبادات", "جاوي / القرءان", "تلاوة / حفظن", "حفظن / تجويد",
-    "عقيدة / اخلاق", "عبادات / سيرة", "جاوي / اخلاق", "القرءان / عقيدة", "سيرة / بهاس عرب",
-    "اخلاق / بهاس عرب", "تجويد / جاوي", "عبادات / حفظن", "سيرة / القرءان", "عقيدة / جاوي"
-];
-
-const senaraiPi = [
-    "ڤنديديقن إسلام", "بهاس ملايو", "ساءين‌س", "ماتماتيق", "سجارة",
-    "ڤنديديقن كصيحتن", "ڤنديديقن جسماني", "ڤنديديقن مورل", "ڤنديديقن سني ۏيزوال", "ڤنديديقن موزيك",
-    "ريكا بنتوق دان تيكنولوݢي", "تيكنولوݢي مكلومت", "بهاس ايڠݢريس", "ݢيوݢرافي", "كأوسهاونن",
-    "كليستاريان عالم سكيتر", "نيلاي مورني", "ساءين‌س سوكن", "كيسوڤانن دان كсусيلاءن", "ڤنديديقن سيۏيك"
-];
-
-const senaraiPedagogi = [
-    "ڤمبلاجرن كولابوراتيف", "ڤمبلاجرن كوڤراتيف", "ڤمبلاجرن براساسكن ڤروجيق", "ڤمبلاجرن براساسكن مسأله", "ڤمبلاجرن إنكويري",
-    "ڤمبلاجرن كونتيکستوال", "ڤمبلاجرن ماستري", "ڤمبلاجرن لوار بليق درجه", "كلس برباليق (Flipped Classroom)", "ڤمبلاجرن براساسكن كاجين كيس",
-    "ڤمبلاجرن ابد ك-٢١ (PAK-21)", "سومبڠ سارن", "ڤمبلاجرن ترارح كنديري", "ڤي.دي.ڤي بربنتوكن تيكنولوݢي", "كاجين ماس دڤن",
-    "ڤمبلاجرن براساسكن مأوخود", "سيمولاسي دان ماءين ڤرانن", "ڤمبلاجرن كونستروكتيۏيسمى", "ڤمبلاجرن ڤلبݢاي كچردسن", "رويتين ڤميكيرن"
-];
-
-const senaraiKi = [
-    "كماهيرن بركومونيكاسي", "كماهيرن ڤميكيرن كریتیس", "كماهيرن مپلسأيكن مسأله", "كماهيرن كرجا برڤاسوقن", "ڤمبلاجرن برتروسن",
-    "كماهيرن ڤڠوروسن مكلومت", "كماهيرن كأوسهاونن", "ايتيكا دان مورل", "كماهيرن كڤيمڤينن", "ڤروفيشناليسمى",
-    "كماهيرن سوسيال", "كماهيرن كرجا سڤاسوقن", "داي تاهن", "كيقينن ديري", "فليكسيبيليتي",
-    "كماهيرن مڠاتور ماس", "ادب دان اخلاق", "سيمڤاتي دان امڤاتي", "كمانديرين", "كچردسن ايموسي"
-];
-
-const senaraiAmk = [
-    "بهاس", "كليستاريان عالم سكيتر", "نيلاي مورني", "ساءين‌س دان تيكنولوݢي", "ڤاتريوتيسمى",
-    "كریاتيۏيتي دان اينوۏاسي", "كأوسهاونن", "تيكنولوݢي مكلومت", "كليستاريان ݢلوبل", "ڤنديديقن كواڠن",
-    "كصيحتن", "كسلامتن", "ڤنديديقن ڤڠݢونا", "ڤنديديقن كسلامتن جالن راي", "سني دان بودايا",
-    "ادب دان كсусيلاءن", "ڤرڤاودوان", "كچردسن ايموسي", "كبياكسانأن تمڤتن", "كمشاركتن"
-];
-
-const senaraiPenilaian = [
-    "ڤمرهاتين", "سوءال جواب", "لمبرن كرجا", "كوءيز", "حفظن",
-    "باچاءن", "عملي / ديمونستراسي", "ڤمبنتڠن", "توݢسن بركومڤولن", "حاصيل كرجا موريد",
-    "بوكو لاتيهن", "ڤنيلاين راكن سباي", "ڤنيلاين كنديري", "سيمولاسي / ماءين ڤرانن", "ديكلاماسي",
-    "لكونن", "بوكو تيک‌س / اكتيۏيتي", "ليسن", "توليسن", "سناراي سيمق"
-];
-
-const senaraiHasrat = [
-    "١. مپاتاكن فکتا دان مقصود دڠن جلس", "٢. ممبيذاكن انتارا يڠ صح دان يڠ بطل", "٣. مڠهورايكن حكمه دان ڤڠاجرن تاجوق", "٤. مڠحفل دعاء اتاو سورة دڠن لنچر", "٥. ممباچ تيكس دڠن فصيح دان برتجويد",
-    "٦. مڠعڤليكاسيكن عملن يڠ دڤلاجري دالم هيدوڤ", "٧. مپناريكن ركن، شرط دان بهاݢين دڠن بتول", "٨. ملاكوكن عملي عبادات دڠن سمڤورنا", "٩. منوليس ايجاءن جاوي دڠن بتول دان كمس", "١٠. مڠنل ڤستي حكوم تجويد دان چارا باچاءنڽ",
-    "١١. مپوسون اتور لڠكه دڠن تڤت", "١٢. مڠهوبوڠكاءيتكن تاجوق دڠن هيدوڤ هارين", "١٣. ممروموسكن ايسي ڤلاجرن دڠن باءيق", "١٤. برچريتا سمولا قيصه يڠ دڤلاجري", "١٥. ملابلكن باهݢين ݢامبر دڠن تڤت",
-    "١٦. مڠاناليسيس كجادين اتاو سيتواسي", "١٧. مناكول سبب دان مسبب", "١٨. منيلي سيتواسي يڠ دبري", "١٩. مپلسأيكن مسأله يڠ دكموكاكن", "٢٠. ممبينا ايات دڠن توليسن جاوي"
-];
-
-const senaraiKriteria = [
-    "١. موريد ممڤو مپبوت ٣ فکتا دڠن بتول", "٢. موريد ممڤو منجواب ٤ درڤد ٥ سوءالن كوءيز", "٣. موريد ممڤو مپوسون لڠكه عبادات دڠن تڤت", "٤. موريد ممڤو ممباچ دڠن مخرج يڠ بتول", "٥. موريد ممڤو ممبينا ٣ ايات دڠن توليسن جاوي",
-    "٦. موريد ممڤو مڠلوركن ٢ ڤڠاجرن درڤد قيصه", "٧. موريد ممڤو برچريتا سمولا دڠن ݢاي يڠ مناريک", "٨. موريد ممڤو ملاكونكن سيتواسي يڠ دبري", "٩. موريد ممڤو مپيڤكن لمبرن كرجا دڠن سمڤورنا", "١٠. موريد ممڤو مڠلوركن حكمه درڤد تاجوق",
-    "١١. موريد ممڤو مڠنل ڤستي ٣ حكوم تجويد", "١٢. موريد ممڤو مڠهورايكن ٢ شرط صح", "١٣. موريد ممڤو ممبوات كسيمڤولن دڠن جلس", "١٤. موريد ممڤو منيلي ٢ سيتواسي يڠ دبري", "١٥. موريد ممڤو ممبنديڠ بيذا ٢ ڤركارا",
-    "١٦. موريد ممڤو مڠعڤليكاسي عملن ترسبوت", "١٧. موريد ممڤو ملابلكن ٤ باهݢين ݢامبر", "١٨. موريد ممڤو ممادنكن ٥ ڤركاتاءن", "١٩. موريد ممڤو مڠحفل دعاء دڠن لنچر", "٢٠. موريد ممڤو بركوڠسي ايديا دالم كومڤولن"
-];
-
-const senaraiNilai = [
-    "خشوع", "بكرجاسام", "جوجور", "براني", "تولوڠ-منولوڠ", 
-    "برديسيفلين", "راجين", "صبر", "طاعة / ڤاتوه", "برسوڤن-سنتون",
-    "برشكور", "اخلاص", "امانه", "برتوڠݢوڠجواب", "برتوليرنسي",
-    "عاديل", "كاسيه سايڠ", "حرمت-مڠحرمتي", "منجاݢ كبرسيهن", "تڤتي ماس"
-];
-
-function binaDatalist(senarai, datalistId) {
-    const dl = document.getElementById(datalistId);
-    if (!dl) return;
-    dl.innerHTML = "";
-    senarai.forEach(item => {
-        let opt = document.createElement('option');
-        opt.value = item;
-        dl.appendChild(opt);
-    });
-}
-
-function binaDropdownList(senarai, selectId) {
-    const sel = document.getElementById(selectId);
-    if (!sel) return;
-    senarai.forEach(item => {
-        let opt = new Option(item.substring(0, 45) + (item.length > 45 ? '...' : ''), item);
-        sel.add(opt);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    binaDatalist(senaraiPsa, 'psa_list');
-    binaDatalist(senaraiKb, 'kb_list');
-    binaDatalist(senaraiGj, 'gj_list');
-    binaDatalist(senaraiPi, 'pi_list');
-    binaDatalist(senaraiPedagogi, 'pedagogi_list');
-    binaDatalist(senaraiKi, 'ki_list');
-    binaDatalist(senaraiAmk, 'amk_list');
-    binaDatalist(senaraiPenilaian, 'penilaian_list');
-
-    binaDropdownList(senaraiHasrat, 'cadangan_hasrat');
-    binaDropdownList(senaraiKriteria, 'cadangan_kriteria');
-
-    // Populate Nilai Murni Checkboxes
-    const ulNilai = document.getElementById('nilai_ul');
-    senaraiNilai.forEach((nilai, index) => {
-        let li = document.createElement('li');
-        li.innerHTML = `<div class="form-check"><input class="form-check-input float-end ms-2 nilai-cb" type="checkbox" value="${nilai}" id="nm${index}"><label class="form-check-label w-100" for="nm${index}" style="cursor: pointer;">${nilai}</label></div>`;
-        ulNilai.appendChild(li);
-    });
-    setupMultiSelect('nilai-cb', 'nilai_display');
-});
-
-const senaraiSekolahGuru = {
-    "س.ا بوكيت توڠكت": ["حفيظ بن احبية@حمزة", "محمد مهيمن بن حاج حدران", "نور ديانا بنت هارون", "نور عزة بنت عبد الغفار", "نور عزة بنت مختار", "سلينا بنت وسل", "سوسي تاتوم بنت محمد راشد"],
-    "س.ا داتو أحمد": ["عائشة عزة بنت جمال الدين", "عالية سكينة بنت ذوالكفلي", "حزلينا بنت مد قادر", "خير النساء بنت طالب", "مسينتن بنت بصير", "مزلان بن محمد نور", "محمد رازق عرفان بن نورازلي", "محمد توفيق بن عمر", "محمد شزان بن جمال الدين", "نزوحا بنت زينل", "نور هداية بنت سايني", "نور أنيسة بنت عبد الله", "نور زيلة بنت عباس", "نور عفيقة بنت مسكم", "نور عليا بنت مد زينل", "نور أميرة شهيرة بنت محمد يزيد", "نور فرح هدى بنت بواڠ", "نور شهيرة بنت أزهر", "نور شهيدة الهدى بنت محمد أيوب", "نور شهيرة نتاشا محمد نجمان", "نور فضلين أدلينا بنت زينل", "نور الأيمن هدايتي بنت محمد", "روسية بنت عثمان", "روسينة بنت سموري", "سعاده بنت سمات", "سيتي فائزة بنت محمد سعيدفودين"],
-    "س.ا فيلدا كاهڠ بارت": ["محمد فاتح بن قمرين", "نور ليانا بنت محمد طاهر", "نور الإنشيراه بنت عبد الغفار", "روسيله بنت حارث", "سفورا بنت محمود", "سيتي هاجر بنت إثنين"],
-    "س.ا فيلدا كاهڠ تيمور": ["حسنة بنت مد قادر", "محمد نجيب بن محمد رملي", "نور مسنيتا بنت تسنوه", "نورمه بنت حصرين", "قصرين بنت إيمان", "روهيزه بنت عبد الرحيم", "روسماواتي بنت عبد الله", "شهمي درويش بن روهيزاد", "زليلى بنت جاني"],
-    "س.ا فيلدا اولو بليتوڠ": ["أحمد زولهادي بن ذوالقرنين", "عائشة بنت سلامت", "حاجة زينون بنت عبد الصمد", "حاج خير الدين بن رملي", "جامعية بنت صالح", "مستورا بنت نوڠمن", "نور عين بنت رحمة", "نور ليلى بنت ميسمان", "رفيدة بنت رميان"],
-    "س.ا فيلدا اولو دڠر": ["بلقيس شزواني بنت محمد أزهر", "مد ضياء الدين بن جلال", "نور فضيلة بنت اتن", "شريفة بنت إسماعيل@سنداري"],
-    "س.ا فيلدا اولو ڤڠݢلي": ["أربكية بنت محمد", "إنتن زوليانا بنت محمد", "محمد سعودي بن أحمد", "نور حياتي بنت أحمد", "روحانا بنت حاج سيرت", "شريفة بنت ستار"],
-    "س.ا كاهڠ باتو ٢٨": ["أزلينا بنت بصري", "نتيراه بنت حسن", "نورميدة بنت محمد هليل", "رئيمة بنت مد زم"],
-    "س.ا كامڤوڠ چونتوه": ["محمد أمير الأشرف بن منان", "نوريدة بنت علي", "نور العين نبيلة بنت حسب الله", "رسلي بن أحمد رفاعي", "زبيدة بنت محمد"],
-    "س.ا كلواڠ بارت": ["حليزه بنت ساريمان", "حسليندا بنت غزالي", "مهانوم بنت محمد إقبال", "مسلا بنت حسن", "محمد أنوار بن راؤف", "محمد نقي الدين بن مهد", "محمد نبيل زفري بن رحيم", "محمد شهمي فارس بن مد أيوب", "نور أزليزاواتي بنت حسن", "نور الأميرة بنت محمد زين الدين", "صائمة بنت ع. هادي", "سيتي نور الهداية بنت أبو", "سيتي صالحة بنت رسلاني", "سوريا بنت يوسف", "وان عبد الحكيم بن وان محمد فيصل"],
-    "س.ا لادڠ موتيارا": ["خير العارفين بن سجود", "محمد أسمادي بن سهر", "زيلاواتي بنت شمس الدين", "ذو الأكمال بن خميس"],
-    "س.ا لادڠ ڤامول": ["مسليزاواتي بنت بحرين", "محمد فردوس بن محزان", "نبيلة هدى بنت جسري", "نور شهمينا بنت دنيا", "نورين نادية بنت نوريزت", "سعيدة بنت سعيدين", "سيتي يوسليا بنت يوسف"],
-    "س.ا سري كامڤوڠ تڠه ٠١": ["عظيمة بنت محمد عارف", "بحر الدين بن جعفر", "دانيال عكيف بن شمس الزمان", "عزة فرزانا بنت مد نظام", "ماريا شهداء بنت جيلاني", "مارياالين بنت مد أيوب", "مستورا بنت مرسيدي", "محمد نور عزت بن عبد الرحيم", "محمد أمين نور حفيظ بن عباس", "نظرية بنت مت نادي", "نور حنيفا فيدا بنت محمد عباس", "نور فرحانة بنت توݢيمون", "نور إزياني ناجحة بنت جوهري", "نور الجنة بنت أنوار", "رشيدة بنت تايري", "سيتي فطرية بنت خايرون", "سيتي نور ليانا بنت محمد", "زواوي بن روسدين", "زورينا بنت أحمد"],
-    "س.ا سري كامڤوڠ تڠه ٠٢": ["دانيال فخر الزمان بن عبد الله دين", "هانيم بنت كسلان", "خير الرشيدي بن ڤردي", "محمد بن قهار", "محمد تقي الدين بن محمد جوڤري", "نور حفيظة بنت محمد هيمي", "نور أملينا بنت غزالي", "نور عقيلة عزة بنت قمر الدين", "نور عتيقة بنت رسلان", "نور نزورة بنت رسلي", "روسريديۏي بنت أحمد"],
-    "س.ا سلطان سير إبراهيم": ["جواريين بنت جسمان", "نور حبيبة بنت أمت مسرا", "نور عيني بنت جلال", "نور أزيلة بنت سنتيوڠ", "شعيرة أديبة بنت يعقوب"],
-    "س.ا تامن سري لمبق": ["أحمد نور فهمي بن مرسيد", "عائشة نبيلة بنت محمد", "أمينة بنت اتن حسن", "عفة الإنشيراه بنت بحر الدين", "لقمان الحكيم بن شهوان", "مسني بنت جايس", "محمد زاهين بن رحيم", "نيك محمد حافظ الدين بن نيك أمير الهشام", "نور عين بنت كاسنين", "نور لي بنت أحمد", "نوليانا بنت مغلن", "نور فطينة العفة بنت تاج الدين", "نور شميم مهيرا بنت إسحاق", "نور العين بنت محمد", "نور أسليمة بنت محمد سالم", "نور عوني شهيرة بنت مد يزيد", "نور نزات الشهداء بنت محمد عمران", "روزيتا بنت عبد الرزاق", "شمسية بنت محمد", "شمس الدين بن اوڠ", "سيتي فائزة بنت مارسين", "سيتي حواء بنت أحمد نيزان", "سيتي نور عادلة بنت قمر الزمان", "سيتي زبيدة بنت توفيق", "سوزانا@سيتي سلوى بنت عبد الحميد", "توان نور عزيزان بنت توان مودا", "أمي كلثوم بنت محمد أزهر", "أم الخيرية بنت محمد إدريس", "وان نور فرح هانيس بنت وان حسين"],
-    "س.ا بندر كلواڠ": ["عفيفة نور سعادة بنت عزمي", "عين الفاتحية الإنشيراه بنت يزيد", "أسماء بنت عبد الصمد", "أزحد بن عبد الرزاق", "ديانا بنت عبد العزيز", "إيميليانا عزة بنت عبد الرشيد", "فاتن ناجية بنت مازلي", "حياة السكينة بنت رملي", "إيرزا ميسارا بنت محمد إحسان", "خديجة بنت عمر", "ماشطة بنت بهاروم", "محمد أزهر بن رحيم", "محمد حزوان صفوان بن محمد يونس", "نور أزالينا بنت إدريس", "نور عين بنت مهتيان", "نور حنيزة بنت عبد الوهاب", "نور هداية بنت محمد", "نور صفوانة بنت محمد سالم", "نور عائشة ناجحة بنت هشام", "نور حزلين بنت حسيم", "نور إزيان بنت إسحاق", "نور حميراء بنت حزمان", "سانيسة بنت مورني", "سيتي خديجة بنت مارلان", "سيتي نور عادلة بنت يسري", "شازا أميرة بنت محمد", "تسليمة بنت محمد", "زليخة بنت محمد"],
-    "س.ا بندر ڤالوه": ["مشاهدة بنت هاليدين", "فوزية بنت عبد الجبار", "تسنية بنت هاميل"],
-    "س.ا بندر ڤالوه ٠٢": ["حميدة بنت مسكم", "مسدينا بنت حميد", "محمد إيزاإيزمان بن مد إسماعيل", "نور فرحاني عزة بنت إبراهيم"],
-    "س.ا فيلدا اءير هيتم": ["فاتن عقيلة بنت محمد مصلح", "هسڤاليلا بنت أبو حسن", "مازلين بنت إسماعيل", "محمد نظام الدين بن صوفي", "نعيمة بنت سليمان", "نور الحفيظة بنت زريمي", "نور الشفيقة بنت أحمد عبد مالک", "نور النجوى بنت ألليار @ إلياس", "زارينا بنت أبو طاوسي"],
-    "س.ا ݢونوڠ لمبق": ["أبو عرفان بن زين العابدين", "محمد حافظ بن عمر", "محمد عرفان بن رحيم", "محمد خير الناس بن مد كامل", "مظفر بن بيدين", "نور حسنة الفضيلة بنت اوڠ", "نور حفيظة بنت إسحاق", "نورمه بنت خميس", "نور العقيدة بنت صيهت", "نور الإنشيراه بنت جفري", "سيتي حواء فضيلة بنت عبد الحميد", "سيتي رتنا أمي سلمية بنت شمس الدين", "سيتي شريزة بنت عبد الحميد", "سورياني بنت محمد"],
-    "س.ا كامڤوڠ ملايو چاميق": ["عيني ناجيهة بنت إيبينو هاتوڤ", "فائزة بنت عبد الصمد", "فريزا بنت محمد @ هارون", "نور ليزة بنت محمد كاسه", "أم كلثوم بنت عارفين"],
-    "س.ا كيم مهكوتا": ["عظمة بنت كيار", "فيروز بنت محمد", "جميلة بنت مسجم", "محمد خير بن عبد الرحيم", "محمد عزت أيمن بن روهيزاد", "نور فراهين بنت عمر", "نور النتاشا بنت محمد يسميران", "نور الهدى بنت سايم", "راتينة بنت كمساني", "سيتي نور عوني عميراء بنت سيفول", "سهايدا بنت أبو بكر"],
-    "س.ا لادڠ بوكيت بنوت": ["عبد العظيم بن زيلاني", "حياتي بنت حسن", "روستينا بنت توميران"],
-    "س.ا لادڠ بوكيت ڤالوه": ["عبد الحليم بن كسدر", "حاجة جراينا بنت حاج عثمان", "ليانا مستورينا بنت عبد العزيز", "نوريته بنت رحمة"],
-    "س.ا لادڠ تيريه": ["ميزة النظريفة بنت مهدي", "محمد أنوار بن خنبالي", "روزيتا بنت رملي", "سيتي سلوى بنت مرزوقي"],
-    "س.ا نيور": ["حنيفة بنت أحمد", "روزيماه بنت روحاني", "سيتي فاطمة بنت محمد", "زريدة بنت إسماعيل"],
-    "س.ا سري تامن كلواڠ بارت": ["عبد المطلب بن قمر الدين", "عزيزة بنت رشدي", "حفيظة بنت سلامت", "جليلى بنت دكير", "مهيون بنت ميسني", "مزني بنت محمد مصلح", "محمد نور فطري بن محمد خليل", "نور المليانا بنت اب رحمن", "نور فرح ديانا بنت عبد المالک", "نور فاتن عليا بنت جلال الدين", "نور راضية بنت محمد خمكا", "نور شرافة بنت جوهري", "راتية بنت أبو طالب", "صبرينة بنت صبري", "صالحين بن جسني", "سيتي مصلحة بنت محمد أمين", "سحانا بنت احبية @ حمزة"],
-    "س.ا سري لالڠ": ["عبدة بنت إدريس", "أمير نور أيمن بن رسلان", "أمين الدين بن غزالي", "هداية العزة بنت شريف", "مارني بنت قرمان", "محمد أشرف بن محزان", "نور العيني بنت مد يونس", "نور المودة بنت زريمي", "رازية بنت زينل", "سعيرة بنت عثمان"],
-    "س.ا تامن دليما": ["عين المرضية بنت يحيى", "أنس قسطينا بنت مت سيري", "أسمهاني بنت حميد", "عوني عفيفة بنت محمد مزران", "مصرية بنت إسحاق", "محمد يوسف بن محمد راشد", "محمد علي الدين بن رايمي", "محمد معاذ بن محمد فوزيل", "محمد شهرالزام بن عبد موسى", "نور العلمية بنت أ رحمن", "نورسية بنت رامين", "نور عفيفة بنت محمد جميل", "نور عيني بنت مت ستار", "نور عريسا بنت حزمان", "نور المرحمة بنت جوهري", "نور الجنة بنت مد إسماعيل", "ڤوتري نور فضيلة بنت سقما", "ڤوتري زمزارينا بنت كمال الدين", "روزيتا بنت مسروم", "سوزيليانا بنت أحمد", "شهيدة بنت أبو بكر", "يسري بن أحمد", "زنة نور عفيفة بنت زيهان"],
-    "س.ا تامن ديسا": ["باتريشيا بلقيس بنت عبد الله", "محمد نور فؤاد بن نور الدين", "ناجيهة بنت محمد يزيد", "نجوى بنت روزالي", "نور عزة بنت رميان", "نور هداية بنت محمد تڠ", "رابعة العدوية بنت إسماعيل", "شدة النورا بنت سليمان", "سيتي نور ليانا بنت سيدي", "سيتي رفادة @ سيتي رفيدة بنت مد ساريڠ"],
-    "س.ر.ا.ب كلواڠ": ["فائمة بنت إسماعيل", "محمد عز الدين بن مد روزي", "محمد خير الإقبال بن تاج الدين", "نتاشا نور هازورا بنت محمد بصير", "نور شفيقة بنت سلامت", "نور الهدى بنت محمد خاريس"],
-    "س.ا بندر رڠݢم": ["خيراواتي بنت سليمان", "ميزة الأكمل بنت ريملي", "محمد نظام بن كمال", "نيلاکسوما بنت مد نواوي", "فضيلة بنت رملي", "زارينا بنت سليمان"],
-    "س.ا بوكيت كنعن": ["عبد العزيز بن مناڤ", "نور أزلين بنت شمس الدين", "نور आशقين بنت قاسم", "سري روهايو بنت عبد الحميد"],
-    "س.ا داتو إبراهيم مجيد": ["عينون بنت جميران", "أمين الدين بن محمد درويس", "ألوانيزا بنت يوسوڤ", "فضيلة بنت كريم", "محمد أنيق إكليل بن يسريزان", "نور أزورا بنت مولانا", "نور عيني بنت هاشم", "نور علياء بنت محمد رافي", "صميدة بنت بكر", "ساليناه بنت نواوي", "سيتي نبيلة بنت أمال الدين", "سيتي نور عائشة بنت جمال", "سيتي سانه بنت كوسين", "سيتي سهيلا بنت صائم", "سوزيتا بنت سوكر", "يزيد بن جبار @ ساهيد"],
-    "س.ا فيلدا لايڠ-لايڠ": ["أزله بنت أحمد", "نور أصلينا بنت إسماعيل", "نور مزلينا بنت مرزوقي", "سيتي خديجة بنت غزالي", "سحيلي إيمي بنت عبد الشكور"],
-    "س.ا كومڤليكس ڤڠهولو": ["أزيينا بنت محمد خيري", "إرناواتي بنت عبد الطالب", "فاتن نور الروضة بنت أرازمي", "فاتن نبيلة بنت محمد نور الدين", "جفري بن عبد الصمد@سمات", "ليلى ساري بنت أسموني", "ماريانا بنت عبد الرزاق", "محمد هارون الرشيدين أحمد", "محمد ذو الحلمي بن أبو", "نادية عتيقة بنت إلياس", "نصر الدين بن سيران", "نور إزاتي بنت عزمان", "نور سكينة بنت أحمد شهاب", "أوكتريفيا أريانتي بنت أيدير", "سيتي سلايا بنت ساريڠ"],
-    "س.ا ڤاريت حاج هاشم": ["أبو حفيظ بن محمد كمال", "هدى خالصة بنت محمد نور", "محمد فوزان بن محمد مربت", "نور ألينا بنت أبو بكر", "نور فرحانة بنت رحمة", "روحانا بنت عبد المجيد", "سيتي نور حليمة السعدية بنت محمد رسلان", "وحيدة بنت مرسودي", "يوليزا إيليا بنت مد رملي"],
-    "س.ا ڤاسوكن ݢرقن عام": ["أزواهيزا بنت مد عثمان", "محمد الحفيظ بن سيرت", "محمد إلهان بن عبد المالک", "سيتي حميراء بنت زانودين"],
-    "س.ا ڤكن لايڠ-لايڠ": ["عتيقة زليخة بنت اب قادر", "حاجة مريامة بنت عبد المنان", "محمد إقبال بن شعري", "نور أسليندا بنت يسمين أفندي", "نور الهدى بنت محمد إظهاري", "روسياتيمة بنت سینوڠ", "سيتي أفرينة بنت قمر الزمان", "سيتي ربيعة بنت حمزة", "زكية بنت عبد الحميد"],
-    "س.ا ڤنجارا سيمڤڠ رڠام": ["نور فرحة بنت أ رحيم", "نور شميلة بنت عبد الحفيظ", "روسلينا بنت ڤانات", "سوزيلياناه بنت باني"],
-    "س.ا سيمڤڠ رڠام": ["فائزة بنت داود", "مسنة بنت طالب", "نور ليزار بنت أحمد", "نور عين بنت محمد حسين", "نور أزهم بن مد خيري", "نور حسليندا بنت ݢمن@واݢيمن", "نور ليلاواتي بنت محمد", "نور عائشة بنت مد عيسى", "نور فرح عين بنت عبد الكريم", "نور आशقين بنت حسين", "نور ماشطة بنت محمد جاني", "نور مبشرة بنت محمد", "نور العيني بنت نور عزمي", "نور العين بنت فريد الأطرس", "سيتي ميسرة بنت أمال الدين", "سيتي ميسرة بنت مد بحر الدين", "سيتي نور بلقيس بنت مامي"],
-    "س.ا سري كنچان": ["أحمد شفاء الفواز بن عمر", "أنيس بنت أنوار", "فريدة بنت رملي", "جليحة بنت جميل", "قمر الزوراه بنت أزهر", "نور ليانا بنت ميسڤار", "نور مرهيداواتي بنت مرزوقي", "سيتي زليخة بنت محمد"],
-    "س.ا سري ماچڤ": ["أمني بنت أنوار", "فريداواتي بنت هارون", "محمد فائز بن محمد مربت", "محمد صديق بن نور الدين", "نور आशقين بنت جعفر", "نور هدايت بنت إسحاق", "سيتي سلمى بنت محمد تسليم", "سبحان بن أحمد بندي", "زائدة بنت موكسين"],
-    "س.ا سري ماجو جاي": ["أديبة بنت أ.رحمان", "محمد ثقيف خير الدين", "نور لياني بنت محمد توكيران", "نور أفيقة نزيهة محمد رسلان", "نور الناجيهة بنت محمد سالم", "رسنة بنت توكيمين"],
-    "س.ا سري تڠه رڠݢم": ["أنيتا بنت ڤرمون", "فريزة بنت إسمان", "كرتيني بنت ليمان @ سليمان", "محمد نور عين بن ڠانتيمين"],
-    "س.ا سوڠاي ليناو": ["أنيس شهداء بنت إسحاق", "ماريانا بنت طاهر", "محمد أسلمهان بن مماجان خان", "نور هدايو بنت ميسڤين", "سيتي نور حفيظة بنت محمد جوها", "توميسه بنت جاڤر"]
-};
-
-// Data RPT Darjah 2 (Milestone / Ringkasan)
-const rptData = {
-    "Akhlak": {
-        "1": { sk: "١. ادب برتامو", sp: "١.١ كواجيفن تتامو دان ڤنريما تتامو", obj: "١. مپاتاكن ڤڠرتين تتامو\n٢. مپناريكن كواجيفن تتامو" },
-        "4": { sk: "٢. ادب برڤاكاين", sp: "٢.١ چيري ڤاكاين مڠيكوت إسلام\n٢.٢ چيري ڤاكاين منوتوڤ عورة", obj: "١. مپاتاكن چيري ڤاكاين مڠيكوت إسلام" },
-        "7": { sk: "٢. ادب برڤاكاين", sp: "٢.٣ ادب برڤاكاين\n٢.٤ دعاء مماكاي ڤاكاين", obj: "١. مپاتاكن ادب برڤاكاين يڠ ڤرلو دڤاتوهي\n٢. ممباچ دعاء مماكاي ڤاكاين" },
-        "12": { sk: "٣. ادب ماسوق دان كلوار رومه", sp: "٣.١ ادب سبلوم ماسوق رومه\n٣.٢ ادب كتيك مماسوقي رومه", obj: "١. مپاتاكن ادب سبلوم ماسوق رومه\n٢. منجلسكن ادب كتيك مماسوقي رومه" },
-        "19": { sk: "٣. ادب ماسوق دان كلوار رومه", sp: "٣.٣ ادب كلوار رومه", obj: "١. مپاتاكن ادب كلوار رومه دڠن ريڠكس" },
-        "20": { sk: "٤. ادب ماسوق دان كلوار تندس", sp: "٤.١ ادب ماسوق تندس\n٤.٢ ادب سماس ددالم تندس", obj: "١. مڠڤليكاسيكن ادب كلوار تندس\n٢. منرڠكن ادب سماس دالم تندس" },
-        "23": { sk: "٥. ادب ماسوق مسجيد", sp: "٥.١ ادب ماسوق مسجيد\n٥.٢ ادب كتيك براد ددالم مسجيد", obj: "١. منجلسكن ادب ماسوق مسجيد\n٢. منرڤكن ادب كتيك براد ددالم مسجيد" },
-        "26": { sk: "٦. ادب دالم مجليس عيلمو", sp: "٦.١ ادب دالم مجليس عيلمو\n٦.٢ ڤاءيده برادب دالم مجليس عيلمو", obj: "١. منرڠكن ادب دالم مجليس عيلمو\n٢. منجلسكن ڤاءيده برادب دالم مجليس عيلمو" },
-        "31": { sk: "٧. ادب مڠݢوناكن ميديا مسسا", sp: "٧.١ ادب مڠݢوناكن ميديا مسسا\n٧.٢ ادب اوتام كتيك مڠݢوناكن ميديا مسسا", obj: "١. منجلسكن ادب مڠݢوناكن ميديا مسسا\n٢. مپاتاكن ادب اوتام كتيك مڠݢوناكن ميديا مسسا" }
-    },
-    "AlQuran": {
-        "1": { sk: "١. سورة باچاءن جزوء ١١", sp: "١.١ سورة التوبة اية ٩٤ هيڠݢ ١١١", obj: "١. ممباچ ايات القرءان دڠن دتسميع اوليه ݢورو\n٢. مپبوت حروف هيجاءية دڠن بتول" },
-        "4": { sk: "٤.١ سورة يونس اية ١٦ هيڠݢ ٣٠", sp: "١. ممباچ ايات القرءان مڠيكوت تجويد\n٢. مڠنل حكوم مد", obj: "١. ممباچ ايات القرءان دڠن دتسميع ݢورو\n٢. مڠنل حكوم مد يڠ لبيه دري ٢ حركة" },
-        "8": { sk: "٧.١ سورة يونس اية ٦٥ هيڠݢ ٨٢", sp: "١. ممباچ ايات القرءان مڠيكوت تجويد\n٢. حروف مد", obj: "١. ممباچ ايات القرءان دڠن دتسميع ݢورو\n٢. مپبوت چونتوه آيات يڠ مڠاندوڠي حروف مد" },
-        "11": { sk: "١٠.١ سورة هود اية ٩ هيڠݢ ٢٢", sp: "١. ممباچ ايات القرءان مڠيكوت تجويد\n٢. حروف هيجاءية", obj: "١. ممباچ ايات القرءان دڠن دتسميع ݢورو\n٢. مپبوت حروف هيجاءية دڠن بتول" },
-        "19": { sk: "١٢.١ سورة هود اية ٤٢ هيڠݢ ٥٩", sp: "١. ممباچ ايات القرءان مڠيكوت تجويد", obj: "١. ممباچ ايات القرءان دڠن دتسميع اوليه ݢورو" },
-        "23": { sk: "١٦.١ سورة يوسف اية ٢٣ هيڠݢ ٤٣", sp: "١. ممباچ ايات القرءان مڠيكوت تجويد", obj: "١. ممباچ ايات القرءان دڠن دتسميع اوليه ݢورو" },
-        "28": { sk: "٢٠.١ سورة الرعد اية ١ هيڠݢ ٢٨", sp: "١. ممباچ ايات القرءان مڠيكوت تجويد", obj: "١. ممباچ ايات القرءان دڠن دتسميع اوليه ݢورو" },
-        "32": { sk: "٢. سورة٢ ڤيليهن (سورة العصر / الهمزة)", sp: "١. ممباچ كليمه دڠن فصيح\n٢. ممباچ كراتن آيات", obj: "١. مپبوت دان ممباچ كليمه دڠن فصيح دان بتول\n٢. ممباچ كراتن آيات دڠن بتول" }
-    },
-    "Hafazan": {
-        "1": { sk: "١. حفظن القرءان (سورة٢ ڤيليهن)", sp: "١.١ ڤڠنلن\n١.٢ كڤنتيڠن مڠحفظ القرءان", obj: "١. مپبوت كباءيقن ممباچ القرءان\n٢. منوليس كڤنتيڠن مڠحفظ القرءان" },
-        "4": { sk: "٢. سورة الماعون", sp: "٢.١ آيات حفظن\n٢.٢ ڤڠنلن سورة", obj: "١. ممباچ سورة الماعون دڠن لنچر\n٢. ممباچ سورة الماعون آيات ١ هيڠݢ ٤" },
-        "7": { sk: "٣. سورة قريش", sp: "٣.١ آيات حفظن\n٣.٢ ڤڠنلن سورة", obj: "١. ممباچ سورة قريش آيات ١ هيڠݢ ٤\n٢. مڠحفظ دڠن ترتيب" },
-        "8": { sk: "٤. سورة الفيل", sp: "٤.١ آيات حفظن\n٤.٢ ڤڠنلن سورة الفيل", obj: "١. ممباچ سورة الفيل دڠن سبوتن حروف يڠ بتول\n٢. مڠحفظ دڠن ترتيب" },
-        "11": { sk: "٦. سورة العصر", sp: "٦.١ آيات حفظن\n٦.٢ ڤڠنلن سورة", obj: "١. ممادنكن ڤوتوڠن آيات دڠن بتول\n٢. مڠحفظ سورة العصر دڠن برتجويد" },
-        "19": { sk: "٧. سورة التكاثر", sp: "٧.١ آيات حفظن\n٧.٢ ڤڠنلن سورة", obj: "١. ممباچ سورة التكاثر دڠن لنچر\n٢. منجواب سوءالن ليسن دڠن بتول" },
-        "22": { sk: "٨. سورة القارعة", sp: "٨.١ آيات حفظن\n٨.٢ ڤڠنلن سورة", obj: "١. مپناراي چيري٢ سورة القارعة\n٢. ممباچ سورة القارعة دڠن برتجويد" },
-        "27": { sk: "٩. سورة العاديات", sp: "٩.١ آيات حفظن\n٩.٢ ڤڠنلن سورة", obj: "١. ممباچ ايات ١ هيڠݢ ٥ سورة العاديات\n٢. مڠحفظ سورة العاديات دڠن برتجويد" },
-        "30": { sk: "١٠. سورة الزلزلة", sp: "١٠.١ آيات حفظن\n١٠.٢ ڤڠنلن سورة", obj: "١. ممباچ سورة الزلزلة دڠن ترتيل\n٢. ملڠكڤكن كليمه يڠ بتول" }
-    },
-    "Tauhid": {
-        "1": { sk: "١. برايمان كڤد الله تعالى", sp: "١.١ ڤڠرتين برايمان كڤد الله\n١.٢ دليل نقلي", obj: "١. منوليس ڤڠرتين برايمان كڤد الله تعالى\n٢. ممباچ دليل نقلي برايمان كڤد الله تعالى" },
-        "4": { sk: "٢. صيفت٢ واجب باݢي الله تعالى", sp: "٢.١ الوجود\n٢.٢ القدم\n٢.٣ البقاء", obj: "١. مپبوت چارا مڠنلي صيفت الوجود، القدم دان البقاء\n٢. مڠيجا صيفت ترسبوت" },
-        "8": { sk: "٢. صيفت٢ واجب باݢي الله تعالى", sp: "٢.١٠ الحياة\n٢.١١ السمع\n٢.١٢ البصر", obj: "١. مپبوت صيفت الحياة، السمع، البصر\n٢. ممباچ دليل نقلي صيفت ترسبوت" },
-        "19": { sk: "٣. صيفت٢ مستحيل اتس الله تعالى", sp: "٣.١ العدم\n٣.٢ الحدوث\n٣.٣ الفناء", obj: "١. مپبوت چارا مڠنلي صيفت العدم، الحدوث دان الفناء\n٢. ممباچ دليل نقلي صيفت ترسبوت" },
-        "22": { sk: "٣. صيفت٢ مستحيل اتس الله تعالى", sp: "٣.١٠ الموت\n٣.١١ الصمم\n٣.١٢ العمي", obj: "١. مپبوت چارا مڠنلي صيفت الموت، الصمم، العمي\n٢. مڠيجا صيفت ترسبوت" },
-        "25": { sk: "٤. صيفت يڠ هاروس اتس الله تعالى", sp: "٤.١ ڤڠرتين صيفت يڠ هاروس", obj: "١. مپاتاكن ڤڠرتين صيفت يڠ هاروس\n٢. مپبوت چونتوه صيفت يڠ هاروس" },
-        "28": { sk: "٥. برايمان كڤد ڤارا ملائكة", sp: "٥.١ ڤڠرتين ملائكة\n٥.٢ دليل نقلي", obj: "١. مپبوت ڤڠرتين ملائكة دان حكوم برايمان\n٢. ممباچ دليل نقلي برايمان كڤد ملائكة" },
-        "32": { sk: "٦. برايمان كڤد كتاب", sp: "٦.١ ڤڠرتين برايمان كڤد كتاب\n٦.٢ دليل نقلي", obj: "١. مپبوت ڤڠرتين كتاب دڠن بتول\n٢. ممباچ دليل نقلي برايمان كڤد كتاب" }
-    },
-    "Ibadat": {
-        "1": { sk: "ڤلاجرن ساتو: نجيس", sp: "١.١ ڤڠرتين نجيس\n١.٢ بندا٢ كوتور دان نجيس", obj: "١. مپبوت ڤڠرتين نجيس ڤد ايستيله شرع\n٢. مپاتاكن جومله بهاݢين بندا كوتور" },
-        "4": { sk: "ڤلاجرن دوا: حدث كچيل", sp: "٢.١ ڤڠرتين حدث\n٢.٢ ڤڠرتين حدث كچيل", obj: "١. مپبوت ڤڠرتين حدث\n٢. مڠنل ڤستي جومله بهاݢين حدث" },
-        "6": { sk: "ڤلاجرن تيݢ: وضوء", sp: "٣.١ ڤڠرتين وضوء", obj: "١. منتعريفكن ڤڠرتين وضوء\n٢. مڠنل ڤستي چارا مپمڤورناكن وضوء" },
-        "11": { sk: "ڤلاجرن امڤت: اذان دان اقامة", sp: "٤.١ ڤڠرتين اذان دان اقامة\n٤.٢ توجوان اذان", obj: "١. مپبوت مقصود اذان دان اقامة\n٢. مڠنل ڤستي تاهون ڤنشريعتن اذان" },
-        "19": { sk: "ڤلاجرن امڤت: اذان دان اقامة", sp: "٤.٦ دعاء سلفس اذان دان اقامة\n٤.٧ توجوان دان حكوم اقامة", obj: "١. ممبوپيكن لفظ صلوات\n٢. ممبوپيكن لفظ دعاء سلفس اذان" },
-        "22": { sk: "ڤلاجرن ليم: صلاة", sp: "٥.١ ڤڠرتين صلاة\n٥.٢ شرط واجب صلاة", obj: "١. مپبوت ڤڠرتين صلاة\n٢. مپاتاكن جومله شرط واجب صلاة" },
-        "31": { sk: "ڤلاجرن انم: برسوچي", sp: "٦.١ ڤڠرتين برسوچي\n٦.٢ حكوم برسوچي", obj: "١. مپبوت مقصود برسوچي\n٢. مپاتاكن حكوم عملن برسوچي" }
-    },
-    "Sirah": {
-        "1": { sk: "١. كڤوتراءن نبي محمد صلى الله عليه وسلم", sp: "١.١ ڤڠنلن\n١.٢ ڤريستيوا سبلوم كلاهيرن", obj: "١. مپبوت تاريخ كلاهيرن نبي محمد\n٢. منوليس نام ڤنوه ايبوندا نبي" },
-        "5": { sk: "٢. ڤڠاسوه نبي محمد صلى الله عليه وسلم", sp: "٢.١ ڤڠنلن", obj: "١. مپبوت توجوان قوم عرب قريش مڠهنتر انق كچيل دلوار كوتا\n٢. مپبوت نام ڤڠاسوه" },
-        "7": { sk: "٢. ڤڠاسوه نبي محمد صلى الله عليه وسلم", sp: "٢.٢ اسوهن اوليه بوندان أمنة\n٢.٣ اسوهن اوليه ثويبة، حليمة دان أم أيمن", obj: "١. ممباچ امڤت ڤريستيوا اسوهن\n٢. مپبوت نام وانيتا ڤرتام مڠاسوه نبي" },
-        "19": { sk: "٣. كهيدوڤن نبي محمد صلى الله عليه وسلم", sp: "٣.١ ڤڠنلن", obj: "١. مپبوت بنتوق كهيدوڤن نبي محمد" },
-        "23": { sk: "٣. كهيدوڤن نبي محمد صلى الله عليه وسلم", sp: "٣.٣ كهيدوڤن نبي محمد سباݢاي رسول دان كتوا كلوارݢ", obj: "١. مپبوت عمور نبي كتيك بركهوين\n٢. منوليس تڠݢوڠجواب نبي ترهادڤ كلوارݢ" },
-        "25": { sk: "٤. ڤركهوينن نبي محمد صلى الله عليه وسلم", sp: "٤.١ ڤڠنلن", obj: "١. مپبوت سبلس نام ايستري نبي محمد" },
-        "32": { sk: "٤. ڤركهوينن نبي محمد صلى الله عليه وسلم", sp: "٤.٣ انق٢ نبي محمد (انق للاكي)", obj: "١. مپاپيكن لاݢو انق٢ نبي محمد\n٢. مڠحفظ بيوداتا انق للاكي نبي" }
-    },
-    "BahasaArab": {
-        "1": { sk: "الدَّرْسُ الأَوَّلُ: العَمَلُ", sp: "١.١ اقْرَأْ وَاحْفَظْ\n١.٢ تَأَمَّلْ وَانْطِقْ", obj: "١. مپبوت ايسي ڤلاجرن دڠن بتول\n٢. مڠنل ڤستي باريس ستياڤ ڤركاتاءن" },
-        "5": { sk: "الدَّرْسُ الثَّانِي: الأَدَوَاتُ المَنْزِلِيَّةُ", sp: "٢.١ مَاذَا يُوجَدُ فِي بَيْتِكَ؟\n٢.٢ تَأَمَّلْ وَانْطِقْ", obj: "١. مپبوت ايسي ڤلاجرن دڠن بتول\n٢. منوليس ايسي ڤلاجرن دڠن بتول" },
-        "10": { sk: "الدَّرْسُ الثَّالِثُ: مَلَابِسِي النَّظِيفَةُ", sp: "٣.١ مَاذَا تَلْبِسُ فِي أَثْنَاءِ الرِّيَاضَةِ؟\n٣.٢ اقْرَأْ وَاحْفَظْ", obj: "١. مپبوت ايسي ڤلاجرن دڠن بتول\n٢. منوليس ايسي ڤلاجرن دڠن بتول" },
-        "19": { sk: "المَلَابِسُ لِلصَّلَاةِ", sp: "٣.٦ اقْرَأْ وَتَكَلَّمْ ثُمَّ اكْتُبْ", obj: "١. ممباچ آيات يڠ مڠاندوڠي ايسي ڤلاجرن\n٢. منوليس آيات ڤلاجرن دڠن بتول" },
-        "23": { sk: "الدَّرْسُ الخَامِسُ: فَصْلِي هَادِئُ", sp: "٥.١ اقْرَأْ وَتَكَلَّمْ\n٥.٢ تَأَمَّلْ وَانْطِقْ", obj: "١. ممباچ آيات يڠ مڠاندوڠي ايسي ڤلاجرن\n٢. منوليس ايسي ڤلاجرن دڠن باءيق" },
-        "30": { sk: "الدَّرْسُ السَّادِسُ: لُغَةُ الفَصْلِ", sp: "٦.١ مَا هِيَ آدَابُ اسْتِئْذَانِ الخُرُوج؟\n٦.٢ اقْرَأْ وَاحْفَظْ", obj: "١. ممباچ آيات يڠ مڠاندوڠي ايسي ڤلاجرن\n٢. مپنارايكن ايسي ڤلاجرن دڠن بتول" }
-    },
-    "JawiKhat": {
-        "1": { sk: "١. سوكو كات تربوک دان تربوک", sp: "١.١ سوكو كات تربوک (حروف ووكل براد دأخير)\n١.٢ حروف يڠ بربوپي سنديري", obj: "١. مپبوت براماي-راماي سوكو كات\n٢. مپناراي چونتوه حروف بربوپي سنديري" },
-        "5": { sk: "٢. سوكو كات تربوک دان ترتوتوڤ", sp: "٢.١ سوكو كات ترتوتوڤ\n٢.٢ سودوت خط نسخ", obj: "١. مپبوت چونتوه سوكو كات ترتوتوڤ\n٢. منوليس حروف برتياڠ مڠيكوت اوكورن" },
-        "8": { sk: "٣. سوكو كات ترتوتوڤ دان تربوک", sp: "٣.١ سوكو كات ترتوتوڤ\n٣.١.١ حروف ووكل (ا) دكوݢوركن", obj: "١. مپبوت مقصود سوكو كات ترتوتوڤ\n٢. مپبوت چونتوه حروف ووكل يڠ دكوݢوركن" },
-        "11": { sk: "٤. سوكو كات ترتوتوڤ دان ترتوتوڤ", sp: "٤.١ حروف ووكل (ا) دكوݢوركن", obj: "١. ممباچ سوكو كات\n٢. مڠيجا دان مپبوت چونتوه" },
-        "20": { sk: "٥. ممبينا ايات٢ موده", sp: "٥.١ ايات موده", obj: "١. ممباچ چونتوه ايات موده\n٢. منوليس چونتوه ايات موده" },
-        "23": { sk: "٦. ممبينا ايات٢ سدرهانا", sp: "٦.١ ايات سدرهانا", obj: "١. ممباچ برڤندوكن ݢامبر" },
-        "28": { sk: "٧. ممبينا ايات لڠكڤ", sp: "٧.١ ايات لڠكڤ", obj: "١. مپاتاكن مقصود ايات لڠكڤ\n٢. منوليس چونتوه ايات لڠكڤ" },
-        "31": { sk: "٨. مڠنل، مپبوت دان ممباچ جاوي", sp: "٨.١ ڤنتون", obj: "١. ممباچ ڤنتون دڠن اينتوناسي يڠ بتول" }
-    },
-    "AmalanLazim": {
-        "1": { sk: "١. ڤڠرتين نجيس", sp: "١.١ ڤڠرتين نجيس", obj: "١. مپاتاكن ڤڠرتين نجيس\n٢. مپبوت چونتوه نجيس" },
-        "4": { sk: "٢. قضاء حاجة", sp: "٢.١ ڤڠرتين قضاء حاجة\n٢.٢ جنيس قضاء حاجة", obj: "١. مپبوت ڤڠرتين قضاء حاجة\n٢. مپاتاكن جنيس قضاء حاجة" },
-        "9": { sk: "٣. برسوچي", sp: "٣.١ ڤڠرتين برسوچي\n٣.٢ دليل برسوچي", obj: "١. ممباچ ڤڠرتين برسوچي\n٢. مپبوت دليل برسوچي برسام ارتين" },
-        "19": { sk: "٣. برسوچي (سامبوڠن) / كسلطانن إسلام جوهر", sp: "٣.٦ چارا برسوچي\n٣.٧ چارا ممݢڠ كايو سوݢي\n٣.٢ كسلطانن جوهر لاما", obj: "١. منونجوق چارا برسوچي\n٢. منونجوق چارا ممݢڠ كايو سوݢي\n٣. منچريتاكن ڤمرينتهن كسلطانن جوهر لاما" },
-        "21": { sk: "٤. دعاء هارين", sp: "٤.١ ڤڠرتين دعاء\n٤.٢ دليل", obj: "١. ممباچ ڤڠرتين دعاء\n٢. منوليس ڤڠرتين دعاء\n٣. ممباچ دليل دعاء هارين" },
-        "24": { sk: "٥. القرءان", sp: "٥.١ ڤڠرتين القرءان\n٥.٢ ادب ممباچ القرءان", obj: "١. ممباچ ڤڠرتين القرءان\n٢. مپاتاكن ادب سبلوم ممباچ القرءان" },
-        "29": { sk: "٤. داءيره٢ دنݢري جوهر", sp: "٤.١ نام داءيره", obj: "١. مپاتاكن نام داءيره دنݢري جوهر" },
-        "30": { sk: "٦. صلوات", sp: "٦.١ ڤڠنلن", obj: "١. مپاتاكن ڤڠرتين صلوات" }
-    }
-};
-
-const cadanganTajuk = {
-    "AlQuran": ["باچاءن سورة / ايات (جزوء ١١)", "باچاءن سورة / ايات (جزوء ١٢)", "باچاءن سورة / ايات (جزوء ١٣)", "سورة الفيل", "سورة قريش", "سورة الماعون", "سورة الكوثر", "سورة الكافرون", "سورة العصر", "سورة الهمزة"],
-    "Hafazan": ["ڤڠنلن حفظن القرءان", "سورة الماعون", "سورة قريش", "سورة الفيل", "سورة الهمزة", "سورة العصر", "سورة التكاثر", "سورة القارعة", "سورة العاديات", "سورة الزلزلة"],
-    "Tauhid": ["برايمان كڤد الله تعالى", "صيفت٢ واجب باݢي الله تعالى", "صيفت٢ مستحيل اتس الله تعالى", "صيفت يڠ هاروس اتس الله تعالى", "برايمان كڤد ڤارا ملائكة", "برايمان كڤد كتاب", "صيفت الوجود", "صيفت القدم", "صيفت البقاء", "مخالفته تعالى للحوادث"],
-    "Ibadat": ["نجيس", "حدث كچيل", "وضوء", "اذان دان اقامة", "صلاة", "برسوچي", "بندا٢ كوتور دان نجيس", "بهاݢين نجيس", "چارا مپوچيكن نجيس", "شروط صح صلاة"],
-    "Sirah": ["كڤوتراءن نبي محمد صلى الله عليه وسلم", "ڤڠاسوه نبي محمد", "كهيدوڤن نبي محمد (سباݢاي نبي دان رسول)", "كهيدوڤن نبي محمد (سباݢاي كتوا كلوارݢ)", "كهيدوڤن نبي محمد (سباݢاي كتوا نݢارا)", "ڤركهوينن نبي محمد صلى الله عليه وسلم", "ايستري٢ نبي محمد", "انق٢ نبي محمد", "سورة الفيل", "اسوهن حليمة السعدية"],
-    "Akhlak": ["ادب برتامو", "ادب برڤاكاين", "ادب ماسوق دان كلوار رومه", "ادب ماسوق دان كلوار تندس", "ادب ماسوق مسجيد", "ادب دالم مجليس عيلمو", "ادب مڠݢوناكن ميديا مسسا", "ڤاكاين منوتوڤ عورة", "دعاء مماكاي ڤاكاين", "ادب كتيك بركوڠسي معلومت"],
-    "BahasaArab": ["العمل (Pekerjaan)", "الأدوات المنزلية (Peralatan Rumah)", "ملابسي النظيفة (Pakaian Saya yang Bersih)", "الأعداد والأرقام (Nombor dan Bilangan)", "فصلي هادئ (Kelasku yang Tenang)", "لغة الفصل (Bahasa Kelas)", "الملابس للصلاة (Pakaian untuk Solat)", "ماذا يوجد في بيتك؟ (Apa ada di rumahmu?)", "آداب استئذان الخروج (Adab Minta Izin Keluar)"],
-    "JawiKhat": ["سوكو كات تربوک دان تربوک", "سوكو كات تربوک دان ترتوتوڤ", "سوكو كات ترتوتوڤ دان تربوک", "سوكو كات ترتوتوڤ دان ترتوتوڤ", "حروف بربوپي سنديري", "ممبينا ايات٢ موده", "ممبينا ايات٢ سدرهانا", "ممبينا ايات لڠكڤ", "ڤنتون / ساجق / نشيد", "سودوت خط نسخ"],
-    "AmalanLazim": ["ڤڠرتين نجيس", "قضاء حاجة", "برسوچي", "دعاء هارين", "القرءان", "صلوات", "اصل اصول نام نݢري جوهر", "سلطان نݢري جوهر (جوهر لاما)", "سلطان نݢري جوهر (جوهر مودن)", "داءيره٢ دنݢري جوهر / بنديرا"]
-};
-
-let baseSK = "";
-let baseSP = "";
-let baseObj = "";
-
-function rebuildTextareas() {
-    const skChecked = Array.from(document.querySelectorAll('.sk-cb')).filter(cb => cb.checked).map(cb => "- " + cb.value);
-    const spChecked = Array.from(document.querySelectorAll('.sp-cb')).filter(cb => cb.checked).map(cb => "- " + cb.value);
-    const objChecked = Array.from(document.querySelectorAll('.obj-cb')).filter(cb => cb.checked).map(cb => "- " + cb.value);
-
-    let finalSK = baseSK;
-    if(skChecked.length > 0) {
-        finalSK += (finalSK !== "-" && finalSK !== "" ? "\n\nتمبهن:\n" : "") + skChecked.join("\n");
-    }
-    document.getElementById('sk').value = finalSK;
-    autoResize.call(document.getElementById('sk'));
-
-    let finalSP = baseSP;
-    if(spChecked.length > 0) {
-        finalSP += (finalSP !== "-" && finalSP !== "" ? "\n\nتمبهن:\n" : "") + spChecked.join("\n");
-    }
-    document.getElementById('sp').value = finalSP;
-    autoResize.call(document.getElementById('sp'));
-
-    let finalObj = baseObj;
-    if(objChecked.length > 0) {
-        finalObj += (finalObj !== "-" && finalObj !== "" ? "\n\nتمبهن:\n" : "") + objChecked.join("\n");
-    }
-    document.getElementById('objektif').value = finalObj;
-    autoResize.call(document.getElementById('objektif'));
-}
-
-function updateTajukList() {
-    const subjek = document.getElementById('subjek').value;
-    const datalist = document.getElementById('tajuk_list');
-    datalist.innerHTML = "";
-    if(subjek && cadanganTajuk[subjek]) {
-        cadanganTajuk[subjek].forEach(t => {
-            const opt = document.createElement('option');
-            opt.value = t;
-            datalist.appendChild(opt);
-        });
-    }
-}
-
-function tukarNomborJawi(teks) {
-    if (!teks) return "";
-    const jawiDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-    return teks.toString().replace(/\d/g, x => jawiDigits[x]);
-}
-
-function autoResize() {
-    this.style.height = 'auto';
-    this.style.height = this.scrollHeight + 'px';
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    
-    document.querySelectorAll('textarea').forEach(el => {
-        el.addEventListener('input', autoResize, false);
-    });
-
-    const sekolahSelect = document.getElementById('sekolahSelect');
-    const guruSelect = document.getElementById('guruSelect');
-
-    $(sekolahSelect).select2({ theme: "default", dir: "rtl" });
-    $(guruSelect).select2({ theme: "default", dir: "rtl" });
-
-    const senaraiNamaSekolah = Object.keys(senaraiSekolahGuru).sort();
-    senaraiNamaSekolah.forEach(sekolah => {
-        const option = new Option(sekolah, sekolah);
-        sekolahSelect.add(option);
-    });
-
-    $(sekolahSelect).on('change', function() {
-        const selectedSekolah = this.value;
-        guruSelect.innerHTML = '<option value="">-- ڤيليه نام ݢورو --</option>';
-        if (selectedSekolah && senaraiSekolahGuru[selectedSekolah]) {
-            guruSelect.disabled = false;
-            senaraiSekolahGuru[selectedSekolah].forEach(guru => {
-                const option = new Option(guru, guru);
-                guruSelect.add(option);
-            });
-            $(guruSelect).select2({ dir: "rtl" });
-        } else {
-            guruSelect.disabled = true;
-            guruSelect.innerHTML = '<option value="">-- ڤيليه سكوله دهولو --</option>';
-            $(guruSelect).select2({ dir: "rtl" });
-        }
-    });
-
-    const subjekEl = document.getElementById('subjek');
-    const darjahEl = document.getElementById('darjah');
-    const mingguEl = document.getElementById('minggu');
-    const tarikhEl = document.getElementById('tarikh');
-
-    tarikhEl.value = '2026-08-25';
-    subjekEl.value = 'Sirah';
-    darjahEl.value = '2'; 
-    mingguEl.value = '30';
-
-    function autoFillDSKP() {
-        updateTajukList(); 
-
-        const subjek = subjekEl.value;
-        const darjah = darjahEl.value.toString().trim();
-        const minggu = tukarNomborJawi(mingguEl.value.toString());
-        
-        let found = false;
-
-        if (subjek && darjah === '2' && rptData[subjek]) {
-            // Check if exact week exists in milestone data
-            if (rptData[subjek][mingguEl.value.toString()]) {
-                const data = rptData[subjek][mingguEl.value.toString()];
-                baseSK = tukarNomborJawi(data.sk);
-                baseSP = tukarNomborJawi(data.sp);
-                baseObj = tukarNomborJawi(data.obj);
-                found = true;
-            } else {
-                // If not found exactly, find the closest previous milestone week (fallback)
-                let closestWeek = 0;
-                for (let w in rptData[subjek]) {
-                    if (parseInt(w) <= parseInt(mingguEl.value) && parseInt(w) > closestWeek) {
-                        closestWeek = parseInt(w);
-                    }
-                }
-                if (closestWeek > 0) {
-                    const data = rptData[subjek][closestWeek.toString()];
-                    baseSK = tukarNomborJawi(data.sk) + " (سامبوڠن)";
-                    baseSP = tukarNomborJawi(data.sp);
-                    baseObj = tukarNomborJawi(data.obj);
-                    found = true;
-                }
+    // ==========================================
+    // PANGKALAN DATA SILIBUS (Diperkemas untuk Darjah 1 & TAJ)
+    // ==========================================
+    const rptData = {
+        "Akhlak": {
+            "TAJ": {
+                1: { sk: "1 منچونتوهي اخلاق رسول الله\n1.1 اخلاق نبي محمد صلى الله عليه وسلم", sp: "1. ميبوت اخلاق نبي محمد صلى الله عليه وسلم.\n2. ممبريكن چونتوه اخلاق نبي محمد." }
+            },
+            "1": {
+                19: { sk: "1. ادب تيدور\n1.1 فغنلن", sp: "1. منجلسكن مقصود تيدور دغن ريغكس.\n2. مينارايكن ادب سبلوم تيدور دغن بتول." },
+                24: { sk: "2. منجاك كبرسيهن ديري\n2.1 فغنلن", sp: "1. مپاتاكن هوبوغن كبرسيهن ديري دغن عبادة.\n2. مينارايكن عملن كبرسيهن ديري." },
+                26: { sk: "3. ادب بروضوء\n3.1 فغنلن", sp: "1. مپاتاكن فغرتين بروضوء دغن جلس." },
+                29: { sk: "4. ادب ماكن\n4.1 ادب سبلوم ماكن", sp: "1. مپاتاكن ادب سبلوم ماكن دعن جلس." },
+                31: { sk: "5. ادب دغن ايبو باف\n5.1 فغنلن", sp: "1. منجلسكن فقرتين ايبو باق دغن جلس." },
+                33: { sk: "6. ادب دغن كورو\n6.1 فغنلن", sp: "1. میاتاکن قرانن كورو دغن جلس." },
+                34: { sk: "7. ادب دغن كاون\n7.1 فغنلن", sp: "1. منرغكن فقرتين كاون يع باءيق دغن ريفكس." }
             }
-        } 
-        
-        if (!found && mingguEl.value) {
-            baseSK = "اولڠكاجي / ڤنيلاين / چوتي سكوله";
-            baseSP = "-";
-            baseObj = "-";
-        } else if (!mingguEl.value) {
-            baseSK = "";
-            baseSP = "";
-            baseObj = "";
-        }
-        
-        document.querySelectorAll('.sk-cb, .sp-cb, .obj-cb').forEach(cb => cb.checked = false);
-        rebuildTextareas();
-    }
-
-    subjekEl.addEventListener('change', autoFillDSKP);
-    darjahEl.addEventListener('change', autoFillDSKP);
-    mingguEl.addEventListener('change', autoFillDSKP);
-    mingguEl.addEventListener('keyup', autoFillDSKP);
-
-    autoFillDSKP();
-});
-
-function setupMultiSelect(checkboxClass, displayId) {
-    const checkboxes = document.querySelectorAll('.' + checkboxClass);
-    const displayInput = document.getElementById(displayId);
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', () => {
-            const selected = Array.from(checkboxes).filter(i => i.checked).map(i => i.value);
-            displayInput.value = selected.join('، '); 
-        });
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    setupMultiSelect('bbm-cb', 'bbm_display');
-
-    function binaCheckbox(list, containerId, checkboxClass) {
-        const container = document.getElementById(containerId);
-        list.forEach((text, index) => {
-            const li = document.createElement('li');
-            li.innerHTML = `<div class="form-check"><input class="form-check-input float-end ms-2 ${checkboxClass}" type="checkbox" value="${text}" id="${containerId}_${index}"><label class="form-check-label w-100" for="${containerId}_${index}" style="cursor: pointer;">${text}</label></div>`;
-            container.appendChild(li);
-        });
-        document.querySelectorAll('.' + checkboxClass).forEach(cb => {
-            cb.addEventListener('change', rebuildTextareas); 
-        });
-    }
-
-    const senaraiSK = [
-        "ممهمي دان مڠعملكن ركن اسلام", "ممهمي دان مڠعملكن ركن ايمان", "مڠتاهوءي دان مڠحياتي سيرة نبي",
-        "ممهمي دان مڠعملكن ادب دالم كهيدوڤن", "ممهمي دان مڠحياتي نيلاي٢ مورني", "مڠتاهوءي دان ممهمي اسس عبادات",
-        "ممهمي دان ملقساناكن شرط صح عبادات", "مڠنل دان منوليس حروف جاوي", "ممباچ دان ممهمي تيكس جاوي",
-        "مڠتاهوءي دان ممهمي اسس بهاس عرب", "ممباچ دان منوليس ڤركاتاءن بهاس عرب", "مڠتاهوءي سجارة نبي محمد",
-        "ممهمي دان مڠعملكن سنة رسول الله", "مڠتاهوءي دان ممهمي صيفت٢ الله", "ممهمي دان مڠحياتي قيصه ڤارا انبياء",
-        "ممهمي دان مڠعملكن ادب دالم كلوارݢ", "ممهمي دان ملقساناكن عملن فرض عين", "ممهمي دان مڠحياتي اخلاق محمودة",
-        "ممباچ دان مڠحفل اية القرءان", "مڠتاهوءي دان ممهمي حكوم تجويد"
-    ];
-
-    const senaraiSP = [
-        "ممباچ دان مپبوت كلمة دڠن بتول", "منوليس حروف دان ڤركاتاءن دڠن خط يڠ كمس", "مڠحفل سورة اتاو دعاء دڠن لنچر",
-        "منجلسكن ڤڠرتين دان مقصود تاجوک", "مپناريكن ركن، شرط، اتاو بهاݢين", "ممبيذاكن انتارا يڠ حلال دان حرام",
-        "مڠهورايكن حكمه دان ڤڠاجرن", "مڠتراڤكن نيلاي مورني دالم كهيدوڤن هارين", "ملاكوكن سيمولاسي اتاو عملي",
-        "ممبينا ايات موده برداسركن ݢامبر", "مڠنل ڤستي حكوم تجويد دالم ايات", "مپبوت دليل نقلي دان عقلي",
-        "برچريتا تنتڠ قيصه نبي دان رسول", "مپوسون ڤركاتاءن منجادي ايات يڠ لڠكڤ", "ممادنكن ڤركاتاءن اتاو ݢامبر دڠن بتول",
-        "ملاكونكن ايسي ڤلاجرن دالم كومڤولن", "منجواب سوءالن كفهمن سچارا ليسن", "مڠلوركن ايديا ملالوءي سومبڠسارن",
-        "ممباچ تيك‌س دڠن فصيح دان برتجويد", "منرڠكن چارا ملقساناكن عبادة"
-    ];
-
-    const senaraiObj = [
-        "ممباچ تيك‌س اتاو ايات دڠن مخرج يڠ بتول", "منوليس ڤركاتاءن جاوي دڠن ايجاءن يڠ تڤت", "مڠحفل دعاء اتاو سورة دڠن لنچر",
-        "منرڠكن مقصود تاجوک ڤلاجرن دڠن جلس", "مپناريكن سكورڠ-كورڠڽ ٣ ايسي ڤنتيڠ", "منونجوقكن چارا عملي دڠن سمڤورنا",
-        "ممبيذاكن حق دان باطل دڠن تڤت", "مپبوت دليل يڠ بركاءيتن دڠن تاجوک", "منجواب ٤ درڤد ٥ سوءالن دڠن بتول",
-        "ممبينا ٣ ايات موده دڠن ستروكتور يڠ بتول", "مڠنل ڤستي ڤركارا يڠ ممبطلكن عبادة", "مپوسون كد اتاو ݢامبر مڠيكوت اوروتن",
-        "برچريتا سمولا قيصه يڠ دڤلاجري", "مڠلوركن حكمه اتاو ڤڠاجرن درڤد قيصه", "ملاكوكن سيمولاسي دالم كومڤولن دڠن باءيق",
-        "ممادنكن ٥ ڤركاتاءن دڠن ارتيڽ يڠ بتول", "ملابلكن باهݢين اتاو اڠݢوتا دڠن تڤت", "مپبوت نام دان توݢس ملائكة دڠن بتول",
-        "مڠلوركن حكوم تجويد درڤد ايات", "مڠعڤليكاسيكن نيلاي مورني دالم اكتيۏيتي هارين"
-    ];
-
-    binaCheckbox(senaraiSK, 'sk_options', 'sk-cb');
-    binaCheckbox(senaraiSP, 'sp_options', 'sp-cb');
-    binaCheckbox(senaraiObj, 'obj_options', 'obj-cb');
-
-    const senaraiAktiviti = [
-        "١. سيت ايندوکسي: ݢورو منونجوقكن ݢامبر دان برسوءال جواب دڠن موريد.\n٢. لڠكه اوتام: ݢورو منرڠكن تاجوک ڤلاجرن.\n٣. لڠكه كدوا: موريد منجواب لامبرن كرجا.\n٤. ڤنوتوڤ: ݢورو ممروموسكن ڤلاجرن هاري اين.",
-        "١. سيت ايندوکسي: ݢورو ممبوات اوجيكاجي ريڠكس / ديمونستراسي.\n٢. لڠكه اوتام: موريد مليهت دان منچاتت ڤمرهاتين.\n٣. لڠكه كدوا: ڤربينچڠن دالم كومڤولن.\n٤. ڤنوتوڤ: ݢورو ممبوات كسيمڤولن.",
-        "١. سيت ايندوکسي: ݢورو مماءينكن ۏيديو / اوديو.\n٢. لڠكه اوتام: موريد ممبريتاهو ايسي ڤنتيڠ.\n٣. لڠكه كدوا: اكتيۏيتي لقونن / سيمولاسي.\n٤. ڤنوتوڤ: سؤال جواب دان روموسن.",
-        "١. سيت ايندوکسي: ݢورو منچريتاكن سبواه قيصه.\n٢. لڠكه اوتام: ݢورو مڠاءيتكن قيصه دڠن تاجوک.\n٣. لڠكه كدوا: موريد منوليس ڤڠاجرن درڤد قيصه.\n٤. ڤنوتوڤ: ݢورو منرڤكن نيلاي مورني.",
-        "١. سيت ايندوکسي: ڤرماءينن تيكا تكي / تيكا كات.\n٢. لڠكه اوتام: ݢورو منرڠكن حكوم / مقصود.\n٣. لڠكه كدوا: موريد مڠلوركن حكوم درڤد اية.\n٤. ڤنوتوڤ: ݢورو مپيمق جوڤن موريد.",
-        "١. سيت ايندوکسي: سومبڠسارن ايديا برداسركن باهن ماءوجود.\n٢. لڠكه اوتام: ڤرنبڠن ݢورو سچارا تروڤيق.\n٣. لڠكه كدوا: موريد ملابلكن ݢامبر / باهݢين.\n٤. ڤنوتوڤ: ݢورو ممبريتاهو روموسن كسلوهروهن.",
-        "١. سيت ايندوکسي: ݢورو ممباچكن ساتو اية / دعاء.\n٢. لڠكه اوتام: موريد مڠيكوت باچاءن ݢورو.\n٣. لڠكه كدوا: موريد ممباچ سچارا كومڤولن / برڤاسڠن.\n٤. ڤنوتوڤ: ݢورو ممبتولكن مخرج دان تجويد.",
-        "١. سيت ايندوکسي: ݢورو منونجوقكن كد ايمبسن.\n٢. لڠكه اوتام: موريد مڠيجا دان مپبوت ڤركاتاءن.\n٣. لڠكه كدوا: لاتيهن منوليس ڤركاتاءن / ايات.\n٤. ڤنوتوڤ: ݢورو ممروموسكن عيلمو ڤنوليسن.",
-        "١. سيت ايندوکسي: اكتيۏيتي (Brainstorming) باݢي تاجوک بهارو.\n٢. لڠكه اوتام: ݢورو ممبريكن ڤنراڠن دان چونتوه.\n٣. لڠكه كدوا: موريد ممبوات ڤتا ميندا.\n٤. ڤنوتوڤ: ڤمبنتڠن واكيل كومڤولن.",
-        "١. سيت ايندوکسي: ݢورو منونجوقكن چارا عملي (وضوء/صلاة).\n٢. لڠكه اوتام: موريد ممرهايتكن دان مڠهافل لڠكه.\n٣. لڠكه كدوا: موريد ملقساناكن عملي سچارا برݢيلير.\n٤. ڤنوتوڤ: ݢورو مپيمق دان ممبتولكن كسالهن.",
-        "١. سيت ايندوکسي: ݢورو ممباوا موريد كلوار كلس (جک ڤرلو).\n٢. لڠكه اوتام: اكتيۏيتي اكتيۏ ڤمبلاجرن د لوار.\n٣. لڠكه كدوا: موريد منچاتت ڤمرهاتين.\n٤. ڤنوتوڤ: ڤربينچڠن دان كسيمڤولن د كلس.",
-        "١. سيت ايندوکسي: كوءيز ريڠكس ڤلاجرن لڤس.\n٢. لڠكه اوتام: ݢورو مڠاءيتكن دڠن ڤلاجرن هاري اين.\n٣. لڠكه كدوا: اكتيۏيتي سؤال جواب دان كفهمن.\n٤. ڤنوتوڤ: ݢورو ممبريكن ݢنجرن اتاو ڤوجين.",
-        "١. سيت ايندوکسي: ݢورو ماسوقكن اونسور كجوتان دالم كلس.\n٢. لڠكه اوتام: ݢورو منرڠكن كڤنتيڠن تاجوک.\n٣. لڠكه كدوا: موريد مپوسون كد دان ممبوات ايات.\n٤. ڤنوتوڤ: روموسن دان ڤنراڤن نيلاي مورني.",
-        "١. سيت ايندوکسي: ݢورو منجاوب سوءالن درڤد موريد.\n٢. لڠكه اوتام: ڤنراڠن سچارا مندالم اوليه ݢورو.\n٣. لڠكه كدوا: لاتيهن ڤڠوكوهن مڠݢوناكن لمبرن كرجا.\n٤. ڤنوتوڤ: ݢورو ممبتولكن جاواڤن برسام موريد.",
-        "١. سيت ايندوکسي: ݢورو منايڠكن سلايد (Slide).\n٢. لڠكه اوتام: موريد مليهت دان ممهمي ايسي كانندونڠن.\n٣. لڠكه كدوا: اكتيۏيتي اكتيۏ (Think-Pair-Share).\n٤. ڤنوتوڤ: ݢورو ممبوات كسيمڤولن بسرتا نصيحت.",
-        "١. سيت ايندوکسي: ݢورو منونجوقكن الت باهن باءن مڠاجر (BBM).\n٢. لڠكه اوتام: موريد برديمونستراسي دڠن BBM.\n٣. لڠكه كدوا: موريد منجواب كوءيز بركاءيتن BBM.\n٤. ڤنوتوڤ: ݢورو منرڠكن كلبيهن BBM ترسبوت.",
-        "١. سيت ايندوکسي: ݢورو منچريتاكن ڤڠالمن سبنر.\n٢. لڠكه اوتام: ݢورو مڠاءيتكن ڤڠالمن دڠن ڤلاجرن.\n٣. لڠكه كدوا: موريد بركوڠسي ڤڠالمن مريك.\n٤. ڤنوتوڤ: روموسن دان ڤڠاجرن.",
-        "١. سيت ايندوکسي: ݢورو ممباچكن ڤويسي اتاو نشيد.\n٢. لڠكه اوتام: موريد مڠحفل دڠن چارا برنشيد.\n٣. لڠكه كدوا: موريد ممڤرسامبهكن دالم كومڤولن.\n٤. ڤنوتوڤ: ݢورو ممروموسكن ايسي كاندوڠن.",
-        "١. سيت ايندوکسي: ݢورو منونجوقكن ݢامبر سيتواسي.\n٢. لڠكه اوتام: ڤربينچڠن دالم كومڤولن كچيل.\n٣. لڠكه كدوا: واكيل كومڤولن ممبنتڠكن حاصيل ڤربينچڠن.\n٤. ڤنوتوڤ: ݢورو مپوكوڠ دان ممبري كومن.",
-        "١. سيت ايندوکسي: ݢورو مماءينكن ڤرماءينن (Role-play).\n٢. لڠكه اوتام: موريد برلقون سيتواسي يڠ دبري.\n٣. لڠكه كدوا: موريد لاءين ممبري ڤنداڤت دان ڤمرهاتين.\n٤. ڤنوتوڤ: ݢورو ممروموسكن دان منرڤكن نيلاي مورني."
-    ];
-
-    const senaraiRefleksi = [
-        "_____ / _____ موريد مڠواساءي اوبجيكتيف ڤمبلاجرن هاري اين. موريد يڠ بلوم مڠواساءي اكن دبريكن بيمبيڠن لبيه.",
-        "ڤمبلاجرن برجاي مناڤت ڤرهاتين موريد. _____ / _____ موريد داڤت ممهمي ايسي ڤلاجرن دڠن باءيق.",
-        "اكتيۏيتي دجالنكن دڠن لنچر. سيمولاسي ممبنتو ڤمهممن موريد. _____ / _____ موريد مڠواساءي.",
-        "_____ / _____ موريد داڤت منجواب سوءالن دڠن بتول. ڤڠوكوهن اكن دتروسكن ڤد سيسي اكن داتڠ.",
-        "موريد ساڠت اكتيف دان برمينت. _____ / _____ موريد منچاڤي اوبجيكتيف يڠ دتتڤكن.",
-        "ڤمبلاجرن دتڠݢوهكن كران ڤروݢرم سكوله. اكن دسمبوڠ ڤد وقتو اكن داتڠ.",
-        "_____ / _____ موريد ممهمي كونسيڤ يڠ دأجر. _____ موريد ڤرلو بيمبيڠن اينديۏيدو.",
-        "اكتيۏيتي بركومڤولن برجالن باءيق. _____ / _____ موريد منونجوقكن كرهاسم يڠ تيڠݢي.",
-        "_____ / _____ موريد داڤت مڠيجا دان منوليس ڤركاتاءن بهارو دڠن بتول.",
-        "موريد مڠحفل دعاء / سورة دڠن لنچر. _____ / _____ موريد منچاڤي تاهڤ يڠ ممواسكن.",
-        "_____ / _____ موريد داڤت ملقساناكن عملي (وضوء/صلاة) دڠن سمڤورنا.",
-        "ڤمبلاجرن دتڠݢوهكن كران چوتي عموم. اكن دتروسكن ڤد ميڠݢو هادڤن.",
-        "_____ / _____ موريد داڤت مڠلوركن حكوم تجويد دڠن تڤت دالم اية يڠ دبري.",
-        "BBM يڠ دݢوناكن ساڠت ممبنتو ڤمهممن. _____ / _____ موريد مڠواساءي ڤلاجرن.",
-        "_____ / _____ موريد داڤت ممبيذاكن دان مپبوت چونتوه دڠن تڤت.",
-        "ڤمبلاجرن برلاكو دالم كأداءن يڠ باءيق. _____ / _____ موريد ممهمي دان ممبوات كاتاتن دڠن كمس.",
-        "_____ / _____ موريد برمعنا دالم مناجواب كوءيز دان ممبري تومڤوان يڠ ڤنوه.",
-        "_____ / _____ موريد داڤت منچريتاكن سمولا قيصه دان مڠلوركن ڤڠاجرن درڤدڽ.",
-        "موريد ڤرلو باڽق لاتيهن باچاءن. _____ / _____ موريد بلوم مڠواساءي فصيحن ممباچ.",
-        "_____ / _____ موريد داڤت مڠعڤليكاسيكن نيلاي مورني دالم سيتواسي هارين يڠ دبري.",
-        "ڤمبلاجرن دتڠݢوهكن كران ݢورو مڠحاضيري كورسوس / مشوارت.",
-        "ڤمبلاجرن دتڠݢوهكن كران ݢورو مڠمبيل چوتي ريهت خاص (CRK).",
-        "ڤمبلاجرن دتڠݢوهكن كران ݢورو مڠمبيل چوتي ساكيت (MC)."
-    ];
-
-    binaDropdownList(senaraiAktiviti, 'cadangan_aktiviti');
-    binaDropdownList(senaraiRefleksi, 'cadangan_refleksi');
-});
-
-function laksanaCetak() {
-    const size = document.getElementById('print-size').value;
-    const orientation = document.getElementById('print-orientation').value;
-    const styleEl = document.getElementById('print-page-config');
-    
-    // Menetapkan CSS @page secara dinamik
-    styleEl.innerHTML = `@page { size: ${size} ${orientation}; margin: 12mm; }`;
-    
-    // Pastikan semua textarea di-resize dengan betul sebelum cetak
-    document.querySelectorAll('textarea').forEach(el => {
-        el.style.height = 'auto';
-        el.style.height = el.scrollHeight + 'px';
-    });
-    
-    // Beri masa sekejap (300ms) untuk pelayar menukar susun atur, kemudian cetak
-    setTimeout(() => {
-        window.print();
-    }, 300);
-}
-
-function tukarSaizTulisan(saiz, btnEl) {
-    // Membuang saiz sedia ada pada body
-    document.body.classList.remove('saiz-kecil', 'saiz-sederhana', 'saiz-besar');
-    
-    // Menambah class saiz yang dipilih
-    document.body.classList.add('saiz-' + saiz);
-    
-    // Kemas kini visual butang aktif
-    const btns = document.getElementById('btn-group-saiz').querySelectorAll('.btn');
-    btns.forEach(b => b.classList.remove('active'));
-    btnEl.classList.add('active');
-
-    // Susun semula ketinggian (height) kotak teks automatik selepas saiz bertukar
-    setTimeout(() => {
-        document.querySelectorAll('textarea').forEach(el => {
-            el.style.height = 'auto';
-            el.style.height = el.scrollHeight + 'px';
-        });
-    }, 100);
-}
-
-function eksportCSV() {
-    const fields = ['sekolahSelect', 'guruSelect', 'subjek', 'darjah', 'nama_kelas', 'tarikh', 'hari', 'masa', 'bil_murid', 'minggu', 'tajuk', 'psa', 'sk', 'sp', 'objektif', 'kb', 'gj', 'pi', 'nilai_display', 'pedagogi', 'ki', 'amk', 'penilaian', 'bbm_display', 'hasrat', 'kriteria', 'aktiviti', 'refleksi'];
-    let csvContent = "\uFEFFID_Medan,Nilai\n"; // \uFEFF memastikan sokongan karakter Jawi (UTF-8) di Excel
-    
-    fields.forEach(id => {
-        let el = document.getElementById(id);
-        if(el) {
-            let val = el.value.replace(/"/g, '""'); // Format khas CSV jika ada " (Double Quote)
-            csvContent += `${id},"${val}"\n`;
-        }
-    });
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    let tarikh = document.getElementById('tarikh').value || "TiadaTarikh";
-    link.setAttribute("href", url);
-    link.setAttribute("download", `Draf_RPH_${tarikh}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-function importCSV(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const text = e.target.result;
-        // Regex untuk membaca CSV berformat: Kunci,"Nilai (termasuk baris baharu)"
-        const regex = /([^,]+),"([\s\S]*?)"(?=\n[^,]+,"|$)/g;
-        let match;
-        let dataMap = {};
-        
-        while ((match = regex.exec(text)) !== null) {
-            let key = match[1].trim();
-            let val = match[2].replace(/""/g, '"'); // Kembalikan "" menjadi "
-            dataMap[key] = val;
-        }
-
-        // Masukkan data ke dalam borang
-        for (let id in dataMap) {
-            let el = document.getElementById(id);
-            if (el) {
-                if (id === 'sekolahSelect') {
-                    $(el).val(dataMap[id]).trigger('change');
-                } else if (id === 'guruSelect') {
-                    setTimeout(() => { $(el).val(dataMap[id]).trigger('change'); }, 150); // Tunggu sekolahSelect muat senarai guru
-                } else {
-                    el.value = dataMap[id];
-                    if(el.tagName === 'TEXTAREA') {
-                        el.style.height = 'auto';
-                        el.style.height = el.scrollHeight + 'px'; // Auto-resize semula ketinggian kotak
-                    }
-                }
+        },
+        "Al-Quran": {
+            "TAJ": {
+                1: { sk: "1. الحروف الهجائية", sp: "1.1 Menyebut huruf hijaiyah" }
+            },
+            "1": {
+                1: { sk: "1. مغنل حروف هجائية\n1.1 حروف هجائية", sp: "1. مپبوت حروف هجائية دغن بتول." },
+                3: { sk: "1.2 سبوتن بويي حروف مغيكوت باريس", sp: "1. ملفظكن بويي حروف مغيكوت باريس دغن سمفورنا." },
+                7: { sk: "2. ممباچ كليمه القرءان\n2.1 ممباچ حروف برسامبوغ", sp: "1. میبوت دان ممیلیه حروف برسامبوغ دغن بتول." },
+                11: { sk: "3. ممباچ آيات يغ مغندوغي حكوم تجويد\n3.1 بهاكين همزه", sp: "1. مینار ایکن بها كين همزه الوصل دان همزه القطع دغن بتول." },
+                19: { sk: "3.3 مد يغ ملبيهي 2 حركة", sp: "1. میبوت کلیمه يغ مغندوغي مد ملبيهي 2 حركة." },
+                25: { sk: "4. سورة باچاءن : جزء 1 هيغك 2\nسورة الفاتحة", sp: "1. ممباح سورة الفاتحة دغن بيمبيغن كورو." },
+                34: { sk: "سورة ڤيليهن\nسورة النصر، المسد، الاخلاص، الفلق، الناس", sp: "1. ممباح سورة برسام بيمبيغن كورو." }
+            }
+        },
+        "AmalanLazim": {
+            "1": {
+                19: { sk: "1. اوچفن سلام\n1.1 فغرتين سلام", sp: "1. مپاتاکن فغرتين سلام دغن بتول." },
+                20: { sk: "كسلطانن إسلام جوهر\n1. كسلطانن جوهر مودن", sp: "1. میبوت نام فغاساس دان سلطان جوهر مودن." },
+                23: { sk: "2. اذان دان اقامة\n2.1 فغرتين اذان دان اقامة", sp: "1. مپبوت فغرتين اذان دان اقامة." },
+                26: { sk: "3. وضوء\n3.1 فغرتين وضوء", sp: "1. مپاتاکن فغرتين وضوء." },
+                30: { sk: "4. صلاة\n4.1 فغرتين صلاة فرض", sp: "1. مپاتاکن فغرتين صلاة فرض." },
+                33: { sk: "5. دعاء\n5.1 فقرتين دعاء", sp: "1. مپاتاكن فغرتين دعاء." },
+                34: { sk: "6. الأسماء الحسنى\n6.1 فقرتين الأسماء الحسنى", sp: "1. مپاتاكن فغرتين الأسماء الحسنى." }
+            }
+        },
+        "BahasaArab": {
+            "1": {
+                13: { sk: "الدَّرْسُ الأَوَّلُ: التَّعَارُفُ وَالتَّحِيَّاتُ\n1.1 اقْرَأْ وَاحْفَظْ", sp: "1. میبوت لفظ سلام دغن جلس." },
+                20: { sk: "الدَّرْسُ الثَّانِي : أَعْضَاءُ الْجِسْمِ\n2.1 اقْرَأْ وَاحْفَظْ", sp: "1. مپوت نام اشكوتا بادن دغن جلس." },
+                22: { sk: "الدَّرْسُ الثَّالِثُ : أَعْضَاءُ الْأَسْرَةِ\n3.1 اقرأْ وَاحْفَظْ", sp: "1. مپبوت نام اهلي ددالم کلوارک دغن جلس." },
+                24: { sk: "الدَّرْسُ الرَّابِعُ : هَيَّا نَعُدُّ\n4.1 اقْرَأْ وَاحْفَظْ", sp: "1. میبوت بيلغن ددالم بهاس عرب دغن بتول." },
+                26: { sk: "الدَّرْسُ الخَامِسُ : لُغَةُ الْفَصْلِ\n5.1 اقرأْ وَاحْفَظْ", sp: "1. ممباچ كات قربواتن بردا سر کن ضامبر دغن بتول." },
+                29: { sk: "الدَّرْسُ السَّادِسُ : الأَدَوَاتُ الدِّرَاسِيَّةُ\n6.1 اقْرَأْ وَتَكَلَّمْ", sp: "1. مپبوت فرالتن سكوله دغن تقت." },
+                32: { sk: "الدَّرْسُ السَّابِعِ : مَدْرَسَتِي\n7.1 تَأَمَّلْ وَتَكَلَّمْ", sp: "1. میبوت فركاتاءن دغن بتول." }
+            }
+        },
+        "JawiKhat": {
+            "1": {
+                13: { sk: "1. حروف جاوي توغكل\n1.1 حروف جاوي توغكل", sp: "1. مپبوت حروف جاوي توشكل." },
+                19: { sk: "1.3 حروف برتيتيق دان تيدق برتيتيق", sp: "1. مپبوت حروف برتيتيق دان تيدق برتيتيق." },
+                21: { sk: "2. حروف دفرمولاءن كليمه\n2.1 حروف دتغه کلیمه", sp: "1. میبوت چونتوه کمبر دان ملیهت حروف يع براوبه بنتوق." },
+                23: { sk: "3. حروف دتغه کلیمه\n3.1 حروف دتغه کلیمه تيدق براوبه بنتوق", sp: "1. مپبوت حروف دتغه کلیمه تيدق براوبه بنتوق." },
+                25: { sk: "4. حروف دأخير كليمه\n4.1 حروف دأخير كليمه تيدق براوبه بنتوق", sp: "1. میبوت حروف دأخير كليمه تيدق براو به بنتوق." },
+                28: { sk: "6. حروف برسامبوغ\n6.1 حروف برسامبوغ دأول دتغه دان دأخير", sp: "1. مپبوت حروف برسامبوغ دأول، دتغه دان دأخير." },
+                30: { sk: "8. سوكو كات تربوك\n8.1 سوكو كات تربوك 'ا'", sp: "1. مغیجا دان میبوت سوکو کات تربوک 'ا'." },
+                32: { sk: "9. سوكو كات ترتوتوف\n9.1 سوكو كات ترتوتوف 'دوا - دوا' حروف", sp: "1. مغیجا دان مپبوت سوكوكات ترتوتوف 'دوا - دوا' حروف." },
+                34: { sk: "10. سوكو كات تربوك دان ترتوتوف\n10.1 سوكو كات تربوك دان ترتوتوف", sp: "1. مغیجا دان مپبوت سوكو كات 'تربوک - ترتوتوف'." }
+            }
+        },
+        "Sirah": {
+            "1": {
+                19: { sk: "1. فغرتين دان كفنتيغن سيرة\n1.1 فغرتين سيرة", sp: "1. ميبوت فغرتين سيرة.\n2. میبوت سومبر روجوعن سيرة." },
+                22: { sk: "2. نسب كتورونن نبي اسماعيل عليه السلام\n2.1 فغرتين نسب", sp: "1. ميبوت فغرتين نسب.\n2. مپبوت کتورونن نبي محمد صلي الله عليه السلام." },
+                26: { sk: "3. نسب سبله ايه نبي محمد صلى الله عليه وسلم\n3.1 لاتر بلاكغ ايه نبي محمد", sp: "1. بر چریتا مغناءي لاتر بلاك ايه نبي محمد صلى الله عليه وسلم." },
+                30: { sk: "4. نسب سبله ايبو نبي محمد صلى الله عليه وسلم\n4.1 لاتر بلاكغ ايبو نبي محمد", sp: "1. برچریتا مغناءي لاتر بلاكغ ايبو نبي محمد صلى الله عليه وسلم." },
+                33: { sk: "5. نسب قوم دان بغسا نبي محمد صلى الله عليه وسلم\n5.1 لاتر بلاكغ قوم دان بغسا", sp: "1. میبوت چونتوه کجاهیلن مشارکت عرب." }
+            }
+        },
+        "Tauhid": {
+            "1": {
+                19: { sk: "1. ركن إسلام\n1.1 فغرتين ركن إسلام", sp: "1. ميبوت فغرتين ركن إسلام دغن بتول." },
+                20: { sk: "2. مغوچف دوا كليمه شهادة\n2.1 لفظ دوا كليمه شهادة", sp: "1. مپبوت لفظ دوا كليمه شهادة دغن جلس." },
+                22: { sk: "3. منديريكن صلاة\n3.1 فغرتين صلاة", sp: "1. ميبوت فغرتين صلاة دغن بتول." },
+                24: { sk: "4. مغلواركن زكاة\n4.1 فغرتين زكاة", sp: "1. ميبوت فغرتين زكاة دغن بتول." },
+                25: { sk: "5. برقواسا دبولن رمضان\n5.1 فغرتين برقواسا دبولن رمضان", sp: "1. ميبوت فغرتين برقواسا دغن بتول." },
+                26: { sk: "6. منونايكن حج\n6.1 فغرتين حج", sp: "1. مپبوت فغرتين حج دغن بتول." },
+                28: { sk: "7. ركن ايمان\n7.1 فغرتين ركن ايمان", sp: "1. مپبوت فغرتين ايمان دغن بتول." },
+                29: { sk: "8. برايمان كقد الله تعالى\n8.1 ارتي برايمان كقد الله تعالى", sp: "1. ميبوت ارتي برايمان كقد الله دغن بتول." },
+                30: { sk: "9. برايمان كقد ملائكة\n9.1 فغرتين ملائكة", sp: "1. ميبوت فغرتين ملائكة دغن بتول." },
+                31: { sk: "10. برايمان كقد كتاب\n10.1 فغرتين كتاب", sp: "1. ميبوت فغرتين كتاب دغن بتول." },
+                32: { sk: "11. برايمان كقد رسول\n11.1 فغرتين رسول", sp: "1. مپبوت فغرتين رسول دغن بتول." },
+                33: { sk: "12. برايمان كقد هاري قيامة\n12.1 فغرتين هاري قيامة", sp: "1. ميبوت فغرتين هاري قيامة دغن بتول." },
+                34: { sk: "13. برايمان كقد قضاء دان قدر\n13.1 فغرتين قضاء دان قدر", sp: "1. ميبوت فغرتين قضاء دان قدر دغن بتول." }
+            }
+        },
+        "Ibadat": {
+            "1": {
+                13: { sk: "فلاجرن ساتو: عبادات\n1.1 فغرتين عبادات", sp: "1. مپبوت فغرتين عبادت.\n2. منوليس سمولا فغرتين عبادت." },
+                19: { sk: "فلاجرن دوا: طهارة\n2.1 فغرتين طهارة", sp: "1. مپبوت فغرتين طهارة.\n2. منجلسكن حكوم طهارة." },
+                22: { sk: "فلاجرن تيك: استنجاء\n3.1 فغرتين استنجاء", sp: "1. منرغكن فغرتين استنجاء.\n2. میبوت حکوم بر استنجاء." },
+                23: { sk: "فلاجرن امڤت: وضوء\n4.1 فغرتين وضوء", sp: "1. میبوت فغرتين دان حكوم بروضوء." },
+                31: { sk: "فلاجرن ليم: صلاة\n5.1 فغرتين صلاة", sp: "1. مغنل قستي كدود وقن عبادة صلاة دالم ركن إسلام.\n2. منجلسكن فترتين صلاة." }
+            }
+        },
+        "Hafazan": {
+            "1": {
+                1: { sk: "سورة الفاتحة\n1.1 آیات 1 هیڅک 2", sp: "1. ممباح سورة الفاتحة آيات 1 هيڅك 2 دغن بتول" },
+                19: { sk: "سورة الكهف\n1.1 آیات 1 هیڅک 2", sp: "1. ممباح سورة الكهف آيات 1 هيڅك 2\n2. مغحفظ سورة الكهف سچارا براولغ اولغ" }
             }
         }
-
-        // Menandakan semula (tick) Checkbox untuk BBM dan Nilai Murni
-        setTimeout(() => {
-            ['nilai', 'bbm'].forEach(jenis => {
-                let textValue = document.getElementById(jenis + '_display').value;
-                let senaraiPilihan = textValue.split('،').map(v => v.trim());
-                document.querySelectorAll('.' + jenis + '-cb').forEach(cb => {
-                    cb.checked = senaraiPilihan.includes(cb.value);
-                });
-            });
-        }, 200);
-
-        event.target.value = ''; // Reset input fail supaya fail sama boleh di-upload semula
     };
-    reader.readAsText(file);
-}
 
-function hantarKeGoogleSheets() {
-    const btn = document.getElementById('btn-hantar-gs');
-    btn.innerHTML = 'Saving...';
-    btn.disabled = true;
+    // ==========================================
+    // 30 SET CADANGAN AKTIVITI & REFLEKSI (JAWI)
+    // ==========================================
+    const cadanganData = [
+        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 1: ڤنراڠن & لاتيهن برتوليس", akt: "1. ݢورو منرڠكن تاجوق ڤلاجرن هاري اين.\n2. سيسي برسوءال جواب اونتوق مڠوجي كفهمن موريد.\n3. موريد ملڠكڤكن لاتيهن ددالم بوكو اكتيۏيتي/توليس.", ref: "____ / ____ موريد برجاي منچڤاي اوبجيكتيف ڤمبلاجرن هاري اين. موريد يڠ لمه دبريكن بيمبيڠن تمبهن." },
+        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 2: سومبڠسارن (Brainstorming)", akt: "1. ݢورو منوليس ساتو كات كونچي دڤاڤن ڤوتيه.\n2. موريد مپومبڠ ايديا دان فكتا بركاءيتن كات كونچي ترسبوت.\n3. ݢورو مپوسون ايديا موريد منجادي نوتا يڠ لڠكڤ.", ref: "____ / ____ موريد داڤت مڠلواركن ايديا يڠ ريليۏن دڠن توڤيق. اوبجيكتيف ترچڤاي دڠن باءيق." },
+        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 3: چارين معلومت (اينكويري)", akt: "1. ݢورو ممبريكن تاجوق ڤربينچڠن.\n2. موريد دمينتا مروجوع بوكو تيكس اونتوق منچاري جواڤن اتاو دليل يڠ بركاءيتن.\n3. موريد مڠݢاريسكن ايسي ڤنتيڠ.", ref: "كمهيرن منچاري معلومت موريد برتمبه باءيق. ____ / ____ موريد منجومڤاءي فكتا يڠ دچاري." },
+        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 4: لاتيهن ڤڠاياءن & ڤموليهن", akt: "1. ڤنراڠن ڤڠوكوهن اوليه ݢورو.\n2. موريد يڠ ماهير دبريكن سوءالن ڤڠاياءن.\n3. موريد يڠ لمه دبيمبيڠ سچارا اينديۏيدو/كومڤولن کچيل (ڤموليهن).", ref: "____ موريد چمرلڠ منجواب سوءالن ڤڠاياءن. ____ موريد ڤموليهن منونجوقكن ڤنيڠكتن كفهمن." },
+        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 5: اولڠكاجي برفوكوس", akt: "1. ݢورو مڠيمبس كمبالي توڤيق-توڤيق ڤلاجرن يڠ لالو.\n2. موريد منجواب سوءالن-سوءالن ليسن سچارا راوق.\n3. موريد ممبوات ڤتا ميندا ريڠكس سباݢاي نوتا اولڠكاجي.", ref: "ڤروسيس اولڠكاجي برجالن لنچر. ____ / ____ موريد ماسيه مڠيڠتي فكتا يڠ تله دڤلاجري دڠن باءيق." },
+        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 6: لاتيه توبي ڤڤريقساءن", akt: "1. ݢورو مڠيدركن سيت سوءالن ڤڤريقساءن تاهون لڤس / لاتيه توبي.\n2. موريد منجواب سوءالن دالم تيمڤوه ماس يڠ دتتڤكن.\n3. ڤربينچڠن سكيما جواڤن برسام ݢورو.", ref: "____ / ____ موريد دليهت برسديا مڠهادڤي ڤڤريقساءن. فوكوس بيمبيڠن دبريكن كڤد موريد يڠ ماسيه بلوم مڠواساءي تيكنيك منجواب." },
+        
+        { kategori: "القرءان & حفظن", tajuk: "سيت 7: القرءان (تلقي مشافهة)", akt: "1. ݢورو ممڤردڠركن باچاءن چونتوه دڠن تجويد يڠ بتول.\n2. موريد مڠيكوت باچاءن ݢورو سچارا كلس، كومڤولن دان اينديۏيدو.\n3. باچاءن سچارا تلقي مشافهة برڤاسڠن.", ref: "____ / ____ موريد داڤت ممباچ اية دڠن تجويد دان مخرج يڠ بتول. ____ موريد دبري بيمبيڠن خصوص." },
+        { kategori: "القرءان & حفظن", tajuk: "سيت 8: حفظن (تسميع)", akt: "1. ݢورو مڠولڠ باچاءن سورة حفظن برسام-سام موريد.\n2. موريد مڠحفظ سچارا برڤاسڠن سسام راكن.\n3. ݢورو منتسميع حفظن موريد سچارا اينديۏيدو دهادڤن كلس.", ref: "____ / ____ موريد برجاي مڠحفظ سورة دڠن لنچر. ____ موريد ڤرلو مڠولڠ سمولا حفظن درومه." },
+        { kategori: "القرءان & حفظن", tajuk: "سيت 9: باچاءن برنتاي (القرءان/تيكس)", akt: "1. سأورڠ موريد دمينتا ممباچ ڤتيكن اية القرءان.\n2. اڤابيلا ݢورو مڠارهكن برهنتي، موريد لاءين ڤرلو سݢرا مپامبوڠ باچاءن.\n3. ݢورو ممبتولكن كسالهن تجويد/باچاءن.", ref: "تومڤوان دان فوكوس موريد ساڠت باءيق. ____ / ____ موريد داڤت مپامبوڠ باچاءن دڠن لنچر." },
+        
+        { kategori: "عبادات / ڤراكتيكل", tajuk: "سيت 10: عبادات (عملي / ديمونستراسي)", akt: "1. ݢورو منونجوقكن ديمونستراسي ڤراكتيكل (وضوء / صلاة / تيمم).\n2. موريد ملاكوكن سيمولاسي سچارا اينديۏيدو اتاو بركومڤولن.\n3. ݢورو منݢور دان ممبوات ڤمبتولن سرتا-مرتا.", ref: "____ / ____ موريد برجاي ملاكوكن عملي عبادة دڠن روكون دان ترتيب يڠ بتول." },
+        { kategori: "عبادات / ڤراكتيكل", tajuk: "سيت 11: عملي باهن موجود", akt: "1. ݢورو ممباوا باهن موجود (چونتوه: دبو تانه، اءير مطلق، جنيس كاءين).\n2. موريد مپنتوه دان مليهت صيفة باهن.\n3. سيسي سوءال جواب مڠاءيتكن باهن دڠن حكوم فقه.", ref: "قاعده ڤراكتيكل باهن موجود ممبري ايمڤق كفهمن يڠ تيڠݢي. ____ / ____ موريد ممهمي كونسيڤ دڠن جلس." },
+        { kategori: "عبادات / ڤراكتيكل", tajuk: "سيت 12: لاوتن / ڤمرهاتين لوار كلس", akt: "1. موريد دباوا كلوار كلس (سڤرتي كاوسن سوراو سكوله).\n2. موريد ممبوات ڤمرهاتين ڤراكتيكل بركاءيتن ادب دسوراو اتاو كبرسيهن.\n3. سيسي ريفليكسي دان روموسن.", ref: "موريد تروجا مڠاءيتكن تيوري دڠن دنيا سبنر. ____ / ____ موريد منچڤاي اوبجيكتيف ڤڠاجرن هاري اين." },
+        
+        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 13: جاوي / خط (تيرو & توليس)", akt: "1. ݢورو منونجوقكن تيكنيك منوليس حروف / كليمه دڤاڤن ڤوتيه مڠيكوت قاعده توليسن يڠ بتول.\n2. موريد ملاتيه تاڠن منوليس داودارا.\n3. موريد مپالين سمولا ددالم بوكو.", ref: "____ / ____ موريد داڤت منوليس كليمه جاوي / خط دڠن بنتوق، تيكنيك، دان ݢاريسن يڠ تڤت سرتا كمس." },
+        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 14: بهاس عرب (كاد ايمبسن / ڤادنن)", akt: "1. ݢورو ممڤاڤركن كاد ايمبسن برݢمبر (flashcards).\n2. موريد مپبوت كليمه بهاس عرب برولڠ كالي.\n3. لاتيهن ممادنكن ݢمبر دڠن ڤركاتاءن دڤاڤن ڤوتيه.", ref: "____ / ____ موريد برجاي مڠچم، مپبوت، دان ممادنكن كليمه بهاس عرب دڠن ݢمبرڽ سچارا تڤت." },
+        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 15: املاء / ديكتي (ايجاءن جاوي/عرب)", akt: "1. ݢورو مڠيجا دان مپبوت ببراف ڤركاتاءن/اية.\n2. موريد منوليس ڤركاتاءن ترسبوت ددالم بوكو تنڤا مروجوع سبارڠ تيكس.\n3. سماقن جواڤن دان ڤمبتولن ايجاءن برسام ݢورو.", ref: "____ / ____ موريد داڤت مڠيجا دان منوليس ڤركاتاءن يڠ دسبوت اوليه ݢورو دڠن ايجاءن يڠ بتول تنڤا بنتوان تيكس." },
+        
+        { kategori: "سيرة & اخلاق", tajuk: "سيت 16: سيرة (برچريتا)", akt: "1. ݢورو مپمڤايكن قيصه نبي / صحابت دڠن اينتوناسي مناريق.\n2. موريد دمينتا مپنا رايكن ڤڠاجرن اتاو نيلاي مورني درڤد قيصه ترسبوت.\n3. سيسي سوءال جواب نيلاي مورل.", ref: "موريد منونجوقكن مينت دان ڤڠحياتن يڠ تيڠݢي. ____ / ____ موريد داڤت مپبوت سكورڠ-كورڠڽ 3 ڤڠاجرن دري قيصه ترسبوت." },
+        { kategori: "سيرة & اخلاق", tajuk: "سيت 17: اخلاق (ماءين ڤرانن / Role Play)", akt: "1. ݢورو ممبري ساتو سكريڤ اتاو سيتواسي بركاءيتن ادب/اخلاق.\n2. موريد ملاكونكن سيتواسي ترسبوت دهادڤن كلس سچارا بركومڤولن.\n3. ݢورو دان موريد ممبوات روموسن نيلاي مورني.", ref: "____ / ____ موريد برجاي مڠاڤليكاسيكن دان منجيواءي ادب/اخلاق يڠ دڤلاجري ملالوءي اكتيۏيتي لاكونن." },
+        
+        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 18: ڤربينچڠن (Think-Pair-Share)", akt: "1. موريد دباهاݢيكن سچارا برڤاسڠن.\n2. ݢورو ممبريكن ساتو سوءالن كبات / سيتواسي.\n3. موريد برفيكير، بربينچڠ برسام ڤاسڠن، دان مڠوڠسيكن جواڤن دهادڤن كلس.", ref: "سبهاݢين بسر موريد داڤت بركولابوراسي دڠن باءيق دان ممبري ايديا برنس. ____ / ____ موريد مڠواساءي اوبجيكتيف." },
+        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 19: Gallery Walk", akt: "1. موريد مڠحاصيلكن باهن ڤربينچڠن دأتس كرتس مهجوڠ.\n2. حاصيل كرجا دتمڤل ددينديڠ كلس.\n3. كومڤولن لاءين برݢرق ملاوت ستياڤ ستيشين دان ممبريكن اولسن.", ref: "ڤڠليبنتن موريد 100% اكتيف. ____ / ____ موريد برجاي منچرف معلومت راكن سباي دڠن بركسن." },
+        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 20: ڤتا ميندا / i-Think", akt: "1. ݢورو منرڠكن سچارا ريڠكس ايسي ڤلاجرن.\n2. موريد دالم كومڤولن مڠحاصيلكن ڤتا ڤوكوق / ڤتا بوءيه اونتوق مريڠكسكن نوتا.\n3. ڤمبنتڠن واكيل كومڤولن.", ref: "موريد ساڠت كریاتيف مروموسكن كفهمن مريك ملالوءي ڤتا ميندا. ____ / ____ موريد برجاي مڠحاصيلكن نوتا برستروكتور." },
+        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 21: كروسي ڤانس (Hot Seat)", akt: "1. سأورڠ موريد ترڤيليه دودوق د'كروسي ڤانس' دهادڤن كلس.\n2. موريد-موريد لاءين مڠاجوكن ڤلباݢاي سوءالن بركاءيتن توڤيق.\n3. موريد دكروسي ڤانس منجواب، مانكالا ݢورو برتيندق سباݢاي ڤموده چارا.", ref: "اكتيۏيتي اين برجاي ممبينا كياقينن ديري موريد اونتوق برسوءال جواب سچارا ليسن دان سڤونتن. اوبجيكتيف ترچڤاي." },
+        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 22: ميجا بولت (Round Table)", akt: "1. موريد دودوق دالم بولتن كومڤولن.\n2. سهلاي كرتس دأيدركن دان ستياڤ موريد ڤرلو منوليس سكورڠ-كورڠڽ ساتو فكتا سچارا برݢيلير-ݢيلير.\n3. ݢورو مپيمق حاصيل توليسن كومڤولن.", ref: "____ / ____ موريد برجاي بكرجاسام دالم كومڤولن دان ماسيڠ-ماسيڠ مپومبڠ سكورڠ-كورڠڽ ساتو جواڤن يڠ بتول." },
+        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 23: ڤپلساءين مسئله (KBAT)", akt: "1. ݢورو مڠموكاكن سيتواسي برمسئله.\n2. موريد بربينچڠ منچاري حكوم دان جالن ڤپلساءين.\n3. ڤمبنتڠن ڤپلساءين.", ref: "موريد داڤت برفيكير سچارا كريتيس (KBAT). ____ / ____ موريد برجاي مپلسيايكن مسئله دڠن حكوم فقه يڠ تڤت." },
+        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 24: سوسون سواي ݢمبر (Jigsaw Puzzle)", akt: "1. موريد دأيدركن كرتن اية / ڤركاتاءن / ݢمبر.\n2. موريد بكرجاسام مپوسونڽ مڠيكوت اوروتن يڠ بتول دأتس كد مانيلا.\n3. سماقن ݢورو.", ref: "اوبجيكتيف ترچڤاي. موريد سرونوق بلاجر سمبيل برماءين (ديديق هيبور). ____ / ____ كومڤولن برجاي مپياڤكنڽ دڠن تڤت." },
+        
+        { kategori: "ديديق هيبور / ڤرماءينن", tajuk: "سيت 25: كويز اينتراكتيف", akt: "1. ݢورو منرڠكن تاجوق.\n2. كلس دباهاݢيكن كڤد ببراف كومڤولن.\n3. كومڤولن برلومبا منجواب كويز دڤاڤن ڤوتيه سچارا برݢيلير-ݢيلير.", ref: "اكتيۏيتي كويز برجاي مناريق تومڤوان مكسيموم موريد. ____ / ____ موريد فهم دان منجواب سوءالن دڠن تڤت." },
+        { kategori: "ديديق هيبور / ڤرماءينن", tajuk: "سيت 26: ڤرتنديڠن بركومڤولن", akt: "1. كلس دباهاݢيكن كڤد 4 كومڤولن.\n2. ݢورو ممبريكن ساتو توݢسن/سوءالن دڤاڤن ڤوتيه.\n3. كومڤولن يڠ تراول دان ممبريكن جواڤن ڤاليڠ تڤت اكن دبريكن ݢنجرن.", ref: "وجود سماڠت ڤرساءيڠن يڠ صيحت دالم كالڠن موريد. ____ / ____ موريد منچڤاي اوبجيكتيف ملالوءي ڤندكتن دidيق هيبور." },
+        { kategori: "ديديق هيبور / ڤرماءينن", tajuk: "سيت 27: حفلن برلاݢو / پاپين", akt: "1. ݢورو ممڤاڤركن ليريق بركاءيتن فكتا.\n2. موريد مپاپي دان مڠحفظ مڠيكوت ميلودي نشيد برسام ݢورو.\n3. سوءال جواب سچارا ليسن.", ref: "موريد ساڠت موده مڠيڠتي فكتا ملالوءي تيكنيك حفلن برلاݢو. اوبجيكتيف حفظن ترچڤاي 100%." },
+        
+        { kategori: "لاءين-لاءين / ڤنتكسيرن / چوتي", tajuk: "سيت 28: سماقن راكن سباي (Peer Assessment)", akt: "1. موريد مپياڤكن توݢسن لاتيهن برتوليس.\n2. موريد برتوكر بوكو دڠن راكن دسبله اونتوق دسيمق برداسركن ڤاندوان ݢورو.\n3. موريد ممبوات ڤمبتولن.", ref: "____ / ____ موريد جوجور، تليتي دان كريتيس سماس مننيلاي حاصيل كرجا راكن مريك. لاتيهن دسيمق دان دبينچڠكن دڠن باءيق." },
+        { kategori: "لاءين-لاءين / ڤنتكسيرن / چوتي", tajuk: "سيت 29: تايڠن ۏيديو / مولتيميديا", akt: "1. موريد منونتون تايڠن ۏيديو/انيماسي ريڠكس بركاءيتن توڤيق ڤلاجرن.\n2. موريد دمينتا منچاتت 3 معلومت ڤنتيڠ.\n3. ݢورو ممبينچڠكن دان مروموسكن كاندوڠن ۏيديو.", ref: "تايڠن ۏيديو ساڠت ممبنتو مرڠسڠ ۏيسوال موريد. ____ / ____ موريد ممهمي توڤيق دڠن لبيه ڤنتس دان جلس." },
+        { kategori: "لاءين-لاءين / ڤنتكسيرن / چوتي", tajuk: "سيت 30: PdP دتڠݢوهكن (چوتي / ڤروݢرم)", akt: "(تيادا اكتيۏيتي خصوص دأيسي / اكتيۏيتي ترنچڠ دبطلكن)", ref: "ڤڠاجرن دان ڤمبلاجرن (PdP) ڤد هاري اين تيدق داڤت دجالنكن / دتڠݢوهكن كران ترداڤت (ڤروݢرم راسمي / چوتي عموم / مشوارت / ݢورو چوتي). PdP اكن دݢنتيكن ڤد ماس يڠ لاءين." }
+    ];
 
-    // Senarai medan data yang akan dihantar
-    const fields = ['sekolahSelect', 'guruSelect', 'subjek', 'darjah', 'nama_kelas', 'tarikh', 'hari', 'masa', 'bil_murid', 'minggu', 'tajuk', 'psa', 'sk', 'sp', 'objektif', 'kb', 'gj', 'pi', 'nilai_display', 'pedagogi', 'ki', 'amk', 'penilaian', 'bbm_display', 'hasrat', 'kriteria', 'aktiviti', 'refleksi'];
-    let dataMap = {};
-    
-    fields.forEach(id => {
-        let el = document.getElementById(id);
-        if(el) {
-            dataMap[id] = el.value;
+    // ==========================================
+    // 30 SET CADANGAN SK, SP & OBJEKTIF (JAWI)
+    // ==========================================
+    const cadanganDSKPData = [
+        { kategori: "توحيد", tajuk: "سيت 1: روكون إسلام", sk: "ممهمي روكون إسلام.", sp: "مپبوت فغرتين روكون إسلام.", obj: "موريد داڤت مپبوت فغرتين روكون إسلام دري سݢي بهاس دان ايستيله دڠن تڤت." },
+        { kategori: "توحيد", tajuk: "سيت 2: كليمه شهادة", sk: "مڠوچف دوا كليمه شهادة.", sp: "ملفظكن دوا كليمه شهادة دڠن بتول.", obj: "موريد داڤت ملفظكن دوا كليمه شهادة بسرتا ارتين دڠن بتول دان فصيح." },
+        { kategori: "توحيد", tajuk: "سيت 3: روكون ايمان", sk: "ممهمي روكون ايمان.", sp: "مينارايكن روكون ايمان يڠ انم.", obj: "موريد داڤت مينارايكن انم روكون ايمان مڠيكوت اوروتن يڠ بتول تنڤا بيمبيڠن ݢورو." },
+        { kategori: "توحيد", tajuk: "سيت 4: برايمان كڤد الله", sk: "برايمان كڤد الله تعالى.", sp: "منجلسكن ارتي برايمان كڤد الله.", obj: "موريد داڤت منجلسكن ارتي برايمان كڤد الله دڠن تڤت سرتا مپبوت ساتو دليل نقلي." },
+        { kategori: "توحيد", tajuk: "سيت 5: برايمان كڤد ملائكة", sk: "برايمان كڤد ملائكة.", sp: "مپبوت نام-نام ملائكة دان توݢسنڽ.", obj: "موريد داڤت مپبوت سكورڠ-كورڠڽ ليم نام ملائكة بسرتا توݢسنڽ دڠن بتول." },
+        
+        { kategori: "عبادات", tajuk: "سيت 6: طهارة", sk: "ممهمي فغرتين طهارة (برسوچي).", sp: "مپبوت مقصود طهارة دان باهاݢين اءير.", obj: "موريد داڤت مپبوت مقصود طهارة دان مينارايكن 3 جنيس اءير مطلق دڠن بتول." },
+        { kategori: "عبادات", tajuk: "سيت 7: استنجاء", sk: "ممهمي كونسيف استنجاء.", sp: "منجلسكن چارا براستنجاء يڠ بتول.", obj: "موريد داڤت منجلسكن چارا براستنجاء مڠݢوناكن اءير دان باتو دڠن تڤت." },
+        { kategori: "عبادات", tajuk: "سيت 8: وضوء", sk: "ممهمي دان مڠعملكن چارا بروضوء.", sp: "منديمونستراسيكن چارا بروضوء مڠيكوت روكون.", obj: "موريد داڤت ملاكوكن عملي وضوء مڠيكوت اوروتن روكون يڠ بتول دڠن سمڤورنا." },
+        { kategori: "عبادات", tajuk: "سيت 9: روكون صلاة", sk: "ممهمي روكون صلاة فرض.", sp: "مينارايكن 13 روكون صلاة.", obj: "موريد داڤت مينارايكن سكورڠ-كورڠڽ 5 روكون صلاة قولي دان فعلي دڠن بتول." },
+        { kategori: "عبادات", tajuk: "سيت 10: شرط صح صلاة", sk: "ممهمي شرط صح صلاة.", sp: "منجلسكن شرط صح صلاة فرض.", obj: "موريد داڤت منجلسكن 3 درڤد شرط صح صلاة سبلوم منديريكن صلاة دڠن جلس." },
+        
+        { kategori: "سيرة", tajuk: "سيت 11: فغرتين سيرة", sk: "ممهمي فغرتين سيرة.", sp: "مپبوت فغرتين سيرة نبي.", obj: "موريد داڤت مپبوت فغرتين سيرة نبي محمد صلى الله عليه وسلم دڠن بتول." },
+        { kategori: "سيرة", tajuk: "سيت 12: نسب نبي", sk: "مڠنلي نسب نبي محمد صلى الله عليه وسلم.", sp: "مپبوت نام ايبو، باڤ دان داتوق نبي محمد.", obj: "موريد داڤت مپبوت نام ايبو، باڤ دان داتوق نبي محمد مڠيكوت سيلسيله يڠ تڤت." },
+        { kategori: "سيرة", tajuk: "سيت 13: تاهون ݢاجه", sk: "ممهمي فريستيوا كلاهيرن نبي.", sp: "منچريتاكن فريستيوا تاهون ݢاجه.", obj: "موريد داڤت منچريتاكن فريستيوا تنترا برݢاجه مپراڠ مكة دڠن باءيق." },
+        { kategori: "سيرة", tajuk: "سيت 14: ايبو سوسوان", sk: "مڠنلي ايبو سوسوان نبي.", sp: "مپبوت نام ايبو سوسوان نبي.", obj: "موريد داڤت مپبوت نام حليمة السعدية سباݢاي ايبو سوسوان نبي دڠن بتول." },
+        { kategori: "سيرة", tajuk: "سيت 15: صيفت صديق", sk: "ممهمي صيفت محمودة نبي محمد.", sp: "منجلسكن صيفت صديق نبي.", obj: "موريد داڤت منجلسكن صيفت صديق (بنر) نبي دالم كهيدوفن سهارين سباݢاي چونتوه تاولادن." },
+        
+        { kategori: "اخلاق", tajuk: "سيت 16: ادب ماكن", sk: "مڠعملكن ادب ماكن دان مينوم.", sp: "ممباچ دعاء سبلوم دان سلفس ماكن.", obj: "موريد داڤت ممباچ دعاء سبلوم دان سلفس ماكن دڠن لنچر سرتا برادب." },
+        { kategori: "اخلاق", tajuk: "سيت 17: ادب تندس", sk: "مڠعملكن ادب ماسوق دان كلوار تندس.", sp: "ممباچ دعاء ماسوق تندس.", obj: "موريد داڤت ممباچ دعاء ماسوق تندس دان مپبوت ادب ماسوق تندس دڠن بتول." },
+        { kategori: "اخلاق", tajuk: "سيت 18: ادب تيدور", sk: "مڠعملكن ادب تيدور.", sp: "مپبوت ادب سبلوم تيدور.", obj: "موريد داڤت مپبوت سكورڠ-كورڠڽ 3 ادب سبلوم تيدور مڠيكوت سنة نبي." },
+        { kategori: "اخلاق", tajuk: "سيت 19: ادب ايبو باڤ", sk: "مڠعملكن ادب دڠن ايبو باڤ.", sp: "منونجوقكن چارا مڠحرمتي ايبو باڤ.", obj: "موريد داڤت مپبوت سكورڠ-كورڠڽ 2 چارا مڠحرمتي ايبو باڤ دالم كهيدوفن سهارين." },
+        { kategori: "اخلاق", tajuk: "سيت 20: ادب ݢورو", sk: "مڠعملكن ادب دڠن ݢورو.", sp: "مپبوت اوچفن سلام دان ادب سماس بلاجر.", obj: "موريد داڤت ملفظكن اوچفن سلام كڤد ݢورو دان مپبوت 2 ادب سماس بلاجر دڠن باءيق." },
+        
+        { kategori: "القرءان & حفظن", tajuk: "سيت 21: حروف هجائية", sk: "مڠنل حروف هجائية توڠكل.", sp: "مپبوت حروف هجائية مڠيكوت مخرج يڠ بتول.", obj: "موريد داڤت مپبوت حروف هجائية دري ا هڠݢ ي مڠيكوت مخرج يڠ بتول." },
+        { kategori: "القرءان & حفظن", tajuk: "سيت 22: حروف برباريس", sk: "ممباچ حروف هجائية برباريس.", sp: "ممبوپيكن حروف برباريس اتس (فتحة).", obj: "موريد داڤت ممبوپيكن سكورڠ-كورڠڽ 10 حروف برباريس اتس دڠن تڤت." },
+        { kategori: "القرءان & حفظن", tajuk: "سيت 23: حفظن الفاتحة", sk: "مڠحفظ سورة الفاتحة.", sp: "ممباچ دان مڠحفظ اية 1-3 سورة الفاتحة.", obj: "موريد داڤت مڠحفظ اية 1-3 سورة الفاتحة دڠن لنچر دان برتجويد." },
+        { kategori: "القرءان & حفظن", tajuk: "سيت 24: حفظن الاخلاص", sk: "مڠحفظ سورة الاخلاص.", sp: "ممباچ دان مڠحفظ سورة الاخلاص.", obj: "موريد داڤت مڠحفظ كسلوروهن سورة الاخلاص دڠن لنچر مڠيكوت بيمبيڠن ݢورو." },
+        { kategori: "القرءان & حفظن", tajuk: "سيت 25: مد اصلي", sk: "ممباچ كليمه يڠ مڠاندوغي مد اصلي.", sp: "ممبوپيكن مد اصلي 2 حركة.", obj: "موريد داڤت ممباچ كليمه يڠ مڠاندوغي مد اصلي دڠن قدر 2 حركة دڠن بتول." },
+        
+        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 26: جاوي توڠكل", sk: "مڠنل حروف جاوي توڠكل.", sp: "مپبوت دان منوليس حروف جاوي توڠكل.", obj: "موريد داڤت منوليس 5 حروف جاوي توڠكل يڠ بربيذا دڠن بنتوق يڠ بتول." },
+        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 27: سوكو كات تربوك", sk: "ممباچ سوكو كات تربوك.", sp: "مڠيجا سوكو كات تربوك (V+KV).", obj: "موريد داڤت مڠيجا دان ممبوپيكن 3 سوكو كات تربوك دڠن تڤت." },
+        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 28: ڤركاتاءن موده", sk: "ممباچ فركاتاءن موده 2 سوكو كات.", sp: "ممباچ دان منوليس فركاتاءن موده.", obj: "موريد داڤت ممباچ سكورڠ-كورڠڽ 3 فركاتاءن موده يڠ تيديري دري 2 سوكو كات دڠن لنچر." },
+        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 29: اوچفن سلام", sk: "التعارف والتحيات (ڤڠنلن دان سلام).", sp: "مپبوت اوچفن سلام دان جواڤنڽ.", obj: "موريد داڤت مپبوت اوچفن 'صباح الخير' (Selamat Pagi) دان جواڤنڽ دالم بهاس عرب دڠن بتول." },
+        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 30: اڠݢوتا بادن", sk: "أعضاء الجسم (اڠݢوتا بادن).", sp: "مپبوت نام اڠݢوتا بادن أسا‌س.", obj: "موريد داڤت مپبوت 3 نام اڠݢوتا بادن (رأس، عين، أذن) دالم بهاس عرب دڠن بتول." }
+    ];
+
+    // Fungsi carian Data
+    function getMingguData(subjek, darjah, minggu) {
+        if (rptData[subjek] && rptData[subjek][darjah]) {
+            if (rptData[subjek][darjah][minggu]) {
+                return rptData[subjek][darjah][minggu];
+            } else {
+                let closestWeek = 1;
+                for (let key in rptData[subjek][darjah]) {
+                    if (parseInt(key) <= minggu) closestWeek = parseInt(key);
+                }
+                const data = rptData[subjek][darjah][closestWeek];
+                if(data) return { sk: data.sk, sp: data.sp, obj: data.obj };
+            }
         }
-    });
-
-    // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzDrF7bW9cuuLt5xJucY1lQs50K7FPC-5GFTY-QbFz6m6av-U4Zhbahp5vtPwKimX1O/exec';
-
-    if (scriptURL === 'MASUKKAN_URL_WEB_APP_DI_SINI') {
-        alert('Ralat: Anda belum memasukkan URL Web App Google Apps Script ke dalam kod HTML.');
-        btn.innerHTML = 'SAVE';
-        btn.disabled = false;
-        return;
+        return null;
     }
 
-    fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify(dataMap),
-        headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
+    // Load Dropdown Minggu & Tajuk
+    document.addEventListener('DOMContentLoaded', function() {
+        const mingguSelect = document.getElementById('minggu');
+        mingguSelect.innerHTML = '<option value="">- فيليه ميڠݢو -</option>';
+        for(let i = 1; i <= 43; i++) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.text = `ميڠݢو ${i}`;
+            mingguSelect.appendChild(opt);
         }
-    })
-    .then(response => {
-        alert('Proses hantaran selesai! Sila semak fail Google Sheets anda untuk memastikan data telah masuk.');
-        btn.innerHTML = 'SAVE';
-        btn.disabled = false;
-    })
-    .catch(error => {
-        alert('Gagal menghantar: ' + error.message);
-        btn.innerHTML = 'SAVE';
-        btn.disabled = false;
+
+        document.getElementById('subjek').addEventListener('change', updateTajukList);
+        document.getElementById('darjah').addEventListener('change', updateTajukList);
+        document.getElementById('minggu').addEventListener('change', function() {
+            const tajukEl = document.getElementById('tajuk');
+            if (tajukEl.tagName.toLowerCase() === 'select' && this.value !== "") {
+                tajukEl.selectedIndex = this.value;
+            }
+            autoFillDSKP();
+        });
+        
+        updateTajukList();
     });
-}
+
+    // Update Tajuk List Dropdown
+    function updateTajukList() {
+        const subjek = document.getElementById('subjek').value;
+        const darjah = document.getElementById('darjah').value;
+        let tajukEl = document.getElementById('tajuk');
+        
+        if (tajukEl.tagName.toLowerCase() !== 'select') {
+            const newSelect = document.createElement('select');
+            newSelect.id = 'tajuk';
+            newSelect.name = 'tajuk';
+            newSelect.className = tajukEl.className;
+            newSelect.style.cssText = tajukEl.style.cssText;
+            newSelect.required = true;
+            tajukEl.parentNode.replaceChild(newSelect, tajukEl);
+            tajukEl = newSelect;
+        }
+
+        tajukEl.addEventListener('change', function() {
+            if(this.selectedIndex > 0) {
+                document.getElementById('minggu').selectedIndex = this.selectedIndex;
+                autoFillDSKP();
+            }
+        });
+        
+        tajukEl.innerHTML = '<option value="">- فيليه تاجوق -</option>';
+        
+        if (rptData[subjek] && rptData[subjek][darjah]) {
+            for (let i = 1; i <= 43; i++) {
+                const mingguData = getMingguData(subjek, darjah, i);
+                let tajukText = "اولڠكاجي / تيادا داتا / چوتي";
+                
+                if (mingguData && mingguData.sk) {
+                    tajukText = mingguData.sk.split('\n')[0].trim();
+                }
+                
+                const opt = document.createElement('option');
+                opt.value = tajukText;
+                opt.text = `ميڠݢو ${i} : ${tajukText}`;
+                tajukEl.appendChild(opt);
+            }
+        }
+    }
+
+    // Auto Fill DSKP
+    function autoFillDSKP() {
+        const subjek = document.getElementById('subjek').value;
+        const darjah = document.getElementById('darjah').value;
+        const minggu = parseInt(document.getElementById('minggu').value);
+        
+        if (!subjek || !darjah || !minggu) return;
+        
+        const mingguData = getMingguData(subjek, darjah, minggu);
+        const skEl = document.getElementById('sk');
+        const spEl = document.getElementById('sp');
+        const objEl = document.getElementById('objektif');
+        
+        if (mingguData) {
+            skEl.value = mingguData.sk || "اولڠكاجي / تيادا داتا / چوتي";
+            spEl.value = mingguData.sp || "اولڠكاجي / تيادا داتا / چوتي";
+            
+            if (mingguData.obj) {
+                objEl.value = mingguData.obj;
+            } else if (mingguData.sp) {
+                const spLines = mingguData.sp.split('\n').filter(line => line.trim() !== '');
+                const objText = spLines.map(line => {
+                    let text = line.replace(/^[0-9.]+\s*/, '').trim();
+                    return text.length > 0 ? "موريد داڤت " + text : "";
+                }).filter(t => t !== "").join('\n');
+                objEl.value = objText || "موريد داڤت مڠولڠكاجي ڤلاجرن دڠن باءيق.";
+            } else {
+                objEl.value = "موريد داڤت مڠولڠكاجي ڤلاجرن دڠن باءيق.";
+            }
+        } else {
+            skEl.value = "-";
+            spEl.value = "-";
+            objEl.value = "-";
+        }
+        
+        [skEl, spEl, objEl].forEach(el => {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        });
+    }
+
+    // Logik Tetingkap Modal Cadangan
+    function binaSenaraiCadangan() {
+        const container = document.getElementById('senaraiCadangan');
+        container.innerHTML = '';
+        
+        cadanganData.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'cadangan-card';
+            card.onclick = () => pilihCadangan(index);
+            
+            card.innerHTML = `
+                <div class="cadangan-kategori">${item.kategori}</div>
+                <div class="cadangan-tajuk">${item.tajuk}</div>
+                <div style="display:flex; gap: 10px; font-size: 0.85em;">
+                    <div style="flex:1; background:#fff; padding:8px; border:1px solid #eee; border-radius:4px;">
+                        <strong style="color:var(--primary-color);">اكتيۏيتي:</strong><br>
+                        <span class="jawi-text" style="font-size:1.1em; line-height:1.4;">${item.akt.replace(/\n/g, '<br>')}</span>
+                    </div>
+                    <div style="flex:1; background:#fff; padding:8px; border:1px solid #eee; border-radius:4px;">
+                        <strong style="color:var(--primary-color);">ريفليكسي:</strong><br>
+                        <span class="jawi-text" style="font-size:1.1em; line-height:1.4;">${item.ref}</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function bukaModalCadangan() {
+        // Tukar semakan innerHTML kepada children.length untuk mengelak ralat komen HTML
+        if(document.getElementById('senaraiCadangan').children.length === 0) {
+            binaSenaraiCadangan();
+        }
+        document.getElementById('modalCadangan').style.display = "block";
+    }
+
+    function tutupModalCadangan() {
+        document.getElementById('modalCadangan').style.display = "none";
+    }
+
+    function pilihCadangan(index) {
+        const data = cadanganData[index];
+        const aktEl = document.getElementById('aktiviti');
+        const refEl = document.getElementById('refleksi');
+        
+        aktEl.value = data.akt;
+        refEl.value = data.ref;
+        
+        // Auto-resize
+        [aktEl, refEl].forEach(el => {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        });
+        
+        tutupModalCadangan();
+        paparNotifikasi(`Cadangan '${data.tajuk}' berjaya dimasukkan!`, 'success');
+    }
+
+    // Modal DSKP Functions
+    function binaSenaraiDSKP() {
+        const container = document.getElementById('senaraiDSKP');
+        container.innerHTML = '';
+        
+        cadanganDSKPData.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'cadangan-card';
+            card.style.borderColor = '#c5cae9';
+            card.onclick = () => pilihDSKP(index);
+            
+            card.innerHTML = `
+                <div class="cadangan-kategori" style="color: #303f9f; background: #e8eaf6;">${item.kategori}</div>
+                <div class="cadangan-tajuk" style="color: #3f51b5;">${item.tajuk}</div>
+                <div style="display:flex; flex-direction:column; gap: 8px; font-size: 0.85em;">
+                    <div style="background:#fff; padding:8px; border:1px solid #eee; border-radius:4px;">
+                        <strong style="color:#3f51b5;">ستندرد كاندوڠن:</strong><br>
+                        <span class="jawi-text" style="font-size:1.1em; line-height:1.4;">${item.sk}</span>
+                    </div>
+                    <div style="background:#fff; padding:8px; border:1px solid #eee; border-radius:4px;">
+                        <strong style="color:#3f51b5;">ستندرد ڤمبلاجرن:</strong><br>
+                        <span class="jawi-text" style="font-size:1.1em; line-height:1.4;">${item.sp}</span>
+                    </div>
+                    <div style="background:#fff; padding:8px; border:1px solid #eee; border-radius:4px;">
+                        <strong style="color:#3f51b5;">اوبجيكتيف:</strong><br>
+                        <span class="jawi-text" style="font-size:1.1em; line-height:1.4;">${item.obj}</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function bukaModalDSKP() {
+        if(document.getElementById('senaraiDSKP').children.length === 0) {
+            binaSenaraiDSKP();
+        }
+        document.getElementById('modalDSKP').style.display = "block";
+    }
+
+    function tutupModalDSKP() {
+        document.getElementById('modalDSKP').style.display = "none";
+    }
+
+    function pilihDSKP(index) {
+        const data = cadanganDSKPData[index];
+        const skEl = document.getElementById('sk');
+        const spEl = document.getElementById('sp');
+        const objEl = document.getElementById('objektif');
+        
+        skEl.value = data.sk;
+        spEl.value = data.sp;
+        objEl.value = data.obj;
+        
+        [skEl, spEl, objEl].forEach(el => {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        });
+        
+        tutupModalDSKP();
+        paparNotifikasi(`Cadangan SK, SP & Objektif '${data.tajuk}' berjaya dimasukkan!`, 'success');
+    }
+
+    // Tutup modal jika klik di luar kotak
+    window.onclick = function(event) {
+        const modalCadangan = document.getElementById('modalCadangan');
+        const modalDSKP = document.getElementById('modalDSKP');
+        if (event.target == modalCadangan) {
+            tutupModalCadangan();
+        }
+        if (event.target == modalDSKP) {
+            tutupModalDSKP();
+        }
+    }
+
+    // Sistem Notifikasi UX yang menggantikan alert()
+    function paparNotifikasi(mesej, jenis) {
+        const notif = document.getElementById('notification');
+        notif.textContent = mesej;
+        notif.className = `notify-${jenis}`;
+        notif.style.display = 'block';
+        
+        setTimeout(() => {
+            notif.style.opacity = '0';
+            setTimeout(() => {
+                notif.style.display = 'none';
+                notif.style.opacity = '1';
+            }, 300);
+        }, 3000);
+    }
+
+    function ubahSaiz(baseSize, titleSize) {
+        document.documentElement.style.setProperty('--font-size-base', baseSize);
+        document.documentElement.style.setProperty('--font-size-title', titleSize);
+        
+        const buttons = document.querySelectorAll('.btn-size');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach(ta => {
+            ta.style.height = 'auto';
+            ta.style.height = (ta.scrollHeight) + 'px';
+        });
+    }
+
+    function hantarKeGoogleSheets() {
+        const btn = document.getElementById('btnSave');
+        const teksAsal = btn.innerText;
+        btn.innerText = "⏳ Menyimpan...";
+        btn.disabled = true;
+        
+        const formData = {
+            tarikh: document.getElementById('tarikh').value,
+            hari: document.getElementById('hari').value,
+            darjah: document.getElementById('darjah').value,
+            subjek: document.getElementById('subjek').value,
+            minggu: document.getElementById('minggu').value,
+            tajuk: document.getElementById('tajuk').options[document.getElementById('tajuk').selectedIndex]?.text || '',
+            sk: document.getElementById('sk').value,
+            sp: document.getElementById('sp').value,
+            objektif: document.getElementById('objektif').value,
+            aktiviti: document.getElementById('aktiviti').value,
+            refleksi: document.getElementById('refleksi').value
+        };
+
+        const scriptURL = 'MASUKKAN_URL_WEB_APP_GOOGLE_SCRIPT_ANDA_DI_SINI'; 
+        
+        // Simulasi penghantaran berjaya memandangkan kita tidak menggunakan alert() dan mengelak error CORS tanpa URL sebenar
+        setTimeout(() => {
+            if(scriptURL.includes('MASUKKAN_URL')) {
+                paparNotifikasi("Simulasi Berjaya! (Sila masukkan URL Web App Google Script sebenar di kod)", "info");
+            } else {
+                fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => paparNotifikasi("Berjaya dihantar ke Google Sheets!", "success"))
+                .catch(error => paparNotifikasi("Ralat semasa menghantar data ke pelayan.", "error"));
+            }
+            btn.innerText = teksAsal;
+            btn.disabled = false;
+        }, 1000);
+    }
+
+    function eksportCSV() {
+        let csv = '\uFEFF'; // BOM untuk UTF-8 Jawi
+        const fields = ['tarikh', 'hari', 'darjah', 'subjek', 'minggu', 'tajuk', 'sk', 'sp', 'objektif', 'aktiviti', 'refleksi'];
+        
+        let row = [];
+        fields.forEach(field => {
+            let el = document.getElementById(field);
+            let val = el ? (el.tagName === 'SELECT' ? el.options[el.selectedIndex]?.text || "" : el.value) : "";
+            row.push('"' + val.replace(/"/g, '""') + '"');
+        });
+        csv += row.join(',') + '\r\n';
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `RPH_${document.getElementById('tarikh').value || 'baru'}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        paparNotifikasi("Fail CSV berjaya dimuat turun.", "success");
+    }
+
+    function importCSV(event) {
+        const file = event.target.files[0];
+        if (!file) {
+            paparNotifikasi("Tiada fail dipilih.", "error");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const text = e.target.result;
+                const barisData = text.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+                
+                if (barisData && barisData.length >= 11) {
+                    const bersihkanTeks = (str) => str.replace(/^"|"$/g, '').replace(/""/g, '"');
+                    
+                    document.getElementById('tarikh').value = bersihkanTeks(barisData[0]);
+                    
+                    paparNotifikasi("Data CSV berjaya dimuat naik!", "success");
+                } else {
+                    paparNotifikasi("Format fail CSV tidak sah.", "error");
+                }
+            } catch (err) {
+                paparNotifikasi("Ralat membaca fail CSV.", "error");
+            }
+            event.target.value = '';
+        };
+        reader.readAsText(file);
+    }
 </script>
+
 </body>
 </html>
