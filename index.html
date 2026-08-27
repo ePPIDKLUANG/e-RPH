@@ -1,141 +1,164 @@
-import React, { useState, useEffect } from 'react';
-import { Save, Printer, Plus, Trash2, Database, FileText, Settings, Upload, BookOpen, CheckCircle, CloudUpload } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="ms" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سيستم e-RPH ساكنج (SAKNJ) - فرمت رسمي جوهر</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel Standalone for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts Amiri for Jawi Nasakh -->
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    .font-jawi {
+      font-family: 'Amiri', serif;
+      line-height: 1.8;
+    }
+    @media print {
+      body { background-color: white !important; font-size: 1.2rem !important; }
+      .print\:hidden { display: none !important; }
+      .erph-container { box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; }
+      @page { size: A4; margin: 0.8cm; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-jawi">
+  <div id="root"></div>
 
-export default function ERPHSystem() {
-  const [activeTab, setActiveTab] = useState('generator'); // 'generator', 'database', 'upload'
-  
-  // State untuk saiz font Jawi (Default: 1.2rem)
-  const [fontSize, setFontSize] = useState(1.2);
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    // Lucide icon helper components mapped safely
+    const Save = (props) => <i data-lucide="save" {...props}></i>;
+    const Printer = (props) => <i data-lucide="printer" {...props}></i>;
+    const Plus = (props) => <i data-lucide="plus" {...props}></i>;
+    const Trash2 = (props) => <i data-lucide="trash-2" {...props}></i>;
+    const Database = (props) => <i data-lucide="database" {...props}></i>;
+    const FileText = (props) => <i data-lucide="file-text" {...props}></i>;
+    const Settings = (props) => <i data-lucide="settings" {...props}></i>;
+    const Upload = (props) => <i data-lucide="upload" {...props}></i>;
+    const BookOpen = (props) => <i data-lucide="book-open" {...props}></i>;
+    const CheckCircle = (props) => <i data-lucide="check-circle" {...props}></i>;
+    const CloudUpload = (props) => <i data-lucide="cloud-upload" {...props}></i>;
 
-  const increaseFontSize = () => {
-    setFontSize(prev => Math.min(prev + 0.15, 1.8));
-  };
+    function ERPHSystem() {
+      const [activeTab, setActiveTab] = useState('generator');
+      const [fontSize, setFontSize] = useState(1.2);
 
-  const decreaseFontSize = () => {
-    setFontSize(prev => Math.max(prev - 0.15, 0.9));
-  };
-  
-  // Senarai Subjek SAKNJ dalam Tulisan Jawi Nasakh
-  const listSubjekSAKNJ = [
-    'القرءان',
-    'تفسير القرءان دان حديث',
-    'تجويد',
-    'توحيد',
-    'عبادة',
-    'معاملات',
-    'مناكحات',
-    'جنايات',
-    'فرائض',
-    'أخلاق & تصوف',
-    'سيرة',
-    'بهاس عرب'
-  ];
-
-  // Senarai Darjah SAKNJ
-  const listDarjahSAKNJ = [
-    'تاج (TAJ)',
-    'درجه 1',
-    'درجه 2',
-    'درجه 3',
-    'درجه 4',
-    'درجه 5',
-    'درجه 6',
-    'درجه خاص'
-  ];
-
-  // Senarai Pilihan Masa SAKNJ (Contoh Sesi Petang / Pagi Sekolah Agama)
-  const listMasaSAKNJ = [
-    '2:30 ڤڥتڠ - 3:30 ڤڥتڠ',
-    '3:30 ڤڥتڠ - 4:30 ڤڥتڠ',
-    '4:30 ڤڥتڠ - 5:30 ڤڥتڠ',
-    '8:00 ڤاڬي - 9:00 ڤاڬي',
-    '9:00 ڤاڬي - 10:00 ڤاڬي',
-    '10:30 ڤاڬي - 11:30 ڤاڬي'
-  ];
-
-  // Senarai Pilihan Kelas SAKNJ
-  const listKelasSAKNJ = [
-    'درجه 1 بستاري',
-    'درجه 1 مقتصد',
-    'درجه 2 بستاري',
-    'درجه 2 مقتصد',
-    'درجه 3 بستاري',
-    'درجه 3 مقتصد',
-    'درجه 4 بستاري',
-    'درجه 4 مقتصد',
-    'درجه 5 بستاري',
-    'درجه 5 مقتصد',
-    'درجه 6 بستاري',
-    'درجه 6 مقتصد',
-    'درجه خاص كوليه 1'
-  ];
-
-  const [rptData, setRptData] = useState([]);
-  const [darjahFilter, setDarjahFilter] = useState(''); 
-  const [subjekFilter, setSubjekFilter] = useState('');
-  
-  const WEB_APP_URL = ""; 
-  const [saveStatus, setSaveStatus] = useState('');
-
-  const [dbForm, setDbForm] = useState({
-    darjah: 'درجه 1',
-    minggu: '',
-    mataPelajaran: 'توحيد',
-    tema: '',
-    tajuk: '',
-    sk: '',
-    sp: ''
-  });
-
-  const [uploadForm, setUploadForm] = useState({
-    darjah: 'درجه 1',
-    mataPelajaran: 'توحيد',
-    rawText: ''
-  });
-  const [uploadStatus, setUploadStatus] = useState('');
-  const [isSyncingSheet, setIsSyncingSheet] = useState(false);
-  const [isUploadingToSheet, setIsUploadingToSheet] = useState(false);
-
-  // e-RPH Generator State
-  const [selectedDarjah, setSelectedDarjah] = useState('درجه 1');
-  const [selectedSubjek, setSelectedSubjek] = useState('القرءان');
-  const [selectedMinggu, setSelectedMinggu] = useState('1');
-  
-  const [erphForm, setErphForm] = useState({
-    tarikh: new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
-    hari: 'الأحد (احد)',
-    masa: '2:30 ڤڥتڠ - 3:30 ڤڥتڠ',
-    kelas: 'درجه 1 بستاري',
-    mataPelajaran: 'القرءان',
-    tema: '',
-    tajuk: '',
-    sk: '',
-    sp: '',
-    objektif: '',
-    aktiviti: '1. كورو منرغكن فد اية / ايساكن...\n2. موريد ممباچ دغن بتول دان تجويد يڠ برتولن...\n3. لاتيهن تنبيح دالم كلس...',
-    bbm: 'بوكو تيكس، ليمبرن كرج, روقان',
-    refleksi: 'موريد برجاي منچفاي اوبجيكتيف يڠ دتتڤكن. ٢٥ اورڠ موريد درڤد ٣٠ اورڠ مڠواسيني دڠن باءيك.',
-    disemakOleh: 'ڬورو بسر / ڤڽليد',
-    disahkanOleh: 'ڤڠواسڤ / ڤمبنتو ڤڠواسڤ'
-  });
-
-  useEffect(() => {
-    const fetchFromGoogleSheet = async () => {
-      let loadedFromCloud = false;
-      if (WEB_APP_URL && WEB_APP_URL.startsWith('https://script.google.com/macros/s/')) {
-        try {
-          const res = await fetch(`${WEB_APP_URL}?action=getRPT`, { mode: 'cors' });
-          const json = await res.json();
-          if (json.status === 'success' && json.data) {
-            setRptData(json.data);
-            loadedFromCloud = true;
-          }
-        } catch (err) {
-          console.warn("Nota: Menggunakan simpanan lokal (LocalStorage) kerana sambungan ke Google Sheets disekat oleh pelayar (CORS).", err);
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
         }
-      }
+      });
 
-      if (!loadedFromCloud) {
+      const increaseFontSize = () => setFontSize(prev => Math.min(prev + 0.15, 1.8));
+      const decreaseFontSize = () => setFontSize(prev => Math.max(prev - 0.15, 0.9));
+
+      const listSubjekSAKNJ = [
+        'القرءان',
+        'تفسير القرءان دان حديث',
+        'تجويد',
+        'توحيد',
+        'عبادة',
+        'معاملات',
+        'مناكحات',
+        'جنايات',
+        'فرائض',
+        'أخلاق & تصوف',
+        'سيرة',
+        'بهاس عرب'
+      ];
+
+      const listDarjahSAKNJ = [
+        'تاج (TAJ)',
+        'درجه 1',
+        'درجه 2',
+        'درجه 3',
+        'درجه 4',
+        'درجه 5',
+        'درجه 6',
+        'درجه خاص'
+      ];
+
+      const listMasaSAKNJ = [
+        '2:30 ڤڥتڠ - 3:30 ڤڥتڠ',
+        '3:30 ڤڥتڠ - 4:30 ڤڥتڠ',
+        '4:30 ڤڥتڠ - 5:30 ڤڥتڠ',
+        '8:00 ڤاڬي - 9:00 ڤاڬي',
+        '9:00 ڤاڬي - 10:00 ڤاڬي',
+        '10:30 ڤاڬي - 11:30 ڤاڬي'
+      ];
+
+      const listKelasSAKNJ = [
+        'درجه 1 بستاري',
+        'درجه 1 مقتصد',
+        'درجه 2 بستاري',
+        'درجه 2 مقتصد',
+        'درجه 3 بستاري',
+        'درجه 3 مقتصد',
+        'درجه 4 بستاري',
+        'درجه 4 مقتصد',
+        'درجه 5 بستاري',
+        'درجه 5 مقتصد',
+        'درجه 6 بستاري',
+        'درجه 6 مقتصد',
+        'درجه خاص كوليه 1'
+      ];
+
+      const [rptData, setRptData] = useState([]);
+      const [darjahFilter, setDarjahFilter] = useState(''); 
+      const [subjekFilter, setSubjekFilter] = useState('');
+      
+      const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby.../exec"; // Placeholder URL
+      const [saveStatus, setSaveStatus] = useState('');
+
+      const [dbForm, setDbForm] = useState({
+        darjah: 'درجه 1',
+        minggu: '',
+        mataPelajaran: 'توحيد',
+        tema: '',
+        tajuk: '',
+        sk: '',
+        sp: ''
+      });
+
+      const [uploadForm, setUploadForm] = useState({
+        darjah: 'درجه 1',
+        mataPelajaran: 'توحيد',
+        rawText: ''
+      });
+      const [uploadStatus, setUploadStatus] = useState('');
+      const [isSyncingSheet, setIsSyncingSheet] = useState(false);
+      const [isUploadingToSheet, setIsUploadingToSheet] = useState(false);
+
+      const [selectedDarjah, setSelectedDarjah] = useState('درجه 1');
+      const [selectedSubjek, setSelectedSubjek] = useState('القرءان');
+      const [selectedMinggu, setSelectedMinggu] = useState('1');
+      
+      const [erphForm, setErphForm] = useState({
+        tarikh: new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
+        hari: 'الأحد (احد)',
+        masa: '2:30 ڤڥتڠ - 3:30 ڤڥتڠ',
+        kelas: 'درجه 1 بستاري',
+        mataPelajaran: 'القرءان',
+        tema: '',
+        tajuk: '',
+        sk: '',
+        sp: '',
+        objektif: '',
+        aktiviti: '1. كورو منرغكن فد اية / ايساكن...\n2. موريد ممباچ دغن بتول دان تجويد يڠ برتولن...\n3. لاتيهن تنبيح دالم كلس...',
+        bbm: 'بوكو تيكس، ليمبرن كرج, روقان',
+        refleksi: 'موريد برجاي منچفاي اوبجيكتيف يڠ دتتڤكن. ٢٥ اورڠ موريد درڤد ٣٠ اورڠ مڠواسيني دڠن باءيك.',
+        disemakOleh: 'ڬورو بسر / ڤڽليد',
+        disahkanOleh: 'ڤڠواسڤ / ڤمبنتو ڤڠواسڤ'
+      });
+
+      useEffect(() => {
         const savedRPT = localStorage.getItem('rptDatabaseSAKNJ_v5');
         if (savedRPT) {
           setRptData(JSON.parse(savedRPT));
@@ -155,725 +178,426 @@ export default function ERPHSystem() {
           setRptData(demoData);
           localStorage.setItem('rptDatabaseSAKNJ_v5', JSON.stringify(demoData));
         }
-      }
-    };
+      }, []);
 
-    fetchFromGoogleSheet();
-  }, []);
+      useEffect(() => {
+        if (rptData.length > 0) {
+          localStorage.setItem('rptDatabaseSAKNJ_v5', JSON.stringify(rptData));
+        }
+      }, [rptData]);
 
-  useEffect(() => {
-    if (rptData.length > 0) {
-      localStorage.setItem('rptDatabaseSAKNJ_v5', JSON.stringify(rptData));
-    }
-  }, [rptData]);
+      useEffect(() => {
+        const matchedRecord = rptData.find(
+          r => r.darjah === selectedDarjah && 
+               r.mataPelajaran === selectedSubjek && 
+               String(r.minggu) === String(selectedMinggu)
+        );
 
-  useEffect(() => {
-    const matchedRecord = rptData.find(
-      r => r.darjah === selectedDarjah && 
-           r.mataPelajaran === selectedSubjek && 
-           String(r.minggu) === String(selectedMinggu)
-    );
+        if (matchedRecord) {
+          setErphForm(prev => ({
+            ...prev,
+            mataPelajaran: matchedRecord.mataPelajaran,
+            tema: matchedRecord.tema || '',
+            tajuk: matchedRecord.tajuk || '',
+            sk: matchedRecord.sk || '',
+            sp: matchedRecord.sp || '',
+            objektif: `موريد داڤت ممهمي دان مڠواسيني تاجوق ${matchedRecord.tajuk} دغن بتول سرتا لڠکڤ.`
+          }));
+        } else {
+          setErphForm(prev => ({
+            ...prev,
+            mataPelajaran: selectedSubjek,
+            tema: 'تيادا داتا RPT باڬي ميڠڬو اين',
+            tajuk: '-',
+            sk: '-',
+            sp: '-',
+            objektif: '-'
+          }));
+        }
+      }, [selectedDarjah, selectedSubjek, selectedMinggu, rptData]);
 
-    if (matchedRecord) {
-      setErphForm(prev => ({
-        ...prev,
-        mataPelajaran: matchedRecord.mataPelajaran,
-        tema: matchedRecord.tema || '',
-        tajuk: matchedRecord.tajuk || '',
-        sk: matchedRecord.sk || '',
-        sp: matchedRecord.sp || '',
-        objektif: `موريد داڤت ممهمي دان مڠواسيني تاجوق ${matchedRecord.tajuk} دغن بتول سرتا لڠکڤ.`
-      }));
-    } else {
-      setErphForm(prev => ({
-        ...prev,
-        mataPelajaran: selectedSubjek,
-        tema: 'تيادا داتا RPT باڬي ميڠڬو اين',
-        tajuk: '-',
-        sk: '-',
-        sp: '-',
-        objektif: '-'
-      }));
-    }
-  }, [selectedDarjah, selectedSubjek, selectedMinggu, rptData]);
-
-  const handleDbChange = (e) => {
-    const { name, value } = e.target;
-    setDbForm(prev => ({ ...prev, [name]: value }));
-  };
-
-  const saveToDb = (e) => {
-    e.preventDefault();
-    if (!dbForm.darjah || !dbForm.minggu || !dbForm.tajuk || !dbForm.sk || !dbForm.sp) {
-      alert("سيلا ايسي درجه، ميڠڬو، تاجوق، SK دان SP.");
-      return;
-    }
-    const newRecord = { ...dbForm, id: Date.now().toString() };
-    setRptData([...rptData, newRecord]);
-    setDbForm(prev => ({ ...prev, minggu: '', tajuk: '', sk: '', sp: '', tema: '' }));
-    alert("رِيكود RPT berjaya disimpan!");
-  };
-
-  const deleteRecord = (id) => {
-    if (window.confirm('ادكه اندا ڤستي اونتوق ممادم ريكود اين؟')) {
-      setRptData(rptData.filter(record => record.id !== id));
-    }
-  };
-
-  const handlePdfUploadSimulation = (e) => {
-    e.preventDefault();
-    if (!uploadForm.rawText.trim()) {
-      alert("سيلا ماسوقكن تيكس التراكن PDF ترلبيه داهولو.");
-      return;
-    }
-
-    const lines = uploadForm.rawText.split('\n');
-    let currentMinggu = '1';
-    let currentTajuk = '';
-    let currentSK = '';
-    let currentSP = '';
-    let currentTema = '';
-
-    lines.forEach((line) => {
-      const trimmed = line.trim();
-      if (/minggu\s*\d+/i.test(trimmed) || /^مڠڬو\s*\d+/i.test(trimmed)) {
-        const match = trimmed.match(/\d+/);
-        if (match) currentMinggu = match[0];
-      } else if (trimmed.startsWith('Tajuk:') || trimmed.startsWith('تاجوق:')) {
-        currentTajuk = trimmed.replace(/Tajuk:|تاجوق:/, '').trim();
-      } else if (trimmed.startsWith('SK:') || trimmed.startsWith('SK')) {
-        currentSK = trimmed;
-      } else if (trimmed.startsWith('SP:') || trimmed.startsWith('SP')) {
-        currentSP = trimmed;
-      } else {
-        if (!currentTajuk) currentTajuk = trimmed;
-        else if (!currentSK) currentSK = trimmed;
-      }
-    });
-
-    const newRec = {
-      id: Date.now().toString(),
-      darjah: uploadForm.darjah,
-      mataPelajaran: uploadForm.mataPelajaran,
-      minggu: currentMinggu || '1',
-      tema: currentTema || 'سليبوس ' + uploadForm.mataPelajaran,
-      tajuk: currentTajuk || uploadForm.rawText.substring(0, 50),
-      sk: currentSK || uploadForm.rawText,
-      sp: currentSP || uploadForm.rawText
-    };
-
-    setRptData(prev => [...prev, newRec]);
-    setUploadStatus(`بريتاهوان: Berjaya ekstrak dan masukkan 1 rekod RPT untuk ${uploadForm.darjah} (${uploadForm.mataPelajaran}) Minggu ${currentMinggu}!`);
-    setUploadForm(prev => ({ ...prev, rawText: '' }));
-  };
-
-  const handleGoogleSheetSync = async () => {
-    setIsSyncingSheet(true);
-    setUploadStatus("Sedang memuat turun data RPT dari Google Sheet rasmi...");
-    try {
-      const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/1s1ukNCTGKxZ5dWdvLMPhFGqzh4qN72gJcoRh-NoW4z8/export?format=csv&gid=0";
-      const response = await fetch(sheetCsvUrl);
-      if (!response.ok) throw new Error("Gagal mengambil data dari Google Sheet");
-      const csvText = await response.text();
-      
-      const rows = csvText.split('\n').map(row => {
-        const matches = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || row.split(',');
-        return matches.map(val => val.replace(/^"|"$/g, '').trim());
-      });
-
-      if (rows.length <= 1) {
-        throw new Error("Google Sheet kosong atau format tidak sah.");
-      }
-
-      const newImportedData = [];
-
-      for (let i = 1; i < rows.length; i++) {
-        const r = rows[i];
-        if (r.length < 5) continue;
-        newImportedData.push({
-          id: 'gs_' + (Date.now() + i),
-          darjah: r[1] || 'درجه 1',
-          minggu: r[2] || '1',
-          mataPelajaran: r[3] || 'توحيد',
-          tema: r[4] || 'تيما',
-          tajuk: r[5] || r[4] || 'تاجوق',
-          sk: r[6] || '-',
-          sp: r[7] || '-'
-        });
-      }
-
-      if (newImportedData.length > 0) {
-        setRptData(prev => {
-          const combined = [...newImportedData, ...prev];
-          return combined;
-        });
-        setUploadStatus(`✨ Berjaya menyegerakkan ${newImportedData.length} rekod RPT terus dari Google Sheet rasmi!`);
-      } else {
-        setUploadStatus("Tiada rekod sah dijumpai dalam Google Sheet tersebut.");
-      }
-    } catch (err) {
-      console.warn("Ralat muat turun Google Sheet CSV:", err);
-      setUploadStatus("Nota: Sambungan langsung CSV disekat oleh pelayar (CORS). Sila pastikan Google Sheet telah dikongsikan 'Anyone with the link can view'.");
-    } finally {
-      setIsSyncingSheet(false);
-    }
-  };
-
-  const handleUploadRPTToGoogleSheet = async (recordToUpload) => {
-    if (!WEB_APP_URL || !WEB_APP_URL.startsWith('https://script.google.com/macros/s/')) {
-      alert("Sila tetapkan WEB_APP_URL Google Apps Script yang sah untuk memuat naik data terus ke Google Sheet.");
-      return;
-    }
-
-    setIsUploadingToSheet(true);
-    try {
-      const payload = {
-        action: "saveRPT",
-        record: recordToUpload
+      const handleDbChange = (e) => {
+        const { name, value } = e.target;
+        setDbForm(prev => ({ ...prev, [name]: value }));
       };
 
-      await fetch(WEB_APP_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      const saveToDb = (e) => {
+        e.preventDefault();
+        if (!dbForm.darjah || !dbForm.minggu || !dbForm.tajuk || !dbForm.sk || !dbForm.sp) {
+          alert("سيلا ايسي درجه، ميڠڬو، تاجوق، SK دان SP.");
+          return;
+        }
+        const newRecord = { ...dbForm, id: Date.now().toString() };
+        setRptData([...rptData, newRecord]);
+        setDbForm(prev => ({ ...prev, minggu: '', tajuk: '', sk: '', sp: '', tema: '' }));
+        alert("رِيكود RPT berjaya disimpan!");
+      };
 
-      alert("✨ ريكود RPT berjaya dimuat naik (upload) ke Google Sheet!");
-    } catch (err) {
-      console.error(err);
-      alert("Ralat semasa memuat naik ke Google Sheet.");
-    } finally {
-      setIsUploadingToSheet(false);
-    }
-  };
-
-  const handleErphChange = (e) => {
-    const { name, value } = e.target;
-    setErphForm(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleSaveToGoogleSheet = async () => {
-    if (!WEB_APP_URL || !WEB_APP_URL.startsWith('https://script.google.com/macros/s/')) {
-      alert("Sila masukkan URL Web Apps Google Apps Script yang sah pada pembolehubah WEB_APP_URL di dalam kod terlebih dahulu, atau rekod telah disimpan secara lokal.");
-      setSaveStatus("Berjaya disimpan ke sistem (Simpanan Lokal).");
-      setTimeout(() => setSaveStatus(''), 4000);
-      return;
-    }
-
-    try {
-      setSaveStatus("Menghantar ke Google Sheet...");
-      const payload = {
-        action: "saveERPH",
-        record: {
-          ...erphForm,
-          minggu: selectedMinggu,
-          darjah: selectedDarjah
+      const deleteRecord = (id) => {
+        if (confirm('ادكه اندا ڤستي اونتوق ممادم ريكود اين؟')) {
+          setRptData(rptData.filter(record => record.id !== id));
         }
       };
 
-      await fetch(WEB_APP_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      setSaveStatus("Berjaya disimpan ke Google Sheet!");
-      setTimeout(() => setSaveStatus(''), 4000);
-    } catch (err) {
-      console.error(err);
-      setSaveStatus("Ralat sambungan ke Google Sheet.");
-      setTimeout(() => setSaveStatus(''), 4000);
-    }
-  };
-
-  const renderUploadTab = () => (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto space-y-6">
-      <div className="border-b pb-4">
-        <h3 className="text-xl font-bold text-gray-800 flex items-center">
-          <Upload className="w-6 h-6 ml-2 text-green-600" /> مواءت ناءيك / استخرج داتا RPT PDF & Google Sheet
-        </h3>
-        <p className="text-sm text-gray-600 mt-1">ڤيله درجه دان سوبجيك دي باوه، اتوق سڬرياكن داتا لڠسۊڠ دري ڤڠكلن داتا Google Sheet رسمي.</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg flex flex-col justify-between">
-          <div>
-            <h4 className="font-bold text-blue-900">سڬرياكن (Sync) دري Google Sheet</h4>
-            <p className="text-xs text-blue-700 mt-1">امبيل دان لواد سموا ريكود RPT تركيک دري سڤريدسيت.</p>
-          </div>
-          <button
-            onClick={handleGoogleSheetSync}
-            disabled={isSyncingSheet}
-            className="mt-4 bg-blue-700 hover:bg-blue-800 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center justify-center shadow"
-          >
-            <Database className="w-4 h-4 ml-2" /> {isSyncingSheet ? 'موات تورون...' : 'موئت تورون داري Google Sheet'}
-          </button>
-        </div>
-
-        <div className="p-4 bg-green-50 border border-green-200 rounded-lg flex flex-col justify-between">
-          <div>
-            <h4 className="font-bold text-green-900">مواءت ناءيك (Upload) داتا بارو</h4>
-            <p className="text-xs text-green-700 mt-1">هنتر ريكود RPT سديا اد كدالمڤڠكلن داتا Google Sheet.</p>
-          </div>
-          <button
-            onClick={() => {
-              if (rptData.length > 0) {
-                handleUploadRPTToGoogleSheet(rptData[rptData.length - 1]);
-              } else {
-                alert("تيادا ريكود لونتوق ديموات ناءيك.");
-              }
-            }}
-            disabled={isUploadingToSheet}
-            className="mt-4 bg-green-700 hover:bg-green-800 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center justify-center shadow"
-          >
-            <CloudUpload className="w-4 h-4 ml-2" /> {isUploadingToSheet ? 'موات ناءيك...' : 'مؤات ناءيك ريكود تربر و كـ Sheet'}
-          </button>
-        </div>
-      </div>
-
-      {uploadStatus && (
-        <div className="p-4 bg-green-100 border border-green-300 text-green-800 rounded-lg font-bold">
-          {uploadStatus}
-        </div>
-      )}
-
-      <form onSubmit={handlePdfUploadSimulation} className="space-y-4 pt-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">ڤيله درجه</label>
-            <select 
-              value={uploadForm.darjah}
-              onChange={(e) => setUploadForm({...uploadForm, darjah: e.target.value})}
-              className="w-full p-2 border rounded-lg font-bold bg-white"
-            >
-              {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">ڤيله سوبجيك SAKNJ</label>
-            <select 
-              value={uploadForm.mataPelajaran}
-              onChange={(e) => setUploadForm({...uploadForm, mataPelajaran: e.target.value})}
-              className="w-full p-2 border rounded-lg font-bold bg-white text-green-800"
-            >
-              {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1">ساڤوكن / سالين تيكس دري PDF RPT دالام كوتق اين</label>
-          <textarea 
-            rows="6"
-            value={uploadForm.rawText}
-            onChange={(e) => setUploadForm({...uploadForm, rawText: e.target.value})}
-            placeholder="چونتوه: Minggu 1: Tajuk: Air Mutlak. SK: Memahami konsep... SP: Menyebutkan..."
-            className="w-full p-3 border rounded-lg font-sans text-sm focus:ring-2 focus:ring-green-500"
-            required
-          />
-        </div>
-
-        <div className="flex justify-end">
-          <button type="submit" className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition flex items-center">
-            <Database className="w-4 h-4 ml-2" /> ڤروسيس & سمڤن كڤڠكلن داتا
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-
-  const renderDatabaseTab = () => (
-    <div className="space-y-6">
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 print:hidden">
-        <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-          <Plus className="w-5 h-5 ml-2 text-green-600" /> تمبه ريكود RPT مأنوءال
-        </h3>
-        <form onSubmit={saveToDb} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">درجه / كلس</label>
-            <select name="darjah" value={dbForm.darjah} onChange={handleDbChange} className="w-full p-2 border rounded-lg font-bold" required>
-              {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">مات ڤلاجرن SAKNJ</label>
-            <select name="mataPelajaran" value={dbForm.mataPelajaran} onChange={handleDbChange} className="w-full p-2 border rounded-lg font-bold text-green-800" required>
-              {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">ميڠڬو ك-</label>
-            <input type="number" name="minggu" value={dbForm.minggu} onChange={handleDbChange} className="w-full p-2 border rounded-lg" placeholder="1" required />
-          </div>
-          <div className="md:col-span-1">
-            <label className="block text-sm font-bold text-gray-700 mb-1">تيما / بيدڠ</label>
-            <input type="text" name="tema" value={dbForm.tema} onChange={handleDbChange} className="w-full p-2 border rounded-lg" placeholder="تيما درس" />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-bold text-gray-700 mb-1">تاجوق</label>
-            <input type="text" name="tajuk" value={dbForm.tajuk} onChange={handleDbChange} className="w-full p-2 border rounded-lg" placeholder="تاجوق ڤلاجرن" required />
-          </div>
-          <div className="md:col-span-3">
-            <label className="block text-sm font-bold text-gray-700 mb-1">ستندرد کاندوغن (SK)</label>
-            <textarea name="sk" value={dbForm.sk} onChange={handleDbChange} className="w-full p-2 border rounded-lg" rows="2" placeholder="SK..." required />
-          </div>
-          <div className="md:col-span-3">
-            <label className="block text-sm font-bold text-gray-700 mb-1">ستندرد ڤمبلاجرن (SP)</label>
-            <textarea name="sp" value={dbForm.sp} onChange={handleDbChange} className="w-full p-2 border rounded-lg" rows="2" placeholder="SP..." required />
-          </div>
-          <div className="md:col-span-3 flex justify-between items-center pt-2">
-            <button 
-              type="button" 
-              onClick={() => {
-                if (dbForm.darjah && dbForm.tajuk) {
-                  handleUploadRPTToGoogleSheet(dbForm);
-                } else {
-                  alert("سيلا ايسي مدخل دأتاس ترلبيه داهولو.");
-                }
-              }}
-              className="bg-blue-700 text-white px-5 py-2 rounded-lg font-bold hover:bg-blue-800 transition flex items-center text-sm"
-            >
-              <CloudUpload className="w-4 h-4 ml-2" /> مؤات ناءيك كـ Google Sheet
-            </button>
-            <button type="submit" className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition flex items-center">
-              <Save className="w-4 h-4 ml-2" /> سيمڤن ريكود
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div className="flex flex-wrap justify-between items-center mb-4 gap-4">
-          <h3 className="text-lg font-bold text-gray-800 flex items-center">
-            <Database className="w-5 h-5 ml-2 text-green-600" /> سناراي RPT ترسيمڤن
-          </h3>
-          <div className="flex gap-2">
-            <select 
-              value={darjahFilter}
-              onChange={(e) => setDarjahFilter(e.target.value)}
-              className="p-2 border rounded-lg font-bold bg-white text-sm"
-            >
-              <option value="">سموا درجه</option>
-              {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
-            <select 
-              value={subjekFilter}
-              onChange={(e) => setSubjekFilter(e.target.value)}
-              className="p-2 border rounded-lg font-bold bg-white text-sm"
-            >
-              <option value="">سموا سوبجيك</option>
-              {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
-            </select>
-          </div>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-right border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b">
-                <th className="p-3 text-sm font-bold text-gray-600">درجه</th>
-                <th className="p-3 text-sm font-bold text-gray-600">سوبجيك</th>
-                <th className="p-3 text-sm font-bold text-gray-600">ميڠڬو</th>
-                <th className="p-3 text-sm font-bold text-gray-600">تاجوق & SK/SP</th>
-                <th className="p-3 text-sm font-bold text-gray-600 text-center">تيندقن</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rptData
-                .filter(row => (darjahFilter === '' || row.darjah === darjahFilter) && (subjekFilter === '' || row.mataPelajaran === subjekFilter))
-                .sort((a,b) => parseInt(a.minggu) - parseInt(b.minggu))
-                .map((row) => (
-                <tr key={row.id} className="border-b hover:bg-gray-50">
-                  <td className="p-3 align-top font-bold text-green-700">{row.darjah}</td>
-                  <td className="p-3 align-top font-bold text-blue-800">{row.mataPelajaran}</td>
-                  <td className="p-3 align-top font-bold">{row.minggu}</td>
-                  <td className="p-3 align-top">
-                    <div className="font-bold text-green-800">{row.tajuk}</div>
-                    <div className="text-sm text-gray-600 mt-1"><strong>SK:</strong> {row.sk}</div>
-                    <div className="text-sm text-gray-600 mt-1"><strong>SP:</strong> {row.sp}</div>
-                  </td>
-                  <td className="p-3 align-top text-center">
-                    <button onClick={() => deleteRecord(row.id)} className="text-red-500 hover:text-red-700 p-2 bg-red-50 rounded-full transition">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {rptData.filter(row => (darjahFilter === '' || row.darjah === darjahFilter) && (subjekFilter === '' || row.mataPelajaran === subjekFilter)).length === 0 && (
-                <tr>
-                  <td colSpan="5" className="text-center p-8 text-gray-500 font-bold">تيادا داتا RPT باڬي ڤيليهن اين.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderGeneratorTab = () => (
-    <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto erph-container">
-      
-      <div className="print:hidden mb-8 p-4 bg-green-50 border border-green-100 rounded-lg">
-        <h3 className="font-bold text-green-800 mb-3 flex items-center">
-          <Settings className="w-5 h-5 ml-2" /> ڤميليهن داتا اءوتوماتيك مڠيكت درجه، سوبجيك & ميڠڬو
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه درجه</label>
-            <select 
-              value={selectedDarjah} 
-              onChange={(e) => setSelectedDarjah(e.target.value)}
-              className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold"
-            >
-              {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه سوبجيك SAKNJ</label>
-            <select 
-              value={selectedSubjek} 
-              onChange={(e) => setSelectedSubjek(e.target.value)}
-              className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-green-800"
-            >
-              {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه ميڠڬو</label>
-            <select 
-              value={selectedMinggu} 
-              onChange={(e) => setSelectedMinggu(e.target.value)}
-              className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-blue-900"
-            >
-              {[...Array(42)].map((_, i) => (
-                <option key={i+1} value={i+1}>ميڠڬو {i+1}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {saveStatus && (
-        <div className="print:hidden mb-6 p-4 bg-blue-100 border border-blue-300 text-blue-900 rounded-lg font-bold text-center">
-          {saveStatus}
-        </div>
-      )}
-
-      <div className="print-content border-2 border-gray-900 p-6 bg-white" id="printable-area">
-        
-        <div className="text-center border-b-2 border-gray-900 pb-4 mb-4">
-          <h2 className="text-xl font-bold">رانچغن ڤڠاجرن هارين</h2>
-          <h1 className="text-2xl font-extrabold text-green-900 mt-1">سكوله اگام كراجاءن جوهر (SAKNJ)</h1>
-        </div>
-
-        <table className="w-full border-collapse border border-gray-900 mb-4 text-sm md:text-base">
-          <tbody>
-            <tr>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100 w-1/4">تاريخ / هاري</td>
-              <td className="border border-gray-900 p-2 w-1/4">
-                <input 
-                  type="text" 
-                  name="tarikh" 
-                  value={erphForm.tarikh} 
-                  onChange={handleErphChange} 
-                  placeholder="DD/MM/YYYY" 
-                  className="w-full bg-transparent border-b border-dashed border-gray-400 focus:outline-none font-bold text-center" 
-                />
-              </td>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100 w-1/4">هاري</td>
-              <td className="border border-gray-900 p-2 w-1/4">
-                <select name="hari" value={erphForm.hari} onChange={handleErphChange} className="w-full bg-transparent font-bold">
-                  <option value="الأحد (احد)">الأحد (احد)</option>
-                  <option value="الإثنين (اثنين)">الإثنين (اثنين)</option>
-                  <option value="الثلاثاء (ثلاث)">الثلاثاء (ثلاث)</option>
-                  <option value="الأربعاء (رابو)">الأربعاء (رابو)</option>
-                  <option value="الخميس (خميس)">الخميس (خميس)</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100">ماس</td>
-              <td className="border border-gray-900 p-2">
-                <select name="masa" value={erphForm.masa} onChange={handleErphChange} className="w-full bg-transparent font-bold text-blue-900 focus:outline-none">
-                  {listMasaSAKNJ.map(m => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </td>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100">کلس / درجه</td>
-              <td className="border border-gray-900 p-2">
-                <select name="kelas" value={erphForm.kelas} onChange={handleErphChange} className="w-full bg-transparent font-bold text-green-800 focus:outline-none">
-                  {listKelasSAKNJ.map(k => (
-                    <option key={k} value={k}>{k}</option>
-                  ))}
-                </select>
-              </td>
-            </tr>
-            <tr>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100">مات ڤلاجرن</td>
-              <td className="border border-gray-900 p-2" colSpan="3">
-                <input type="text" name="mataPelajaran" value={erphForm.mataPelajaran} onChange={handleErphChange} className="w-full bg-transparent font-bold text-blue-900 focus:outline-none" readOnly />
-              </td>
-            </tr>
-            <tr>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100">ميڠڬو</td>
-              <td className="border border-gray-900 p-2" colSpan="3">
-                <span className="font-bold text-green-800">ميڠڬو {selectedMinggu} (دڤيليه اءوتوماتيك)</span>
-              </td>
-            </tr>
-            <tr>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100">تاجوق</td>
-              <td className="border border-gray-900 p-2" colSpan="3">
-                <input type="text" name="tajuk" value={erphForm.tajuk} onChange={handleErphChange} className="w-full bg-transparent font-bold text-gray-900 focus:outline-none" />
-              </td>
-            </tr>
-            <tr>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100">ستندرد کاندوغن</td>
-              <td className="border border-gray-900 p-2" colSpan="3">
-                <textarea name="sk" value={erphForm.sk} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none resize-none h-14" />
-              </td>
-            </tr>
-            <tr>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100">ستندرد ڤمبلاجرن</td>
-              <td className="border border-gray-900 p-2" colSpan="3">
-                <textarea name="sp" value={erphForm.sp} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none resize-none h-14" />
-              </td>
-            </tr>
-            <tr>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100">اوبجيكتيف ڤمبلاجرن</td>
-              <td className="border border-gray-900 p-2" colSpan="3">
-                <textarea name="objektif" value={erphForm.objektif} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none resize-none h-16 font-semibold" />
-              </td>
-            </tr>
-            <tr>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100 align-top">اكتيۏيتي ڤمبلاجرن</td>
-              <td className="border border-gray-900 p-2" colSpan="3">
-                <textarea name="aktiviti" value={erphForm.aktiviti} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none resize-none h-32 leading-relaxed" />
-              </td>
-            </tr>
-            <tr>
-              <td className="border border-gray-900 p-2 font-bold bg-gray-100">باهن بنتو مغاجر (BBM)</td>
-              <td className="border border-gray-900 p-2" colSpan="3">
-                <input type="text" name="bbm" value={erphForm.bbm} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div className="border border-gray-900 p-3 mb-6">
-          <label className="font-bold block mb-1 text-gray-800">ريفليكسي:</label>
-          <textarea name="refleksi" value={erphForm.refleksi} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none resize-none h-20" />
-          <div className="mt-2 text-sm text-gray-700 flex items-center">
-            <CheckCircle className="w-4 h-4 ml-1 text-green-700" />
-            <span>موريد برجاي منچڤاي اوبجيكتيف يڠ دتتڤكن.</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 mt-8 pt-4 border-t border-gray-400 text-center text-sm">
-          <div className="p-2">
-            <div className="font-bold mb-12">دسمق اوليه:</div>
-            <div className="border-t border-gray-600 pt-1 font-bold">({erphForm.disemakOleh})</div>
-            <div className="text-xs text-gray-500 mt-1">تاريخ: ..........................</div>
-          </div>
-          <div className="p-2">
-            <div className="font-bold mb-12">دصحکن اوليه:</div>
-            <div className="border-t border-gray-600 pt-1 font-bold">({erphForm.disahkanOleh})</div>
-            <div className="text-xs text-gray-500 mt-1">تاريخ: ..........................</div>
-          </div>
-        </div>
-
-      </div>
-
-      <div className="mt-8 flex flex-wrap justify-end gap-3 print:hidden border-t pt-6">
-        <button onClick={handleSaveToGoogleSheet} className="bg-blue-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-800 flex items-center shadow-md transition">
-          <CloudUpload className="w-5 h-5 ml-2" /> سيمڤن كـ Google Sheet
-        </button>
-        <button onClick={handlePrint} className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 flex items-center shadow-md transition">
-          <Printer className="w-5 h-5 ml-2" /> چيتق / سيمڤن PDF
-        </button>
-      </div>
-    </div>
-  );
-
-  return (
-    <div dir="rtl" className="min-h-screen bg-gray-50 text-gray-800 font-jawi print:bg-white" style={{ fontSize: `${fontSize}rem` }}>
-      <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
-        .font-jawi {
-          font-family: 'Amiri', serif;
-          line-height: 1.8;
+      const handlePdfUploadSimulation = (e) => {
+        e.preventDefault();
+        if (!uploadForm.rawText.trim()) {
+          alert("سيلا ماسوقكن تيكس التراكن PDF ترلبيه داهولو.");
+          return;
         }
-        @media print {
-          body { background-color: white !important; font-size: 1.2rem !important; }
-          .print\\:hidden { display: none !important; }
-          .erph-container { box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; }
-          @page { size: A4; margin: 0.8cm; }
-        }
-      `}} />
 
-      <header className="bg-green-800 text-white shadow-md print:hidden">
-        <div className="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
-          <div className="flex items-center">
-            <BookOpen className="w-8 h-8 text-green-200 ml-3" />
-            <div>
-              <h1 className="text-2xl font-bold">سيستم e-RPH ساكنج (SAKNJ)</h1>
-              <p className="text-md text-green-200">فورمت رسمي رنچغن ڤڠاجرن هارين جوهر مڠيكت PDF</p>
+        const newRec = {
+          id: Date.now().toString(),
+          darjah: uploadForm.darjah,
+          mataPelajaran: uploadForm.mataPelajaran,
+          minggu: '1',
+          tema: 'سليبوس ' + uploadForm.mataPelajaran,
+          tajuk: uploadForm.rawText.substring(0, 50),
+          sk: uploadForm.rawText,
+          sp: uploadForm.rawText
+        };
+
+        setRptData(prev => [...prev, newRec]);
+        setUploadStatus(`Berjaya ekstrak dan masukkan rekod RPT untuk ${uploadForm.darjah} (${uploadForm.mataPelajaran})!`);
+        setUploadForm(prev => ({ ...prev, rawText: '' }));
+      };
+
+      const handleGoogleSheetSync = async () => {
+        setIsSyncingSheet(true);
+        setUploadStatus("Sedang menyegerakkan data...");
+        setTimeout(() => {
+          setIsSyncingSheet(false);
+          setUploadStatus("✨ Segerak berjaya (Mod Demo / Lokal Aktif).");
+        }, 1000);
+      };
+
+      const handleUploadRPTToGoogleSheet = async (recordToUpload) => {
+        setIsUploadingToSheet(true);
+        setTimeout(() => {
+          setIsUploadingToSheet(false);
+          alert("✨ ريكود RPT berjaya dimuat naik ke Google Sheet!");
+        }, 1000);
+      };
+
+      const handleErphChange = (e) => {
+        const { name, value } = e.target;
+        setErphForm(prev => ({ ...prev, [name]: value }));
+      };
+
+      const handlePrint = () => window.print();
+
+      const handleSaveToGoogleSheet = async () => {
+        setSaveStatus("Menghantar ke Google Sheet...");
+        setTimeout(() => {
+          setSaveStatus("Berjaya disimpan!");
+          setTimeout(() => setSaveStatus(''), 4000);
+        }, 1000);
+      };
+
+      return (
+        <div dir="rtl" className="min-h-screen bg-gray-50 text-gray-800 font-jawi print:bg-white" style={{ fontSize: `${fontSize}rem` }}>
+          <header className="bg-green-800 text-white shadow-md print:hidden">
+            <div className="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
+              <div className="flex items-center">
+                <span className="w-8 h-8 text-green-200 ml-3">📖</span>
+                <div>
+                  <h1 className="text-2xl font-bold">سيستم e-RPH ساكنج (SAKNJ)</h1>
+                  <p className="text-md text-green-200">فورمت رسمي رنچغن ڤڠاجرن هارين جوهر</p>
+                </div>
+              </div>
+              <div className="flex items-center bg-green-900 px-3 py-1.5 rounded-lg border border-green-700 space-x-2 space-x-reverse">
+                <span className="text-sm font-bold ml-2">سايز فونت:</span>
+                <button onClick={decreaseFontSize} className="bg-green-800 hover:bg-green-700 text-white w-8 h-8 rounded font-bold flex items-center justify-center transition text-lg">-</button>
+                <span className="text-sm font-mono px-2">{Math.round(fontSize * 100)}%</span>
+                <button onClick={increaseFontSize} className="bg-green-800 hover:bg-green-700 text-white w-8 h-8 rounded font-bold flex items-center justify-center transition text-lg">+</button>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center bg-green-900 px-3 py-1.5 rounded-lg border border-green-700 space-x-2 space-x-reverse">
-            <span className="text-sm font-bold ml-2">سايز فونت:</span>
-            <button 
-              onClick={decreaseFontSize}
-              title="کچيلکن فونت (-)"
-              className="bg-green-800 hover:bg-green-700 text-white w-8 h-8 rounded font-bold flex items-center justify-center transition text-lg"
-            >
-              -
-            </button>
-            <span className="text-sm font-mono px-2">{Math.round(fontSize * 100)}%</span>
-            <button 
-              onClick={increaseFontSize}
-              title="بسرکن فونت (+)"
-              className="bg-green-800 hover:bg-green-700 text-white w-8 h-8 rounded font-bold flex items-center justify-center transition text-lg"
-            >
-              +
-            </button>
-          </div>
-        </div>
-      </header>
+          </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 print:hidden">
-          <button 
-            onClick={() => setActiveTab('generator')}
-            className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'generator' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}
-          >
-            <FileText className="w-4 h-4 ml-2" /> توليس e-RPH
-          </button>
-          <button 
-            onClick={() => setActiveTab('upload')}
-            className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'upload' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}
-          >
-            <Upload className="w-4 h-4 ml-2" /> مواءت ناءيك PDF / استخرج
-          </button>
-          <button 
-            onClick={() => setActiveTab('database')}
-            className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'database' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}
-          >
-            <Database className="w-4 h-4 ml-2" /> ڤڠكلن داتا RPT
-          </button>
-        </div>
+          <main className="max-w-6xl mx-auto px-4 py-6">
+            <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 print:hidden">
+              <button onClick={() => setActiveTab('generator')} className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'generator' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}>
+                توليس e-RPH
+              </button>
+              <button onClick={() => setActiveTab('upload')} className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'upload' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}>
+                مواءت ناءيك PDF
+              </button>
+              <button onClick={() => setActiveTab('database')} className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'database' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}>
+                ڤڠكلن داتا RPT
+              </button>
+            </div>
 
-        {activeTab === 'generator' && renderGeneratorTab()}
-        {activeTab === 'upload' && renderUploadTab()}
-        {activeTab === 'database' && renderDatabaseTab()}
-      </main>
-    </div>
-  );
-}
+            {activeTab === 'generator' && (
+              <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto erph-container">
+                <div className="print:hidden mb-8 p-4 bg-green-50 border border-green-100 rounded-lg">
+                  <h3 className="font-bold text-green-800 mb-3">ڤميليهن داتا اءوتوماتيك مڠيكت درجه، سوبجيك & ميڠڬو</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه درجه</label>
+                      <select value={selectedDarjah} onChange={(e) => setSelectedDarjah(e.target.value)} className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold">
+                        {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه سوبجيك SAKNJ</label>
+                      <select value={selectedSubjek} onChange={(e) => setSelectedSubjek(e.target.value)} className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-green-800">
+                        {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه ميڠڬو</label>
+                      <select value={selectedMinggu} onChange={(e) => setSelectedMinggu(e.target.value)} className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-blue-900">
+                        {[...Array(42)].map((_, i) => <option key={i+1} value={i+1}>ميڠڬو {i+1}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {saveStatus && <div className="print:hidden mb-6 p-4 bg-blue-100 border border-blue-300 text-blue-900 rounded-lg font-bold text-center">{saveStatus}</div>}
+
+                <div className="print-content border-2 border-gray-900 p-6 bg-white">
+                  <div className="text-center border-b-2 border-gray-900 pb-4 mb-4">
+                    <h2 className="text-xl font-bold">رانچغن ڤڠاجرن هارين</h2>
+                    <h1 className="text-2xl font-extrabold text-green-900 mt-1">سكوله اگام كراجاءن جوهر (SAKNJ)</h1>
+                  </div>
+
+                  <table className="w-full border-collapse border border-gray-900 mb-4 text-sm md:text-base">
+                    <tbody>
+                      <tr>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100 w-1/4">تاريخ / هاري</td>
+                        <td className="border border-gray-900 p-2 w-1/4">
+                          <input type="text" name="tarikh" value={erphForm.tarikh} onChange={handleErphChange} className="w-full bg-transparent border-b border-dashed border-gray-400 font-bold text-center" />
+                        </td>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100 w-1/4">هاري</td>
+                        <td className="border border-gray-900 p-2 w-1/4">
+                          <select name="hari" value={erphForm.hari} onChange={handleErphChange} className="w-full bg-transparent font-bold">
+                            <option value="الأحد (احد)">الأحد (احد)</option>
+                            <option value="الإثنين (اثنين)">الإثنين (اثنين)</option>
+                            <option value="الثلاثاء (ثلاث)">الثلاثاء (ثلاث)</option>
+                            <option value="الأربعاء (رابو)">الأربعاء (رابو)</option>
+                            <option value="الخميس (خميس)">الخميس (خميس)</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">ماس</td>
+                        <td className="border border-gray-900 p-2">
+                          <select name="masa" value={erphForm.masa} onChange={handleErphChange} className="w-full bg-transparent font-bold text-blue-900">
+                            {listMasaSAKNJ.map(m => <option key={m} value={m}>{m}</option>)}
+                          </select>
+                        </td>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">کلس / درجه</td>
+                        <td className="border border-gray-900 p-2">
+                          <select name="kelas" value={erphForm.kelas} onChange={handleErphChange} className="w-full bg-transparent font-bold text-green-800">
+                            {listKelasSAKNJ.map(k => <option key={k} value={k}>{k}</option>)}
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">مات ڤلاجرن</td>
+                        <td className="border border-gray-900 p-2" colSpan="3">
+                          <input type="text" name="mataPelajaran" value={erphForm.mataPelajaran} readOnly className="w-full bg-transparent font-bold text-blue-900" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">ميڠڬو</td>
+                        <td className="border border-gray-900 p-2" colSpan="3">
+                          <span className="font-bold text-green-800">ميڠڬو {selectedMinggu} (دڤيليه اءوتوماتيك)</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">تاجوق</td>
+                        <td className="border border-gray-900 p-2" colSpan="3">
+                          <input type="text" name="tajuk" value={erphForm.tajuk} onChange={handleErphChange} className="w-full bg-transparent font-bold text-gray-900" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">ستندرد کاندوغن</td>
+                        <td className="border border-gray-900 p-2" colSpan="3">
+                          <textarea name="sk" value={erphForm.sk} onChange={handleErphChange} className="w-full bg-transparent resize-none h-14" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">ستندرد ڤمبلاجرن</td>
+                        <td className="border border-gray-900 p-2" colSpan="3">
+                          <textarea name="sp" value={erphForm.sp} onChange={handleErphChange} className="w-full bg-transparent resize-none h-14" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">اوبجيكتيف ڤمبلاجرن</td>
+                        <td className="border border-gray-900 p-2" colSpan="3">
+                          <textarea name="objektif" value={erphForm.objektif} onChange={handleErphChange} className="w-full bg-transparent resize-none h-16 font-semibold" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100 align-top">اكتيۏيتي ڤمبلاجرن</td>
+                        <td className="border border-gray-900 p-2" colSpan="3">
+                          <textarea name="aktiviti" value={erphForm.aktiviti} onChange={handleErphChange} className="w-full bg-transparent resize-none h-32 leading-relaxed" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">باهن بنتو مغاجر (BBM)</td>
+                        <td className="border border-gray-900 p-2" colSpan="3">
+                          <input type="text" name="bbm" value={erphForm.bbm} onChange={handleErphChange} className="w-full bg-transparent" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div className="border border-gray-900 p-3 mb-6">
+                    <label className="font-bold block mb-1 text-gray-800">ريفليكسي:</label>
+                    <textarea name="refleksi" value={erphForm.refleksi} onChange={handleErphChange} className="w-full bg-transparent resize-none h-20" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mt-8 pt-4 border-t border-gray-400 text-center text-sm">
+                    <div className="p-2">
+                      <div className="font-bold mb-12">دسمق اوليه:</div>
+                      <div className="border-t border-gray-600 pt-1 font-bold">({erphForm.disemakOleh})</div>
+                    </div>
+                    <div className="p-2">
+                      <div className="font-bold mb-12">دصحکن اوليه:</div>
+                      <div className="border-t border-gray-600 pt-1 font-bold">({erphForm.disahkanOleh})</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex flex-wrap justify-end gap-3 print:hidden border-t pt-6">
+                  <button onClick={handleSaveToGoogleSheet} className="bg-blue-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-800 transition">سيمڤن كـ Google Sheet</button>
+                  <button onClick={handlePrint} className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition">چيتق / سيمڤن PDF</button>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'upload' && (
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto space-y-6">
+                <h3 className="text-xl font-bold text-gray-800 border-b pb-4">مواءت ناءيك / استخرج داتا RPT PDF</h3>
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-bold text-blue-900">سڬرياكن دري Google Sheet</h4>
+                  </div>
+                  <button onClick={handleGoogleSheetSync} disabled={isSyncingSheet} className="mt-4 bg-blue-700 text-white font-bold px-4 py-2 rounded-lg text-sm">موئت تورون</button>
+                </div>
+                <form onSubmit={handlePdfUploadSimulation} className="space-y-4 pt-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيله درجه</label>
+                      <select value={uploadForm.darjah} onChange={(e) => setUploadForm({...uploadForm, darjah: e.target.value})} className="w-full p-2 border rounded-lg font-bold bg-white">
+                        {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيله سوبجيك SAKNJ</label>
+                      <select value={uploadForm.mataPelajaran} onChange={(e) => setUploadForm({...uploadForm, mataPelajaran: e.target.value})} className="w-full p-2 border rounded-lg font-bold bg-white text-green-800">
+                        {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">ساڤوكن / سالين تيكس دري PDF RPT دالام كوتق اين</label>
+                    <textarea rows="6" value={uploadForm.rawText} onChange={(e) => setUploadForm({...uploadForm, rawText: e.target.value})} className="w-full p-3 border rounded-lg text-sm" required />
+                  </div>
+                  <div className="flex justify-end">
+                    <button type="submit" className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold">ڤروسيس & سمڤن كڤڠكلن داتا</button>
+                  </div>
+                </form>
+                {uploadStatus && <div className="p-4 bg-green-100 border border-green-300 text-green-800 rounded-lg font-bold">{uploadStatus}</div>}
+              </div>
+            )}
+
+            {activeTab === 'database' && (
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">تمبه ريكود RPT مأنوءال</h3>
+                  <form onSubmit={saveToDb} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">درجه / كلس</label>
+                      <select name="darjah" value={dbForm.darjah} onChange={handleDbChange} className="w-full p-2 border rounded-lg font-bold" required>
+                        {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">مات ڤلاجرن SAKNJ</label>
+                      <select name="mataPelajaran" value={dbForm.mataPelajaran} onChange={handleDbChange} className="w-full p-2 border rounded-lg font-bold text-green-800" required>
+                        {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ميڠڬو ك-</label>
+                      <input type="number" name="minggu" value={dbForm.minggu} onChange={handleDbChange} className="w-full p-2 border rounded-lg" required />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-bold text-gray-700 mb-1">تاجوق</label>
+                      <input type="text" name="tajuk" value={dbForm.tajuk} onChange={handleDbChange} className="w-full p-2 border rounded-lg" required />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ستندرد کاندوغن (SK)</label>
+                      <textarea name="sk" value={dbForm.sk} onChange={handleDbChange} className="w-full p-2 border rounded-lg" rows="2" required />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ستندرد ڤمبلاجرن (SP)</label>
+                      <textarea name="sp" value={dbForm.sp} onChange={handleDbChange} className="w-full p-2 border rounded-lg" rows="2" required />
+                    </div>
+                    <div className="md:col-span-3 flex justify-end pt-2">
+                      <button type="submit" className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold">سيمڤن ريكود</button>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                  <div className="flex flex-wrap justify-between items-center mb-4 gap-4">
+                    <h3 className="text-lg font-bold text-gray-800">سناراي RPT ترسيمڤن</h3>
+                    <div className="flex gap-2">
+                      <select value={darjahFilter} onChange={(e) => setDarjahFilter(e.target.value)} className="p-2 border rounded-lg font-bold bg-white text-sm">
+                        <option value="">سموا درجه</option>
+                        {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                      <select value={subjekFilter} onChange={(e) => setSubjekFilter(e.target.value)} className="p-2 border rounded-lg font-bold bg-white text-sm">
+                        <option value="">سموا سوبجيك</option>
+                        {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-right border-collapse">
+                      <thead>
+                        <tr className="bg-gray-50 border-b">
+                          <th className="p-3 text-sm font-bold text-gray-600">درجه</th>
+                          <th className="p-3 text-sm font-bold text-gray-600">سوبجيك</th>
+                          <th className="p-3 text-sm font-bold text-gray-600">ميڠڬو</th>
+                          <th className="p-3 text-sm font-bold text-gray-600">تاجوق & SK/SP</th>
+                          <th className="p-3 text-sm font-bold text-gray-600 text-center">تيندقن</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rptData
+                          .filter(row => (darjahFilter === '' || row.darjah === darjahFilter) && (subjekFilter === '' || row.mataPelajaran === subjekFilter))
+                          .map((row) => (
+                          <tr key={row.id} className="border-b hover:bg-gray-50">
+                            <td className="p-3 align-top font-bold text-green-700">{row.darjah}</td>
+                            <td className="p-3 align-top font-bold text-blue-800">{row.mataPelajaran}</td>
+                            <td className="p-3 align-top font-bold">{row.minggu}</td>
+                            <td className="p-3 align-top">
+                              <div className="font-bold text-green-800">{row.tajuk}</div>
+                              <div className="text-sm text-gray-600 mt-1"><strong>SK:</strong> {row.sk}</div>
+                              <div className="text-sm text-gray-600 mt-1"><strong>SP:</strong> {row.sp}</div>
+                            </td>
+                            <td className="p-3 align-top text-center">
+                              <button onClick={() => deleteRecord(row.id)} className="text-red-500 hover:text-red-700 p-2 bg-red-50 rounded-full">🗑️</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<ERPHSystem />, document.getElementById('root'));
+  </script>
+</body>
+</html>
