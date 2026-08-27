@@ -294,6 +294,22 @@
         }, 1000);
       };
 
+      const handleKosongkan = () => {
+        if (confirm('ادکه اندا ڤستي اونتوق مڠوسوڠکن بورڠ اين؟ (Adakah anda pasti mahu mengosongkan borang ini?)')) {
+          setErphForm(prev => ({
+            ...prev,
+            tema: '',
+            tajuk: '',
+            sk: '',
+            sp: '',
+            objektif: '',
+            aktiviti: '',
+            bbm: '',
+            refleksi: ''
+          }));
+        }
+      };
+
       return (
         <div dir="rtl" className="min-h-screen bg-gray-50 text-gray-800 font-jawi print:bg-white" style={{ fontSize: `${fontSize}rem` }}>
           <header className="bg-green-800 text-white shadow-md print:hidden">
@@ -435,6 +451,7 @@
                 </div>
 
                 <div className="mt-8 flex flex-wrap justify-end gap-3 print:hidden border-t pt-6">
+                  <button onClick={handleKosongkan} className="bg-red-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700 transition">کوسوڠکن</button>
                   <button onClick={handleSaveToGoogleSheet} className="bg-blue-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-800 transition">سيمڤن كـ Google Sheet</button>
                   <button onClick={handlePrint} className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition">چيتق / سيمڤن PDF</button>
                 </div>
