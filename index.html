@@ -86,12 +86,12 @@
       ];
 
       const listMasaSAKNJ = [
-        '2:30 ڤڥتڠ - 3:30 ڤڥتڠ',
-        '3:30 ڤڥتڠ - 4:30 ڤڥتڠ',
-        '4:30 ڤڥتڠ - 5:30 ڤڥتڠ',
-        '8:00 ڤاڬي - 9:00 ڤاڬي',
-        '9:00 ڤاڬي - 10:00 ڤاڬي',
-        '10:30 ڤاڬي - 11:30 ڤاڬي'
+        '2:30 ڤتڠ - 3:30 ڤتڠ',
+        '3:30 ڤتڠ - 4:30 ڤتڠ',
+        '4:30 ڤتڠ - 5:30 ڤتڠ',
+        '8:00 ڤاݢي - 9:00 ڤاݢي',
+        '9:00 ڤاݢي - 10:00 ڤاݢي',
+        '10:30 ڤاݢي - 11:30 ڤاݢي'
       ];
 
       const listKelasSAKNJ = [
@@ -142,8 +142,8 @@
       
       const [erphForm, setErphForm] = useState({
         tarikh: new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
-        hari: 'الأحد (احد)',
-        masa: '2:30 ڤڥتڠ - 3:30 ڤڥتڠ',
+        hari: 'الاحد (احد)',
+        masa: '2:30 ڤتڠ - 3:30 ڤتڠ',
         kelas: 'درجه 1 بستاري',
         mataPelajaran: 'القرءان',
         tema: '',
@@ -151,11 +151,11 @@
         sk: '',
         sp: '',
         objektif: '',
-        aktiviti: '1. كورو منرغكن فد اية / ايساكن...\n2. موريد ممباچ دغن بتول دان تجويد يڠ برتولن...\n3. لاتيهن تنبيح دالم كلس...',
-        bbm: 'بوكو تيكس، ليمبرن كرج, روقان',
-        refleksi: 'موريد برجاي منچفاي اوبجيكتيف يڠ دتتڤكن. ٢٥ اورڠ موريد درڤد ٣٠ اورڠ مڠواسيني دڠن باءيك.',
-        disemakOleh: 'ڬورو بسر / ڤڽليد',
-        disahkanOleh: 'ڤڠواسڤ / ڤمبنتو ڤڠواسڤ'
+        aktiviti: '1. ݢورو منرڠكن ڤد اية / ايسيکن...\n2. موريد ممباچ دڠن بتول دان تجويد يڠ بتول...\n3. لاتيهن توليسن دالم کلس...',
+        bbm: 'بوکو تيکس، لمبرن کرجا، روجوعن',
+        refleksi: 'موريد برجاي منچاڤاي اوبجيکتيف يڠ دتتڤكن. ٢٥ اورڠ موريد درڤد ٣٠ اورڠ مڠواساءي دڠن باءيق.',
+        disemakOleh: 'ݢورو بسر / ڤڽليا',
+        disahkanOleh: 'ڤڠاوس / ڤمبنتو ڤڠاوس'
       });
 
       useEffect(() => {
@@ -301,8 +301,8 @@
               <div className="flex items-center">
                 <span className="w-8 h-8 text-green-200 ml-3">📖</span>
                 <div>
-                  <h1 className="text-2xl font-bold">سيستم e-RPH ساكنج (SAKNJ)</h1>
-                  <p className="text-md text-green-200">فورمت رسمي رنچغن ڤڠاجرن هارين جوهر</p>
+                  <h1 className="text-2xl font-bold">سيستم e-RPH سکنڤ (SAKNJ)</h1>
+                  <p className="text-md text-green-200">فورمات رسمي رانچڠن ڤڠاجرن هارين جوهر</p>
                 </div>
               </div>
               <div className="flex items-center bg-green-900 px-3 py-1.5 rounded-lg border border-green-700 space-x-2 space-x-reverse">
@@ -320,22 +320,22 @@
                 توليس e-RPH
               </button>
               <button onClick={() => setActiveTab('upload')} className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'upload' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}>
-                مواءت ناءيك PDF
+                موات ناءيق PDF
               </button>
               <button onClick={() => setActiveTab('database')} className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'database' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}>
-                ڤڠكلن داتا RPT
+                ڤڠکلن داتا RPT
               </button>
             </div>
 
             {activeTab === 'generator' && (
               <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto erph-container">
                 <div className="print:hidden mb-8 p-4 bg-green-50 border border-green-100 rounded-lg">
-                  <h3 className="font-bold text-green-800 mb-3">ڤميليهن داتا اءوتوماتيك مڠيكت درجه، سوبجيك & ميڠڬو</h3>
+                  <h3 className="font-bold text-green-800 mb-3">ڤميليهن داتا اءوتوماتيک مڠيکوت درجه، سوبجيک & ميڠݢو</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه درجه</label>
-                      <select value={selectedDarjah} onChange={(e) => setSelectedDarjah(e.target.value)} className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold">
-                        {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه ميڠݢو</label>
+                      <select value={selectedMinggu} onChange={(e) => setSelectedMinggu(e.target.value)} className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-blue-900">
+                        {[...Array(42)].map((_, i) => <option key={i+1} value={i+1}>ميڠݢو {i+1}</option>)}
                       </select>
                     </div>
                     <div>
@@ -357,8 +357,7 @@
 
                 <div className="print-content border-2 border-gray-900 p-6 bg-white">
                   <div className="text-center border-b-2 border-gray-900 pb-4 mb-4">
-                    <h2 className="text-xl font-bold">رانچغن ڤڠاجرن هارين</h2>
-                    <h1 className="text-2xl font-extrabold text-green-900 mt-1">سكوله اگام كراجاءن جوهر (SAKNJ)</h1>
+                    <h2 className="text-xl font-bold">رانچڠن ڤڠاجرن هارين</h2>
                   </div>
 
                   <table className="w-full border-collapse border border-gray-900 mb-4 text-sm md:text-base">
@@ -371,48 +370,22 @@
                         <td className="border border-gray-900 p-2 font-bold bg-gray-100 w-1/4">هاري</td>
                         <td className="border border-gray-900 p-2 w-1/4">
                           <select name="hari" value={erphForm.hari} onChange={handleErphChange} className="w-full bg-transparent font-bold">
-                            <option value="الأحد (احد)">الأحد (احد)</option>
-                            <option value="الإثنين (اثنين)">الإثنين (اثنين)</option>
-                            <option value="الثلاثاء (ثلاث)">الثلاثاء (ثلاث)</option>
-                            <option value="الأربعاء (رابو)">الأربعاء (رابو)</option>
+                            <option value="الاحد (احد)">الاحد (احد)</option>
+                            <option value="الاثنين (اثنين)">الاثنين (اثنين)</option>
+                            <option value="الثلاثاء (ثلاثا)">الثلاثاء (ثلاثا)</option>
+                            <option value="الاربعاء (رابو)">الاربعاء (رابو)</option>
                             <option value="الخميس (خميس)">الخميس (خميس)</option>
                           </select>
                         </td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">ماس</td>
-                        <td className="border border-gray-900 p-2">
-                          <select name="masa" value={erphForm.masa} onChange={handleErphChange} className="w-full bg-transparent font-bold text-blue-900">
-                            {listMasaSAKNJ.map(m => <option key={m} value={m}>{m}</option>)}
-                          </select>
-                        </td>
-                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">کلس / درجه</td>
-                        <td className="border border-gray-900 p-2">
-                          <select name="kelas" value={erphForm.kelas} onChange={handleErphChange} className="w-full bg-transparent font-bold text-green-800">
-                            {listKelasSAKNJ.map(k => <option key={k} value={k}>{k}</option>)}
-                          </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">مات ڤلاجرن</td>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">ميڠݢو</td>
                         <td className="border border-gray-900 p-2" colSpan="3">
-                          <input type="text" name="mataPelajaran" value={erphForm.mataPelajaran} readOnly className="w-full bg-transparent font-bold text-blue-900" />
+                          <span className="font-bold text-green-800">ميڠݢو {selectedMinggu}</span>
                         </td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">ميڠڬو</td>
-                        <td className="border border-gray-900 p-2" colSpan="3">
-                          <span className="font-bold text-green-800">ميڠڬو {selectedMinggu} (دڤيليه اءوتوماتيك)</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">تاجوق</td>
-                        <td className="border border-gray-900 p-2" colSpan="3">
-                          <input type="text" name="tajuk" value={erphForm.tajuk} onChange={handleErphChange} className="w-full bg-transparent font-bold text-gray-900" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">ستندرد کاندوغن</td>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">ستندرد كاندوڠن</td>
                         <td className="border border-gray-900 p-2" colSpan="3">
                           <textarea name="sk" value={erphForm.sk} onChange={handleErphChange} className="w-full bg-transparent resize-none h-14" />
                         </td>
@@ -424,19 +397,19 @@
                         </td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">اوبجيكتيف ڤمبلاجرن</td>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">اوبجيکتيف ڤمبلاجرن</td>
                         <td className="border border-gray-900 p-2" colSpan="3">
                           <textarea name="objektif" value={erphForm.objektif} onChange={handleErphChange} className="w-full bg-transparent resize-none h-16 font-semibold" />
                         </td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-900 p-2 font-bold bg-gray-100 align-top">اكتيۏيتي ڤمبلاجرن</td>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100 align-top">اکتيۏيتي ڤمبلاجرن</td>
                         <td className="border border-gray-900 p-2" colSpan="3">
                           <textarea name="aktiviti" value={erphForm.aktiviti} onChange={handleErphChange} className="w-full bg-transparent resize-none h-32 leading-relaxed" />
                         </td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">باهن بنتو مغاجر (BBM)</td>
+                        <td className="border border-gray-900 p-2 font-bold bg-gray-100">باهن بنتو مڠاجر (BBM)</td>
                         <td className="border border-gray-900 p-2" colSpan="3">
                           <input type="text" name="bbm" value={erphForm.bbm} onChange={handleErphChange} className="w-full bg-transparent" />
                         </td>
@@ -445,7 +418,7 @@
                   </table>
 
                   <div className="border border-gray-900 p-3 mb-6">
-                    <label className="font-bold block mb-1 text-gray-800">ريفليكسي:</label>
+                    <label className="font-bold block mb-1 text-gray-800">ريفليکسي:</label>
                     <textarea name="refleksi" value={erphForm.refleksi} onChange={handleErphChange} className="w-full bg-transparent resize-none h-20" />
                   </div>
 
