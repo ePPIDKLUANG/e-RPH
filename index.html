@@ -1,1148 +1,879 @@
-<!DOCTYPE html>
-<html lang="ms" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem e-RPH SAKNJ</title>
-    <!-- Memuatkan font Jawi (Amiri & Lateef) -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --font-size-base: 20px;
-            --font-size-title: 28px;
-            --table-padding: 12px;
-            --line-height: 1.8;
-            --primary-color: #1b5e20;
-            --secondary-color: #2e7d32;
-            --bg-color: #f4f7f6;
-            --surface-color: #ffffff;
-            --border-color: #e0e0e0;
-            --text-color: #333333;
-        }
+import React, { useState, useEffect } from 'react';
+import { Save, Printer, Plus, Trash2, Database, FileText, Settings, Upload, BookOpen, CheckCircle, CloudUpload } from 'lucide-react';
 
-        body {
-            font-family: 'Amiri', 'Lateef', serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            font-size: var(--font-size-base);
-            direction: rtl;
-            transition: font-size 0.3s ease;
-        }
+export default function ERPHSystem() {
+  const [activeTab, setActiveTab] = useState('generator'); // 'generator', 'database', 'upload'
+  
+  // State untuk saiz font Jawi (Default: 1.2rem)
+  const [fontSize, setFontSize] = useState(1.2);
 
-        .container {
-            max-width: 950px;
-            margin: 0 auto;
-            background: var(--surface-color);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
+  const increaseFontSize = () => {
+    setFontSize(prev => Math.min(prev + 0.15, 1.8));
+  };
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 3px solid var(--secondary-color);
-            padding-bottom: 20px;
-        }
+  const decreaseFontSize = () => {
+    setFontSize(prev => Math.max(prev - 0.15, 0.9));
+  };
+  
+  // Senarai Subjek SAKNJ dalam Tulisan Jawi Nasakh
+  const listSubjekSAKNJ = [
+    'القرءان',
+    'تفسير القرءان دان حديث',
+    'تجويد',
+    'توحيد',
+    'عبادة',
+    'معاملات',
+    'مناكحات',
+    'جنايات',
+    'فرائض',
+    'أخلاق & تصوف',
+    'سيرة',
+    'بهاس عرب'
+  ];
 
-        .header h1 {
-            color: var(--primary-color);
-            font-size: var(--font-size-title);
-            margin: 0 0 10px 0;
-            font-weight: 700;
-        }
+  // Senarai Darjah SAKNJ
+  const listDarjahSAKNJ = [
+    'تاج (TAJ)',
+    'درجه 1',
+    'درجه 2',
+    'درجه 3',
+    'درجه 4',
+    'درجه 5',
+    'درجه 6',
+    'درجه خاص'
+  ];
 
-        .header p {
-            color: #666;
-            margin: 0;
-            font-size: 1.1em;
-        }
+  // Senarai Pilihan Masa SAKNJ (Contoh Sesi Petang / Pagi Sekolah Agama)
+  const listMasaSAKNJ = [
+    '2:30 ڤڥتڠ - 3:30 ڤڥتڠ',
+    '3:30 ڤڥتڠ - 4:30 ڤڥتڠ',
+    '4:30 ڤڥتڠ - 5:30 ڤڥتڠ',
+    '8:00 ڤاڬي - 9:00 ڤاڬي',
+    '9:00 ڤاڬي - 10:00 ڤاڬي',
+    '10:30 ڤاڬي - 11:30 ڤاڬي'
+  ];
 
-        /* Notification System */
-        #notification {
-            display: none;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .notify-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .notify-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .notify-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+  // Senarai Pilihan Kelas SAKNJ
+  const listKelasSAKNJ = [
+    'درجه 1 بستاري',
+    'درجه 1 مقتصد',
+    'درجه 2 بستاري',
+    'درجه 2 مقتصد',
+    'درجه 3 بستاري',
+    'درجه 3 مقتصد',
+    'درجه 4 بستاري',
+    'درجه 4 مقتصد',
+    'درجه 5 بستاري',
+    'درجه 5 مقتصد',
+    'درجه 6 بستاري',
+    'درجه 6 مقتصد',
+    'درجه خاص كوليه 1'
+  ];
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 25px;
-            font-size: var(--font-size-base);
-        }
+  const [rptData, setRptData] = useState([]);
+  const [darjahFilter, setDarjahFilter] = useState(''); 
+  const [subjekFilter, setSubjekFilter] = useState('');
+  
+  const WEB_APP_URL = ""; 
+  const [saveStatus, setSaveStatus] = useState('');
 
-        table, th, td {
-            border: 1px solid var(--border-color);
-        }
+  const [dbForm, setDbForm] = useState({
+    darjah: 'درجه 1',
+    minggu: '',
+    mataPelajaran: 'توحيد',
+    tema: '',
+    tajuk: '',
+    sk: '',
+    sp: ''
+  });
 
-        th, td {
-            padding: var(--table-padding);
-            vertical-align: top;
-            line-height: var(--line-height);
-        }
+  const [uploadForm, setUploadForm] = useState({
+    darjah: 'درجه 1',
+    mataPelajaran: 'توحيد',
+    rawText: ''
+  });
+  const [uploadStatus, setUploadStatus] = useState('');
+  const [isSyncingSheet, setIsSyncingSheet] = useState(false);
+  const [isUploadingToSheet, setIsUploadingToSheet] = useState(false);
 
-        th {
-            background-color: #e8f5e9;
-            color: var(--primary-color);
-            text-align: right;
-            width: 22%;
-            font-weight: bold;
-        }
+  // e-RPH Generator State
+  const [selectedDarjah, setSelectedDarjah] = useState('درجه 1');
+  const [selectedSubjek, setSelectedSubjek] = useState('القرءان');
+  const [selectedMinggu, setSelectedMinggu] = useState('1');
+  
+  const [erphForm, setErphForm] = useState({
+    tarikh: new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
+    hari: 'الأحد (احد)',
+    masa: '2:30 ڤڥتڠ - 3:30 ڤڥتڠ',
+    kelas: 'درجه 1 بستاري',
+    mataPelajaran: 'القرءان',
+    tema: '',
+    tajuk: '',
+    sk: '',
+    sp: '',
+    objektif: '',
+    aktiviti: '1. كورو منرغكن فد اية / ايساكن...\n2. موريد ممباچ دغن بتول دان تجويد يڠ برتولن...\n3. لاتيهن تنبيح دالم كلس...',
+    bbm: 'بوكو تيكس، ليمبرن كرج, روقان',
+    refleksi: 'موريد برجاي منچفاي اوبجيكتيف يڠ دتتڤكن. ٢٥ اورڠ موريد درڤد ٣٠ اورڠ مڠواسيني دڠن باءيك.',
+    disemakOleh: 'ڬورو بسر / ڤڽليد',
+    disahkanOleh: 'ڤڠواسڤ / ڤمبنتو ڤڠواسڤ'
+  });
 
-        .jawi-text {
-            font-family: 'Amiri', 'Lateef', serif;
-            font-size: var(--font-size-base);
-            width: 100%;
-            box-sizing: border-box;
-            line-height: var(--line-height);
+  useEffect(() => {
+    const fetchFromGoogleSheet = async () => {
+      let loadedFromCloud = false;
+      if (WEB_APP_URL && WEB_APP_URL.startsWith('https://script.google.com/macros/s/')) {
+        try {
+          const res = await fetch(`${WEB_APP_URL}?action=getRPT`, { mode: 'cors' });
+          const json = await res.json();
+          if (json.status === 'success' && json.data) {
+            setRptData(json.data);
+            loadedFromCloud = true;
+          }
+        } catch (err) {
+          console.warn("Nota: Menggunakan simpanan lokal (LocalStorage) kerana sambungan ke Google Sheets disekat oleh pelayar (CORS).", err);
         }
+      }
 
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            resize: vertical;
-            min-height: 100px;
-            box-sizing: border-box;
-            background-color: #fafafa;
-            transition: border-color 0.2s;
-        }
-        
-        textarea:focus, input:focus, select:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            background-color: #fff;
-        }
-
-        input[type="text"], input[type="date"], input[type="time"], select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            background-color: #fafafa;
-        }
-
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-
-        /* Buttons */
-        .btn-group {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 25px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: all 0.2s ease;
-            font-family: 'Amiri', 'Lateef', serif;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        button:active {
-            transform: translateY(2px);
-            box-shadow: 0 0 2px rgba(0,0,0,0.1);
-        }
-
-        .btn-print { background-color: var(--secondary-color); color: white; }
-        .btn-print:hover { background-color: var(--primary-color); }
-        .btn-save { background-color: #ffb300; color: #000; }
-        .btn-save:hover { background-color: #ff8f00; color: #fff; }
-        .btn-export { background-color: #1976d2; color: white; }
-        .btn-export:hover { background-color: #1565c0; }
-        .btn-import { background-color: #00acc1; color: white; }
-        .btn-import:hover { background-color: #00838f; }
-        .btn-size { background-color: #f5f5f5; color: #333; border: 1px solid #ccc; box-shadow: none; }
-        .btn-size.active { background-color: var(--secondary-color); color: white; border-color: var(--primary-color); }
-
-        .panel-cetakan {
-            background-color: #f1f8f5;
-            border: 2px dashed var(--secondary-color);
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 30px;
-            border: 1px solid #888;
-            width: 85%;
-            max-width: 800px;
-            border-radius: 12px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-            direction: rtl;
-        }
-
-        .close-btn {
-            color: #aaa;
-            float: left;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .close-btn:hover, .close-btn:focus {
-            color: #d32f2f;
-            text-decoration: none;
-        }
-
-        .cadangan-card {
-            background: #f9fbfb;
-            border: 1px solid #c8e6c9;
-            border-radius: 8px;
-            padding: 15px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            text-align: right;
-        }
-
-        .cadangan-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-color: var(--secondary-color);
-            background: #f1f8f5;
-        }
-
-        .cadangan-kategori {
-            font-size: 0.9em;
-            color: #00796b;
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: inline-block;
-            background: #e0f2f1;
-            padding: 3px 10px;
-            border-radius: 12px;
-        }
-
-        .cadangan-tajuk {
-            font-size: 1.1em;
-            color: var(--primary-color);
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .cadangan-teks {
-            font-size: 0.95em;
-            color: #555;
-            white-space: pre-wrap;
-            margin: 5px 0;
-        }
-
-        @media print {
-            @page {
-                size: A4 portrait;
-                margin: 1.5cm; /* Menambah margin untuk A4 supaya jadual tidak terpotong */
+      if (!loadedFromCloud) {
+        const savedRPT = localStorage.getItem('rptDatabaseSAKNJ_v5');
+        if (savedRPT) {
+          setRptData(JSON.parse(savedRPT));
+        } else {
+          const demoData = [
+            {
+              id: '1',
+              darjah: 'درجه 1',
+              minggu: '1',
+              mataPelajaran: 'القرءان',
+              tema: 'سورة الفاتحة',
+              tajuk: 'بچاءن سورة الفاتحة دغن بتول',
+              sk: '1.1 ممباچ سورة الفاتحة دغن تجويد يڠ بتول.',
+              sp: '1.1.1 ممباچ ايات ١-٣ دغن مڠاجوق بونيقن.'
             }
-            body { 
-                background-color: #fff; 
-                padding: 0;
-                margin: 0;
-                font-size: 14pt; /* Saiz font mesra cetakan A4 */
-            }
-            .container { 
-                box-shadow: none; 
-                padding: 0; 
-                margin: 0;
-                max-width: 100%; 
-                width: 100%;
-            }
-            .panel-cetakan, .btn-group, .no-print { 
-                display: none !important; 
-            }
-            textarea { 
-                border: none; 
-                resize: none; 
-                overflow: visible; 
-                background-color: transparent; 
-                padding: 0;
-                height: auto !important;
-            }
-            input, select { 
-                border: none; 
-                appearance: none; 
-                -webkit-appearance: none; 
-                background: transparent; 
-                padding: 0;
-                white-space: normal;
-                /* Mengelakkan input melebihi ruang dalam jadual cetakan */
-                width: auto;
-                max-width: 100%;
-            }
-            /* Susunan khas untuk bahagian masa supaya tidak terkeluar kotak */
-            input[type="time"] {
-                width: 40%;
-                display: inline-block;
-            }
-            table { 
-                border: 2px solid #000 !important; 
-                width: 100% !important;
-                table-layout: auto; /* Mengubah kepada auto supaya lajur masa boleh menyesuaikan saiz dengan lebih baik */
-                margin-bottom: 0;
-            }
-            table, th, td { 
-                border: 1px solid #000 !important; 
-                color: #000; 
-            }
-            th, td {
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                padding: 8px !important;
-            }
-            tr {
-                page-break-inside: avoid; /* Mengelakkan baris terpotong ke muka surat lain */
-            }
-            th { 
-                background-color: #f0f0f0 !important; 
-                -webkit-print-color-adjust: exact; 
-                color-adjust: exact; 
-                width: 25%;
-            }
-            /* Hide empty checkboxes when printing, only show checked */
-            input[type="checkbox"]:not(:checked) + span,
-            input[type="checkbox"]:not(:checked) {
-                display: none;
-            }
+          ];
+          setRptData(demoData);
+          localStorage.setItem('rptDatabaseSAKNJ_v5', JSON.stringify(demoData));
         }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div class="header">
-        <h1>رانچڠن ڤڠاجرن هارين</h1>
-        <p>سكوله اݢام كراجاءن جوهر</p>
-    </div>
-
-    <!-- Container Notifikasi -->
-    <div id="notification"></div>
-
-    <form id="rphForm">
-        <table>
-            <tr>
-                <th>تاريخ / هاري</th>
-                <td colspan="3">
-                    <div style="display: flex; gap: 10px;">
-                        <input type="date" id="tarikh" name="tarikh" required class="jawi-text" style="flex: 1;">
-                        <select id="hari" name="hari" class="jawi-text" style="flex: 1;">
-                            <option value="الأحد">الأحد (Ahad)</option>
-                            <option value="الإثنين">الإثنين (Isnin)</option>
-                            <option value="الثلاثاء">الثلاثاء (Selasa)</option>
-                            <option value="الأربعاء">الأربعاء (Rabu)</option>
-                            <option value="الخميس">الخميس (Khamis)</option>
-                        </select>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th>كلس / درجه</th>
-                <td>
-                    <select id="darjah" name="darjah" class="jawi-text" required>
-                        <option value="TAJ">تاديكا (TAJ 6 Tahun)</option>
-                        <option value="1" selected>1 (ساتو)</option>
-                        <option value="2">2 (دوا)</option>
-                        <option value="3">3 (تيݢ)</option>
-                        <option value="4">4 (امڤت)</option>
-                        <option value="5">5 (ليم)</option>
-                        <option value="6">6 (انم)</option>
-                        <option value="Khas">خاص (Khas)</option>
-                    </select>
-                </td>
-                <th style="width: 15%;">ماس</th>
-                <td>
-                    <div style="display: flex; align-items: center; gap: 5px;">
-                        <input type="time" id="masa_mula" name="masa_mula" required> 
-                        <span>هيڠݢ</span>
-                        <input type="time" id="masa_tamat" name="masa_tamat" required>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th>مات ڤلاجرن</th>
-                <td colspan="3">
-                    <select id="subjek" name="subjek" class="jawi-text" required>
-                        <option value="Al-Quran" selected>القرءان (Al-Quran)</option>
-                        <option value="Hafazan">حفظن (Hafazan)</option>
-                        <option value="Tauhid">توحيد (Tauhid)</option>
-                        <option value="Ibadat">عبادات (Ibadat)</option>
-                        <option value="Sirah">سيرة (Sirah)</option>
-                        <option value="Akhlak">اخلاق / اخلاق دان تصوف (Akhlak / Tasauf)</option>
-                        <option value="JawiKhat">جاوي دان خط (Jawi & Khat)</option>
-                        <option value="BahasaArab">اللغة العربية (Bahasa Arab)</option>
-                        <option value="AmalanLazim">عملن لازيم (Amalan Lazim)</option>
-                        <option value="Faraid">فرائض (Faraid)</option>
-                        <option value="Jenayat">جنايات (Jenayat)</option>
-                        <option value="Muamalat">معاملات (Muamalat)</option>
-                        <option value="BahasaMelayu">بهاس ملايو (BM Rumi / Jawi)</option>
-                        <option value="BahasaInggeris">بهاس ايڠݢريس (English)</option>
-                        <option value="Sains">ساءينس (Sains)</option>
-                        <option value="Matematik">ماتماتيك (Matematik)</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <th>ميڠݢو ك-</th>
-                <td colspan="3">
-                    <select id="minggu" name="minggu" class="jawi-text"></select>
-                </td>
-            </tr>
-            <tr>
-                <th>تاجوق</th>
-                <td colspan="3">
-                    <select id="tajuk" name="tajuk" class="jawi-text"></select>
-                </td>
-            </tr>
-            <tr>
-                <th>ستندرد كاندوڠن</th>
-                <td colspan="3">
-                    <textarea id="sk" name="sk" class="jawi-text" placeholder="ستندرد كاندوڠن..."></textarea>
-                </td>
-            </tr>
-            <tr>
-                <th>ستندرد ڤمبلاجرن</th>
-                <td colspan="3">
-                    <textarea id="sp" name="sp" class="jawi-text" placeholder="ستندرد ڤمبلاجرن..."></textarea>
-                </td>
-            </tr>
-            <tr>
-                <th>اوبجيكتيف</th>
-                <td colspan="3">
-                    <textarea id="objektif" name="objektif" class="jawi-text" placeholder="موريد داڤت..."></textarea>
-                </td>
-            </tr>
-            
-            <tr class="no-print">
-                <td colspan="4" style="text-align: center; background-color: #e8eaf6; padding: 15px;">
-                    <button type="button" onclick="bukaModalDSKP()" style="background-color: #3f51b5; color: white; border-radius: 30px; padding: 10px 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        💡 ڤيليه چادڠن SK, SP & اوبجيكتيف (30 سيت)
-                    </button>
-                </td>
-            </tr>
-
-            <tr class="no-print">
-                <td colspan="4" style="text-align: center; background-color: #e0f2f1; padding: 15px;">
-                    <button type="button" onclick="bukaModalCadangan()" style="background-color: #00838f; color: white; border-radius: 30px; padding: 10px 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        💡 ڤيليه چادڠن اكتيۏيتي & ريفليكسي (30 سيت)
-                    </button>
-                </td>
-            </tr>
-
-            <tr>
-                <th>اكتيۏيتي</th>
-                <td colspan="3">
-                    <textarea id="aktiviti" name="aktiviti" class="jawi-text" placeholder="1. ݢورو منرڠكن...&#10;2. موريد ممباچ..."></textarea>
-                </td>
-            </tr>
-            <tr>
-                <th>باهن بنتو مڠاجر</th>
-                <td colspan="3" class="jawi-text">
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" value="بنتو تيكس"> <span>بوكو تيكس</span></label>
-                        <label><input type="checkbox" value="ڤاڤن ڤوتيه"> <span>ڤاڤن ڤوتيه</span></label>
-                        <label><input type="checkbox" value="لمبرن كرجا"> <span>لمبرن كرجا</span></label>
-                        <label><input type="checkbox" value="كاد إيمبس"> <span>كاد إيمبس</span></label>
-                        <label><input type="checkbox" value="القرءان / مقدم"> <span>القرءان / مقدم</span></label>
-                        <label><input type="checkbox" value="كومڤيوتر / LCD"> <span>كومڤيوتر / LCD</span></label>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th>ريفليكسي</th>
-                <td colspan="3">
-                    <textarea id="refleksi" name="refleksi" class="jawi-text" placeholder="____ / ____ موريد برجاي منچڤاي اوبجيكتيف."></textarea>
-                </td>
-            </tr>
-        </table>
-    </form>
-
-    <div style="display: flex; justify-content: space-between; margin-top: 50px; padding: 0 20px; font-family: 'Amiri', 'Lateef', serif; font-size: var(--font-size-base); page-break-inside: avoid;">
-        <div style="flex: 1;">
-            <p style="font-weight: bold; margin-bottom: 70px;">دسمق اوليه :</p>
-            <p style="margin: 15px 0 0 0;">تاريخ : </p>
-        </div>
-        <div style="flex: 1;">
-            <p style="font-weight: bold; margin-bottom: 70px;">دصحكن اوليه :</p>
-            <p style="margin: 15px 0 0 0;">تاريخ : </p>
-        </div>
-    </div>
-
-    <div class="panel-cetakan no-print">
-        <h3 style="margin-top:0; color: var(--primary-color);">تتڤن چيتقن / سيستم (Sistem & Cetakan)</h3>
-        
-        <div style="display: flex; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
-            <div>
-                <label style="font-weight: bold; color: #555;">ساءيز توليسن Jawi:</label>
-                <div class="btn-group" style="margin-top:10px;">
-                    <button type="button" class="btn-size" onclick="ubahSaiz('18px', '22px')">كچيل</button>
-                    <button type="button" class="btn-size active" onclick="ubahSaiz('20px', '28px')">سدرهان</button>
-                    <button type="button" class="btn-size" onclick="ubahSaiz('24px', '34px')">لبيه بسر</button>
-                </div>
-            </div>
-        </div>
-
-        <hr style="border: 0; border-top: 1px solid #ccc; margin: 25px 0;">
-
-        <div class="btn-group">
-            <button type="button" class="btn-save" id="btnSave" onclick="hantarKeGoogleSheets()">💾 SAVE (Google Sheets)</button>
-            <button type="button" class="btn-export" onclick="eksportCSV()">📥 Eksport CSV</button>
-            <input type="file" id="importFile" accept=".csv" style="display:none;" onchange="importCSV(event)">
-            <button type="button" class="btn-import" onclick="document.getElementById('importFile').click()">📤 Import CSV</button>
-            <button type="button" class="btn-print" onclick="window.print()">🖨️ چيتق / سيمڤن PDF</button>
-        </div>
-    </div>
-
-    <!-- Modal Cadangan -->
-    <div id="modalCadangan" class="modal no-print">
-        <div class="modal-content">
-            <span class="close-btn" onclick="tutupModalCadangan()">&times;</span>
-            <h2 style="color: var(--primary-color); border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px; margin-top: 0;">سنا راي چادڠن اكتيۏيتي & ريفليكسي</h2>
-            <p style="color: #666; margin-bottom: 20px;">كليك ڤد مان-مان سيت دباوه اونتوق مماسوقكنڽ كدالم RPH اندا سچارا اٴوتوماتيك.</p>
-            <div id="senaraiCadangan" style="display: flex; flex-direction: column; gap: 15px; max-height: 60vh; overflow-y: auto; padding-right: 10px;">
-                <!-- Kandungan akan diisi oleh JavaScript -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Cadangan SK, SP & Objektif -->
-    <div id="modalDSKP" class="modal no-print">
-        <div class="modal-content">
-            <span class="close-btn" onclick="tutupModalDSKP()">&times;</span>
-            <h2 style="color: #3f51b5; border-bottom: 2px solid #7986cb; padding-bottom: 10px; margin-top: 0;">سنا راي چادڠن SK, SP & اوبجيكتيف</h2>
-            <p style="color: #666; margin-bottom: 20px;">كليك ڤد مان-مان سيت دباوه اونتوق مماسوقكنڽ كدالم RPH اندا سچارا اٴوتوماتيك.</p>
-            <div id="senaraiDSKP" style="display: flex; flex-direction: column; gap: 15px; max-height: 60vh; overflow-y: auto; padding-right: 10px;">
-                <!-- Kandungan akan diisi oleh JavaScript -->
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<script>
-    // ==========================================
-    // PANGKALAN DATA SILIBUS (Diperkemas untuk Darjah 1 & TAJ)
-    // ==========================================
-    const rptData = {
-        "Akhlak": {
-            "TAJ": {
-                1: { sk: "1 منچونتوهي اخلاق رسول الله\n1.1 اخلاق نبي محمد صلى الله عليه وسلم", sp: "1. ميبوت اخلاق نبي محمد صلى الله عليه وسلم.\n2. ممبريكن چونتوه اخلاق نبي محمد." }
-            },
-            "1": {
-                19: { sk: "1. ادب تيدور\n1.1 فغنلن", sp: "1. منجلسكن مقصود تيدور دغن ريغكس.\n2. مينارايكن ادب سبلوم تيدور دغن بتول." },
-                24: { sk: "2. منجاك كبرسيهن ديري\n2.1 فغنلن", sp: "1. مپاتاكن هوبوغن كبرسيهن ديري دغن عبادة.\n2. مينارايكن عملن كبرسيهن ديري." },
-                26: { sk: "3. ادب بروضوء\n3.1 فغنلن", sp: "1. مپاتاكن فغرتين بروضوء دغن جلس." },
-                29: { sk: "4. ادب ماكن\n4.1 ادب سبلوم ماكن", sp: "1. مپاتاكن ادب سبلوم ماكن دعن جلس." },
-                31: { sk: "5. ادب دغن ايبو باف\n5.1 فغنلن", sp: "1. منجلسكن فقرتين ايبو باق دغن جلس." },
-                33: { sk: "6. ادب دغن كورو\n6.1 فغنلن", sp: "1. میاتاکن قرانن كورو دغن جلس." },
-                34: { sk: "7. ادب دغن كاون\n7.1 فغنلن", sp: "1. منرغكن فقرتين كاون يع باءيق دغن ريفكس." }
-            }
-        },
-        "Al-Quran": {
-            "TAJ": {
-                1: { sk: "1. الحروف الهجائية", sp: "1.1 Menyebut huruf hijaiyah" }
-            },
-            "1": {
-                1: { sk: "1. مغنل حروف هجائية\n1.1 حروف هجائية", sp: "1. مپبوت حروف هجائية دغن بتول." },
-                3: { sk: "1.2 سبوتن بويي حروف مغيكوت باريس", sp: "1. ملفظكن بويي حروف مغيكوت باريس دغن سمفورنا." },
-                7: { sk: "2. ممباچ كليمه القرءان\n2.1 ممباچ حروف برسامبوغ", sp: "1. میبوت دان ممیلیه حروف برسامبوغ دغن بتول." },
-                11: { sk: "3. ممباچ آيات يغ مغندوغي حكوم تجويد\n3.1 بهاكين همزه", sp: "1. مینار ایکن بها كين همزه الوصل دان همزه القطع دغن بتول." },
-                19: { sk: "3.3 مد يغ ملبيهي 2 حركة", sp: "1. میبوت کلیمه يغ مغندوغي مد ملبيهي 2 حركة." },
-                25: { sk: "4. سورة باچاءن : جزء 1 هيغك 2\nسورة الفاتحة", sp: "1. ممباح سورة الفاتحة دغن بيمبيغن كورو." },
-                34: { sk: "سورة ڤيليهن\nسورة النصر، المسد، الاخلاص، الفلق، الناس", sp: "1. ممباح سورة برسام بيمبيغن كورو." }
-            }
-        },
-        "AmalanLazim": {
-            "1": {
-                19: { sk: "1. اوچفن سلام\n1.1 فغرتين سلام", sp: "1. مپاتاکن فغرتين سلام دغن بتول." },
-                20: { sk: "كسلطانن إسلام جوهر\n1. كسلطانن جوهر مودن", sp: "1. میبوت نام فغاساس دان سلطان جوهر مودن." },
-                23: { sk: "2. اذان دان اقامة\n2.1 فغرتين اذان دان اقامة", sp: "1. مپبوت فغرتين اذان دان اقامة." },
-                26: { sk: "3. وضوء\n3.1 فغرتين وضوء", sp: "1. مپاتاکن فغرتين وضوء." },
-                30: { sk: "4. صلاة\n4.1 فغرتين صلاة فرض", sp: "1. مپاتاکن فغرتين صلاة فرض." },
-                33: { sk: "5. دعاء\n5.1 فقرتين دعاء", sp: "1. مپاتاكن فغرتين دعاء." },
-                34: { sk: "6. الأسماء الحسنى\n6.1 فقرتين الأسماء الحسنى", sp: "1. مپاتاكن فغرتين الأسماء الحسنى." }
-            }
-        },
-        "BahasaArab": {
-            "1": {
-                13: { sk: "الدَّرْسُ الأَوَّلُ: التَّعَارُفُ وَالتَّحِيَّاتُ\n1.1 اقْرَأْ وَاحْفَظْ", sp: "1. میبوت لفظ سلام دغن جلس." },
-                20: { sk: "الدَّرْسُ الثَّانِي : أَعْضَاءُ الْجِسْمِ\n2.1 اقْرَأْ وَاحْفَظْ", sp: "1. مپوت نام اشكوتا بادن دغن جلس." },
-                22: { sk: "الدَّرْسُ الثَّالِثُ : أَعْضَاءُ الْأَسْرَةِ\n3.1 اقرأْ وَاحْفَظْ", sp: "1. مپبوت نام اهلي ددالم کلوارک دغن جلس." },
-                24: { sk: "الدَّرْسُ الرَّابِعُ : هَيَّا نَعُدُّ\n4.1 اقْرَأْ وَاحْفَظْ", sp: "1. میبوت بيلغن ددالم بهاس عرب دغن بتول." },
-                26: { sk: "الدَّرْسُ الخَامِسُ : لُغَةُ الْفَصْلِ\n5.1 اقرأْ وَاحْفَظْ", sp: "1. ممباچ كات قربواتن بردا سر کن ضامبر دغن بتول." },
-                29: { sk: "الدَّرْسُ السَّادِسُ : الأَدَوَاتُ الدِّرَاسِيَّةُ\n6.1 اقْرَأْ وَتَكَلَّمْ", sp: "1. مپبوت فرالتن سكوله دغن تقت." },
-                32: { sk: "الدَّرْسُ السَّابِعِ : مَدْرَسَتِي\n7.1 تَأَمَّلْ وَتَكَلَّمْ", sp: "1. میبوت فركاتاءن دغن بتول." }
-            }
-        },
-        "JawiKhat": {
-            "1": {
-                13: { sk: "1. حروف جاوي توغكل\n1.1 حروف جاوي توغكل", sp: "1. مپبوت حروف جاوي توشكل." },
-                19: { sk: "1.3 حروف برتيتيق دان تيدق برتيتيق", sp: "1. مپبوت حروف برتيتيق دان تيدق برتيتيق." },
-                21: { sk: "2. حروف دفرمولاءن كليمه\n2.1 حروف دتغه کلیمه", sp: "1. میبوت چونتوه کمبر دان ملیهت حروف يع براوبه بنتوق." },
-                23: { sk: "3. حروف دتغه کلیمه\n3.1 حروف دتغه کلیمه تيدق براوبه بنتوق", sp: "1. مپبوت حروف دتغه کلیمه تيدق براوبه بنتوق." },
-                25: { sk: "4. حروف دأخير كليمه\n4.1 حروف دأخير كليمه تيدق براوبه بنتوق", sp: "1. میبوت حروف دأخير كليمه تيدق براو به بنتوق." },
-                28: { sk: "6. حروف برسامبوغ\n6.1 حروف برسامبوغ دأول دتغه دان دأخير", sp: "1. مپبوت حروف برسامبوغ دأول، دتغه دان دأخير." },
-                30: { sk: "8. سوكو كات تربوك\n8.1 سوكو كات تربوك 'ا'", sp: "1. مغیجا دان میبوت سوکو کات تربوک 'ا'." },
-                32: { sk: "9. سوكو كات ترتوتوف\n9.1 سوكو كات ترتوتوف 'دوا - دوا' حروف", sp: "1. مغیجا دان مپبوت سوكوكات ترتوتوف 'دوا - دوا' حروف." },
-                34: { sk: "10. سوكو كات تربوك دان ترتوتوف\n10.1 سوكو كات تربوك دان ترتوتوف", sp: "1. مغیجا دان مپبوت سوكو كات 'تربوک - ترتوتوف'." }
-            }
-        },
-        "Sirah": {
-            "1": {
-                19: { sk: "1. فغرتين دان كفنتيغن سيرة\n1.1 فغرتين سيرة", sp: "1. ميبوت فغرتين سيرة.\n2. میبوت سومبر روجوعن سيرة." },
-                22: { sk: "2. نسب كتورونن نبي اسماعيل عليه السلام\n2.1 فغرتين نسب", sp: "1. ميبوت فغرتين نسب.\n2. مپبوت کتورونن نبي محمد صلي الله عليه السلام." },
-                26: { sk: "3. نسب سبله ايه نبي محمد صلى الله عليه وسلم\n3.1 لاتر بلاكغ ايه نبي محمد", sp: "1. بر چریتا مغناءي لاتر بلاك ايه نبي محمد صلى الله عليه وسلم." },
-                30: { sk: "4. نسب سبله ايبو نبي محمد صلى الله عليه وسلم\n4.1 لاتر بلاكغ ايبو نبي محمد", sp: "1. برچریتا مغناءي لاتر بلاكغ ايبو نبي محمد صلى الله عليه وسلم." },
-                33: { sk: "5. نسب قوم دان بغسا نبي محمد صلى الله عليه وسلم\n5.1 لاتر بلاكغ قوم دان بغسا", sp: "1. میبوت چونتوه کجاهیلن مشارکت عرب." }
-            }
-        },
-        "Tauhid": {
-            "1": {
-                19: { sk: "1. ركن إسلام\n1.1 فغرتين ركن إسلام", sp: "1. ميبوت فغرتين ركن إسلام دغن بتول." },
-                20: { sk: "2. مغوچف دوا كليمه شهادة\n2.1 لفظ دوا كليمه شهادة", sp: "1. مپبوت لفظ دوا كليمه شهادة دغن جلس." },
-                22: { sk: "3. منديريكن صلاة\n3.1 فغرتين صلاة", sp: "1. ميبوت فغرتين صلاة دغن بتول." },
-                24: { sk: "4. مغلواركن زكاة\n4.1 فغرتين زكاة", sp: "1. ميبوت فغرتين زكاة دغن بتول." },
-                25: { sk: "5. برقواسا دبولن رمضان\n5.1 فغرتين برقواسا دبولن رمضان", sp: "1. ميبوت فغرتين برقواسا دغن بتول." },
-                26: { sk: "6. منونايكن حج\n6.1 فغرتين حج", sp: "1. مپبوت فغرتين حج دغن بتول." },
-                28: { sk: "7. ركن ايمان\n7.1 فغرتين ركن ايمان", sp: "1. مپبوت فغرتين ايمان دغن بتول." },
-                29: { sk: "8. برايمان كقد الله تعالى\n8.1 ارتي برايمان كقد الله تعالى", sp: "1. ميبوت ارتي برايمان كقد الله دغن بتول." },
-                30: { sk: "9. برايمان كقد ملائكة\n9.1 فغرتين ملائكة", sp: "1. ميبوت فغرتين ملائكة دغن بتول." },
-                31: { sk: "10. برايمان كقد كتاب\n10.1 فغرتين كتاب", sp: "1. ميبوت فغرتين كتاب دغن بتول." },
-                32: { sk: "11. برايمان كقد رسول\n11.1 فغرتين رسول", sp: "1. مپبوت فغرتين رسول دغن بتول." },
-                33: { sk: "12. برايمان كقد هاري قيامة\n12.1 فغرتين هاري قيامة", sp: "1. ميبوت فغرتين هاري قيامة دغن بتول." },
-                34: { sk: "13. برايمان كقد قضاء دان قدر\n13.1 فغرتين قضاء دان قدر", sp: "1. ميبوت فغرتين قضاء دان قدر دغن بتول." }
-            }
-        },
-        "Ibadat": {
-            "1": {
-                13: { sk: "فلاجرن ساتو: عبادات\n1.1 فغرتين عبادات", sp: "1. مپبوت فغرتين عبادت.\n2. منوليس سمولا فغرتين عبادت." },
-                19: { sk: "فلاجرن دوا: طهارة\n2.1 فغرتين طهارة", sp: "1. مپبوت فغرتين طهارة.\n2. منجلسكن حكوم طهارة." },
-                22: { sk: "فلاجرن تيك: استنجاء\n3.1 فغرتين استنجاء", sp: "1. منرغكن فغرتين استنجاء.\n2. میبوت حکوم بر استنجاء." },
-                23: { sk: "فلاجرن امڤت: وضوء\n4.1 فغرتين وضوء", sp: "1. میبوت فغرتين دان حكوم بروضوء." },
-                31: { sk: "فلاجرن ليم: صلاة\n5.1 فغرتين صلاة", sp: "1. مغنل قستي كدود وقن عبادة صلاة دالم ركن إسلام.\n2. منجلسكن فترتين صلاة." }
-            }
-        },
-        "Hafazan": {
-            "1": {
-                1: { sk: "سورة الفاتحة\n1.1 آیات 1 هیڅک 2", sp: "1. ممباح سورة الفاتحة آيات 1 هيڅك 2 دغن بتول" },
-                19: { sk: "سورة الكهف\n1.1 آیات 1 هیڅک 2", sp: "1. ممباح سورة الكهف آيات 1 هيڅك 2\n2. مغحفظ سورة الكهف سچارا براولغ اولغ" }
-            }
-        }
+      }
     };
 
-    // ==========================================
-    // 30 SET CADANGAN AKTIVITI & REFLEKSI (JAWI)
-    // ==========================================
-    const cadanganData = [
-        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 1: ڤنراڠن & لاتيهن برتوليس", akt: "1. ݢورو منرڠكن تاجوق ڤلاجرن هاري اين.\n2. سيسي برسوءال جواب اونتوق مڠوجي كفهمن موريد.\n3. موريد ملڠكڤكن لاتيهن ددالم بوكو اكتيۏيتي/توليس.", ref: "____ / ____ موريد برجاي منچڤاي اوبجيكتيف ڤمبلاجرن هاري اين. موريد يڠ لمه دبريكن بيمبيڠن تمبهن." },
-        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 2: سومبڠسارن (Brainstorming)", akt: "1. ݢورو منوليس ساتو كات كونچي دڤاڤن ڤوتيه.\n2. موريد مپومبڠ ايديا دان فكتا بركاءيتن كات كونچي ترسبوت.\n3. ݢورو مپوسون ايديا موريد منجادي نوتا يڠ لڠكڤ.", ref: "____ / ____ موريد داڤت مڠلواركن ايديا يڠ ريليۏن دڠن توڤيق. اوبجيكتيف ترچڤاي دڠن باءيق." },
-        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 3: چارين معلومت (اينكويري)", akt: "1. ݢورو ممبريكن تاجوق ڤربينچڠن.\n2. موريد دمينتا مروجوع بوكو تيكس اونتوق منچاري جواڤن اتاو دليل يڠ بركاءيتن.\n3. موريد مڠݢاريسكن ايسي ڤنتيڠ.", ref: "كمهيرن منچاري معلومت موريد برتمبه باءيق. ____ / ____ موريد منجومڤاءي فكتا يڠ دچاري." },
-        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 4: لاتيهن ڤڠاياءن & ڤموليهن", akt: "1. ڤنراڠن ڤڠوكوهن اوليه ݢورو.\n2. موريد يڠ ماهير دبريكن سوءالن ڤڠاياءن.\n3. موريد يڠ لمه دبيمبيڠ سچارا اينديۏيدو/كومڤولن کچيل (ڤموليهن).", ref: "____ موريد چمرلڠ منجواب سوءالن ڤڠاياءن. ____ موريد ڤموليهن منونجوقكن ڤنيڠكتن كفهمن." },
-        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 5: اولڠكاجي برفوكوس", akt: "1. ݢورو مڠيمبس كمبالي توڤيق-توڤيق ڤلاجرن يڠ لالو.\n2. موريد منجواب سوءالن-سوءالن ليسن سچارا راوق.\n3. موريد ممبوات ڤتا ميندا ريڠكس سباݢاي نوتا اولڠكاجي.", ref: "ڤروسيس اولڠكاجي برجالن لنچر. ____ / ____ موريد ماسيه مڠيڠتي فكتا يڠ تله دڤلاجري دڠن باءيق." },
-        { kategori: "عموم / ڤنراڠن / لاتيه توبي", tajuk: "سيت 6: لاتيه توبي ڤڤريقساءن", akt: "1. ݢورو مڠيدركن سيت سوءالن ڤڤريقساءن تاهون لڤس / لاتيه توبي.\n2. موريد منجواب سوءالن دالم تيمڤوه ماس يڠ دتتڤكن.\n3. ڤربينچڠن سكيما جواڤن برسام ݢورو.", ref: "____ / ____ موريد دليهت برسديا مڠهادڤي ڤڤريقساءن. فوكوس بيمبيڠن دبريكن كڤد موريد يڠ ماسيه بلوم مڠواساءي تيكنيك منجواب." },
-        
-        { kategori: "القرءان & حفظن", tajuk: "سيت 7: القرءان (تلقي مشافهة)", akt: "1. ݢورو ممڤردڠركن باچاءن چونتوه دڠن تجويد يڠ بتول.\n2. موريد مڠيكوت باچاءن ݢورو سچارا كلس، كومڤولن دان اينديۏيدو.\n3. باچاءن سچارا تلقي مشافهة برڤاسڠن.", ref: "____ / ____ موريد داڤت ممباچ اية دڠن تجويد دان مخرج يڠ بتول. ____ موريد دبري بيمبيڠن خصوص." },
-        { kategori: "القرءان & حفظن", tajuk: "سيت 8: حفظن (تسميع)", akt: "1. ݢورو مڠولڠ باچاءن سورة حفظن برسام-سام موريد.\n2. موريد مڠحفظ سچارا برڤاسڠن سسام راكن.\n3. ݢورو منتسميع حفظن موريد سچارا اينديۏيدو دهادڤن كلس.", ref: "____ / ____ موريد برجاي مڠحفظ سورة دڠن لنچر. ____ موريد ڤرلو مڠولڠ سمولا حفظن درومه." },
-        { kategori: "القرءان & حفظن", tajuk: "سيت 9: باچاءن برنتاي (القرءان/تيكس)", akt: "1. سأورڠ موريد دمينتا ممباچ ڤتيكن اية القرءان.\n2. اڤابيلا ݢورو مڠارهكن برهنتي، موريد لاءين ڤرلو سݢرا مپامبوڠ باچاءن.\n3. ݢورو ممبتولكن كسالهن تجويد/باچاءن.", ref: "تومڤوان دان فوكوس موريد ساڠت باءيق. ____ / ____ موريد داڤت مپامبوڠ باچاءن دڠن لنچر." },
-        
-        { kategori: "عبادات / ڤراكتيكل", tajuk: "سيت 10: عبادات (عملي / ديمونستراسي)", akt: "1. ݢورو منونجوقكن ديمونستراسي ڤراكتيكل (وضوء / صلاة / تيمم).\n2. موريد ملاكوكن سيمولاسي سچارا اينديۏيدو اتاو بركومڤولن.\n3. ݢورو منݢور دان ممبوات ڤمبتولن سرتا-مرتا.", ref: "____ / ____ موريد برجاي ملاكوكن عملي عبادة دڠن روكون دان ترتيب يڠ بتول." },
-        { kategori: "عبادات / ڤراكتيكل", tajuk: "سيت 11: عملي باهن موجود", akt: "1. ݢورو ممباوا باهن موجود (چونتوه: دبو تانه، اءير مطلق، جنيس كاءين).\n2. موريد مپنتوه دان مليهت صيفة باهن.\n3. سيسي سوءال جواب مڠاءيتكن باهن دڠن حكوم فقه.", ref: "قاعده ڤراكتيكل باهن موجود ممبري ايمڤق كفهمن يڠ تيڠݢي. ____ / ____ موريد ممهمي كونسيڤ دڠن جلس." },
-        { kategori: "عبادات / ڤراكتيكل", tajuk: "سيت 12: لاوتن / ڤمرهاتين لوار كلس", akt: "1. موريد دباوا كلوار كلس (سڤرتي كاوسن سوراو سكوله).\n2. موريد ممبوات ڤمرهاتين ڤراكتيكل بركاءيتن ادب دسوراو اتاو كبرسيهن.\n3. سيسي ريفليكسي دان روموسن.", ref: "موريد تروجا مڠاءيتكن تيوري دڠن دنيا سبنر. ____ / ____ موريد منچڤاي اوبجيكتيف ڤڠاجرن هاري اين." },
-        
-        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 13: جاوي / خط (تيرو & توليس)", akt: "1. ݢورو منونجوقكن تيكنيك منوليس حروف / كليمه دڤاڤن ڤوتيه مڠيكوت قاعده توليسن يڠ بتول.\n2. موريد ملاتيه تاڠن منوليس داودارا.\n3. موريد مپالين سمولا ددالم بوكو.", ref: "____ / ____ موريد داڤت منوليس كليمه جاوي / خط دڠن بنتوق، تيكنيك، دان ݢاريسن يڠ تڤت سرتا كمس." },
-        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 14: بهاس عرب (كاد ايمبسن / ڤادنن)", akt: "1. ݢورو ممڤاڤركن كاد ايمبسن برݢمبر (flashcards).\n2. موريد مپبوت كليمه بهاس عرب برولڠ كالي.\n3. لاتيهن ممادنكن ݢمبر دڠن ڤركاتاءن دڤاڤن ڤوتيه.", ref: "____ / ____ موريد برجاي مڠچم، مپبوت، دان ممادنكن كليمه بهاس عرب دڠن ݢمبرڽ سچارا تڤت." },
-        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 15: املاء / ديكتي (ايجاءن جاوي/عرب)", akt: "1. ݢورو مڠيجا دان مپبوت ببراف ڤركاتاءن/اية.\n2. موريد منوليس ڤركاتاءن ترسبوت ددالم بوكو تنڤا مروجوع سبارڠ تيكس.\n3. سماقن جواڤن دان ڤمبتولن ايجاءن برسام ݢورو.", ref: "____ / ____ موريد داڤت مڠيجا دان منوليس ڤركاتاءن يڠ دسبوت اوليه ݢورو دڠن ايجاءن يڠ بتول تنڤا بنتوان تيكس." },
-        
-        { kategori: "سيرة & اخلاق", tajuk: "سيت 16: سيرة (برچريتا)", akt: "1. ݢورو مپمڤايكن قيصه نبي / صحابت دڠن اينتوناسي مناريق.\n2. موريد دمينتا مپنا رايكن ڤڠاجرن اتاو نيلاي مورني درڤد قيصه ترسبوت.\n3. سيسي سوءال جواب نيلاي مورل.", ref: "موريد منونجوقكن مينت دان ڤڠحياتن يڠ تيڠݢي. ____ / ____ موريد داڤت مپبوت سكورڠ-كورڠڽ 3 ڤڠاجرن دري قيصه ترسبوت." },
-        { kategori: "سيرة & اخلاق", tajuk: "سيت 17: اخلاق (ماءين ڤرانن / Role Play)", akt: "1. ݢورو ممبري ساتو سكريڤ اتاو سيتواسي بركاءيتن ادب/اخلاق.\n2. موريد ملاكونكن سيتواسي ترسبوت دهادڤن كلس سچارا بركومڤولن.\n3. ݢورو دان موريد ممبوات روموسن نيلاي مورني.", ref: "____ / ____ موريد برجاي مڠاڤليكاسيكن دان منجيواءي ادب/اخلاق يڠ دڤلاجري ملالوءي اكتيۏيتي لاكونن." },
-        
-        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 18: ڤربينچڠن (Think-Pair-Share)", akt: "1. موريد دباهاݢيكن سچارا برڤاسڠن.\n2. ݢورو ممبريكن ساتو سوءالن كبات / سيتواسي.\n3. موريد برفيكير، بربينچڠ برسام ڤاسڠن، دان مڠوڠسيكن جواڤن دهادڤن كلس.", ref: "سبهاݢين بسر موريد داڤت بركولابوراسي دڠن باءيق دان ممبري ايديا برنس. ____ / ____ موريد مڠواساءي اوبجيكتيف." },
-        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 19: Gallery Walk", akt: "1. موريد مڠحاصيلكن باهن ڤربينچڠن دأتس كرتس مهجوڠ.\n2. حاصيل كرجا دتمڤل ددينديڠ كلس.\n3. كومڤولن لاءين برݢرق ملاوت ستياڤ ستيشين دان ممبريكن اولسن.", ref: "ڤڠليبنتن موريد 100% اكتيف. ____ / ____ موريد برجاي منچرف معلومت راكن سباي دڠن بركسن." },
-        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 20: ڤتا ميندا / i-Think", akt: "1. ݢورو منرڠكن سچارا ريڠكس ايسي ڤلاجرن.\n2. موريد دالم كومڤولن مڠحاصيلكن ڤتا ڤوكوق / ڤتا بوءيه اونتوق مريڠكسكن نوتا.\n3. ڤمبنتڠن واكيل كومڤولن.", ref: "موريد ساڠت كریاتيف مروموسكن كفهمن مريك ملالوءي ڤتا ميندا. ____ / ____ موريد برجاي مڠحاصيلكن نوتا برستروكتور." },
-        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 21: كروسي ڤانس (Hot Seat)", akt: "1. سأورڠ موريد ترڤيليه دودوق د'كروسي ڤانس' دهادڤن كلس.\n2. موريد-موريد لاءين مڠاجوكن ڤلباݢاي سوءالن بركاءيتن توڤيق.\n3. موريد دكروسي ڤانس منجواب، مانكالا ݢورو برتيندق سباݢاي ڤموده چارا.", ref: "اكتيۏيتي اين برجاي ممبينا كياقينن ديري موريد اونتوق برسوءال جواب سچارا ليسن دان سڤونتن. اوبجيكتيف ترچڤاي." },
-        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 22: ميجا بولت (Round Table)", akt: "1. موريد دودوق دالم بولتن كومڤولن.\n2. سهلاي كرتس دأيدركن دان ستياڤ موريد ڤرلو منوليس سكورڠ-كورڠڽ ساتو فكتا سچارا برݢيلير-ݢيلير.\n3. ݢورو مپيمق حاصيل توليسن كومڤولن.", ref: "____ / ____ موريد برجاي بكرجاسام دالم كومڤولن دان ماسيڠ-ماسيڠ مپومبڠ سكورڠ-كورڠڽ ساتو جواڤن يڠ بتول." },
-        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 23: ڤپلساءين مسئله (KBAT)", akt: "1. ݢورو مڠموكاكن سيتواسي برمسئله.\n2. موريد بربينچڠ منچاري حكوم دان جالن ڤپلساءين.\n3. ڤمبنتڠن ڤپلساءين.", ref: "موريد داڤت برفيكير سچارا كريتيس (KBAT). ____ / ____ موريد برجاي مپلسيايكن مسئله دڠن حكوم فقه يڠ تڤت." },
-        { kategori: "ڤاك-21 / ڤمبلاجرن اكتيف", tajuk: "سيت 24: سوسون سواي ݢمبر (Jigsaw Puzzle)", akt: "1. موريد دأيدركن كرتن اية / ڤركاتاءن / ݢمبر.\n2. موريد بكرجاسام مپوسونڽ مڠيكوت اوروتن يڠ بتول دأتس كد مانيلا.\n3. سماقن ݢورو.", ref: "اوبجيكتيف ترچڤاي. موريد سرونوق بلاجر سمبيل برماءين (ديديق هيبور). ____ / ____ كومڤولن برجاي مپياڤكنڽ دڠن تڤت." },
-        
-        { kategori: "ديديق هيبور / ڤرماءينن", tajuk: "سيت 25: كويز اينتراكتيف", akt: "1. ݢورو منرڠكن تاجوق.\n2. كلس دباهاݢيكن كڤد ببراف كومڤولن.\n3. كومڤولن برلومبا منجواب كويز دڤاڤن ڤوتيه سچارا برݢيلير-ݢيلير.", ref: "اكتيۏيتي كويز برجاي مناريق تومڤوان مكسيموم موريد. ____ / ____ موريد فهم دان منجواب سوءالن دڠن تڤت." },
-        { kategori: "ديديق هيبور / ڤرماءينن", tajuk: "سيت 26: ڤرتنديڠن بركومڤولن", akt: "1. كلس دباهاݢيكن كڤد 4 كومڤولن.\n2. ݢورو ممبريكن ساتو توݢسن/سوءالن دڤاڤن ڤوتيه.\n3. كومڤولن يڠ تراول دان ممبريكن جواڤن ڤاليڠ تڤت اكن دبريكن ݢنجرن.", ref: "وجود سماڠت ڤرساءيڠن يڠ صيحت دالم كالڠن موريد. ____ / ____ موريد منچڤاي اوبجيكتيف ملالوءي ڤندكتن دidيق هيبور." },
-        { kategori: "ديديق هيبور / ڤرماءينن", tajuk: "سيت 27: حفلن برلاݢو / پاپين", akt: "1. ݢورو ممڤاڤركن ليريق بركاءيتن فكتا.\n2. موريد مپاپي دان مڠحفظ مڠيكوت ميلودي نشيد برسام ݢورو.\n3. سوءال جواب سچارا ليسن.", ref: "موريد ساڠت موده مڠيڠتي فكتا ملالوءي تيكنيك حفلن برلاݢو. اوبجيكتيف حفظن ترچڤاي 100%." },
-        
-        { kategori: "لاءين-لاءين / ڤنتكسيرن / چوتي", tajuk: "سيت 28: سماقن راكن سباي (Peer Assessment)", akt: "1. موريد مپياڤكن توݢسن لاتيهن برتوليس.\n2. موريد برتوكر بوكو دڠن راكن دسبله اونتوق دسيمق برداسركن ڤاندوان ݢورو.\n3. موريد ممبوات ڤمبتولن.", ref: "____ / ____ موريد جوجور، تليتي دان كريتيس سماس مننيلاي حاصيل كرجا راكن مريك. لاتيهن دسيمق دان دبينچڠكن دڠن باءيق." },
-        { kategori: "لاءين-لاءين / ڤنتكسيرن / چوتي", tajuk: "سيت 29: تايڠن ۏيديو / مولتيميديا", akt: "1. موريد منونتون تايڠن ۏيديو/انيماسي ريڠكس بركاءيتن توڤيق ڤلاجرن.\n2. موريد دمينتا منچاتت 3 معلومت ڤنتيڠ.\n3. ݢورو ممبينچڠكن دان مروموسكن كاندوڠن ۏيديو.", ref: "تايڠن ۏيديو ساڠت ممبنتو مرڠسڠ ۏيسوال موريد. ____ / ____ موريد ممهمي توڤيق دڠن لبيه ڤنتس دان جلس." },
-        { kategori: "لاءين-لاءين / ڤنتكسيرن / چوتي", tajuk: "سيت 30: PdP دتڠݢوهكن (چوتي / ڤروݢرم)", akt: "(تيادا اكتيۏيتي خصوص دأيسي / اكتيۏيتي ترنچڠ دبطلكن)", ref: "ڤڠاجرن دان ڤمبلاجرن (PdP) ڤد هاري اين تيدق داڤت دجالنكن / دتڠݢوهكن كران ترداڤت (ڤروݢرم راسمي / چوتي عموم / مشوارت / ݢورو چوتي). PdP اكن دݢنتيكن ڤد ماس يڠ لاءين." }
-    ];
+    fetchFromGoogleSheet();
+  }, []);
 
-    // ==========================================
-    // 30 SET CADANGAN SK, SP & OBJEKTIF (JAWI)
-    // ==========================================
-    const cadanganDSKPData = [
-        { kategori: "توحيد", tajuk: "سيت 1: روكون إسلام", sk: "ممهمي روكون إسلام.", sp: "مپبوت فغرتين روكون إسلام.", obj: "موريد داڤت مپبوت فغرتين روكون إسلام دري سݢي بهاس دان ايستيله دڠن تڤت." },
-        { kategori: "توحيد", tajuk: "سيت 2: كليمه شهادة", sk: "مڠوچف دوا كليمه شهادة.", sp: "ملفظكن دوا كليمه شهادة دڠن بتول.", obj: "موريد داڤت ملفظكن دوا كليمه شهادة بسرتا ارتين دڠن بتول دان فصيح." },
-        { kategori: "توحيد", tajuk: "سيت 3: روكون ايمان", sk: "ممهمي روكون ايمان.", sp: "مينارايكن روكون ايمان يڠ انم.", obj: "موريد داڤت مينارايكن انم روكون ايمان مڠيكوت اوروتن يڠ بتول تنڤا بيمبيڠن ݢورو." },
-        { kategori: "توحيد", tajuk: "سيت 4: برايمان كڤد الله", sk: "برايمان كڤد الله تعالى.", sp: "منجلسكن ارتي برايمان كڤد الله.", obj: "موريد داڤت منجلسكن ارتي برايمان كڤد الله دڠن تڤت سرتا مپبوت ساتو دليل نقلي." },
-        { kategori: "توحيد", tajuk: "سيت 5: برايمان كڤد ملائكة", sk: "برايمان كڤد ملائكة.", sp: "مپبوت نام-نام ملائكة دان توݢسنڽ.", obj: "موريد داڤت مپبوت سكورڠ-كورڠڽ ليم نام ملائكة بسرتا توݢسنڽ دڠن بتول." },
-        
-        { kategori: "عبادات", tajuk: "سيت 6: طهارة", sk: "ممهمي فغرتين طهارة (برسوچي).", sp: "مپبوت مقصود طهارة دان باهاݢين اءير.", obj: "موريد داڤت مپبوت مقصود طهارة دان مينارايكن 3 جنيس اءير مطلق دڠن بتول." },
-        { kategori: "عبادات", tajuk: "سيت 7: استنجاء", sk: "ممهمي كونسيف استنجاء.", sp: "منجلسكن چارا براستنجاء يڠ بتول.", obj: "موريد داڤت منجلسكن چارا براستنجاء مڠݢوناكن اءير دان باتو دڠن تڤت." },
-        { kategori: "عبادات", tajuk: "سيت 8: وضوء", sk: "ممهمي دان مڠعملكن چارا بروضوء.", sp: "منديمونستراسيكن چارا بروضوء مڠيكوت روكون.", obj: "موريد داڤت ملاكوكن عملي وضوء مڠيكوت اوروتن روكون يڠ بتول دڠن سمڤورنا." },
-        { kategori: "عبادات", tajuk: "سيت 9: روكون صلاة", sk: "ممهمي روكون صلاة فرض.", sp: "مينارايكن 13 روكون صلاة.", obj: "موريد داڤت مينارايكن سكورڠ-كورڠڽ 5 روكون صلاة قولي دان فعلي دڠن بتول." },
-        { kategori: "عبادات", tajuk: "سيت 10: شرط صح صلاة", sk: "ممهمي شرط صح صلاة.", sp: "منجلسكن شرط صح صلاة فرض.", obj: "موريد داڤت منجلسكن 3 درڤد شرط صح صلاة سبلوم منديريكن صلاة دڠن جلس." },
-        
-        { kategori: "سيرة", tajuk: "سيت 11: فغرتين سيرة", sk: "ممهمي فغرتين سيرة.", sp: "مپبوت فغرتين سيرة نبي.", obj: "موريد داڤت مپبوت فغرتين سيرة نبي محمد صلى الله عليه وسلم دڠن بتول." },
-        { kategori: "سيرة", tajuk: "سيت 12: نسب نبي", sk: "مڠنلي نسب نبي محمد صلى الله عليه وسلم.", sp: "مپبوت نام ايبو، باڤ دان داتوق نبي محمد.", obj: "موريد داڤت مپبوت نام ايبو، باڤ دان داتوق نبي محمد مڠيكوت سيلسيله يڠ تڤت." },
-        { kategori: "سيرة", tajuk: "سيت 13: تاهون ݢاجه", sk: "ممهمي فريستيوا كلاهيرن نبي.", sp: "منچريتاكن فريستيوا تاهون ݢاجه.", obj: "موريد داڤت منچريتاكن فريستيوا تنترا برݢاجه مپراڠ مكة دڠن باءيق." },
-        { kategori: "سيرة", tajuk: "سيت 14: ايبو سوسوان", sk: "مڠنلي ايبو سوسوان نبي.", sp: "مپبوت نام ايبو سوسوان نبي.", obj: "موريد داڤت مپبوت نام حليمة السعدية سباݢاي ايبو سوسوان نبي دڠن بتول." },
-        { kategori: "سيرة", tajuk: "سيت 15: صيفت صديق", sk: "ممهمي صيفت محمودة نبي محمد.", sp: "منجلسكن صيفت صديق نبي.", obj: "موريد داڤت منجلسكن صيفت صديق (بنر) نبي دالم كهيدوفن سهارين سباݢاي چونتوه تاولادن." },
-        
-        { kategori: "اخلاق", tajuk: "سيت 16: ادب ماكن", sk: "مڠعملكن ادب ماكن دان مينوم.", sp: "ممباچ دعاء سبلوم دان سلفس ماكن.", obj: "موريد داڤت ممباچ دعاء سبلوم دان سلفس ماكن دڠن لنچر سرتا برادب." },
-        { kategori: "اخلاق", tajuk: "سيت 17: ادب تندس", sk: "مڠعملكن ادب ماسوق دان كلوار تندس.", sp: "ممباچ دعاء ماسوق تندس.", obj: "موريد داڤت ممباچ دعاء ماسوق تندس دان مپبوت ادب ماسوق تندس دڠن بتول." },
-        { kategori: "اخلاق", tajuk: "سيت 18: ادب تيدور", sk: "مڠعملكن ادب تيدور.", sp: "مپبوت ادب سبلوم تيدور.", obj: "موريد داڤت مپبوت سكورڠ-كورڠڽ 3 ادب سبلوم تيدور مڠيكوت سنة نبي." },
-        { kategori: "اخلاق", tajuk: "سيت 19: ادب ايبو باڤ", sk: "مڠعملكن ادب دڠن ايبو باڤ.", sp: "منونجوقكن چارا مڠحرمتي ايبو باڤ.", obj: "موريد داڤت مپبوت سكورڠ-كورڠڽ 2 چارا مڠحرمتي ايبو باڤ دالم كهيدوفن سهارين." },
-        { kategori: "اخلاق", tajuk: "سيت 20: ادب ݢورو", sk: "مڠعملكن ادب دڠن ݢورو.", sp: "مپبوت اوچفن سلام دان ادب سماس بلاجر.", obj: "موريد داڤت ملفظكن اوچفن سلام كڤد ݢورو دان مپبوت 2 ادب سماس بلاجر دڠن باءيق." },
-        
-        { kategori: "القرءان & حفظن", tajuk: "سيت 21: حروف هجائية", sk: "مڠنل حروف هجائية توڠكل.", sp: "مپبوت حروف هجائية مڠيكوت مخرج يڠ بتول.", obj: "موريد داڤت مپبوت حروف هجائية دري ا هڠݢ ي مڠيكوت مخرج يڠ بتول." },
-        { kategori: "القرءان & حفظن", tajuk: "سيت 22: حروف برباريس", sk: "ممباچ حروف هجائية برباريس.", sp: "ممبوپيكن حروف برباريس اتس (فتحة).", obj: "موريد داڤت ممبوپيكن سكورڠ-كورڠڽ 10 حروف برباريس اتس دڠن تڤت." },
-        { kategori: "القرءان & حفظن", tajuk: "سيت 23: حفظن الفاتحة", sk: "مڠحفظ سورة الفاتحة.", sp: "ممباچ دان مڠحفظ اية 1-3 سورة الفاتحة.", obj: "موريد داڤت مڠحفظ اية 1-3 سورة الفاتحة دڠن لنچر دان برتجويد." },
-        { kategori: "القرءان & حفظن", tajuk: "سيت 24: حفظن الاخلاص", sk: "مڠحفظ سورة الاخلاص.", sp: "ممباچ دان مڠحفظ سورة الاخلاص.", obj: "موريد داڤت مڠحفظ كسلوروهن سورة الاخلاص دڠن لنچر مڠيكوت بيمبيڠن ݢورو." },
-        { kategori: "القرءان & حفظن", tajuk: "سيت 25: مد اصلي", sk: "ممباچ كليمه يڠ مڠاندوغي مد اصلي.", sp: "ممبوپيكن مد اصلي 2 حركة.", obj: "موريد داڤت ممباچ كليمه يڠ مڠاندوغي مد اصلي دڠن قدر 2 حركة دڠن بتول." },
-        
-        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 26: جاوي توڠكل", sk: "مڠنل حروف جاوي توڠكل.", sp: "مپبوت دان منوليس حروف جاوي توڠكل.", obj: "موريد داڤت منوليس 5 حروف جاوي توڠكل يڠ بربيذا دڠن بنتوق يڠ بتول." },
-        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 27: سوكو كات تربوك", sk: "ممباچ سوكو كات تربوك.", sp: "مڠيجا سوكو كات تربوك (V+KV).", obj: "موريد داڤت مڠيجا دان ممبوپيكن 3 سوكو كات تربوك دڠن تڤت." },
-        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 28: ڤركاتاءن موده", sk: "ممباچ فركاتاءن موده 2 سوكو كات.", sp: "ممباچ دان منوليس فركاتاءن موده.", obj: "موريد داڤت ممباچ سكورڠ-كورڠڽ 3 فركاتاءن موده يڠ تيديري دري 2 سوكو كات دڠن لنچر." },
-        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 29: اوچفن سلام", sk: "التعارف والتحيات (ڤڠنلن دان سلام).", sp: "مپبوت اوچفن سلام دان جواڤنڽ.", obj: "موريد داڤت مپبوت اوچفن 'صباح الخير' (Selamat Pagi) دان جواڤنڽ دالم بهاس عرب دڠن بتول." },
-        { kategori: "جاوي & بهاس عرب", tajuk: "سيت 30: اڠݢوتا بادن", sk: "أعضاء الجسم (اڠݢوتا بادن).", sp: "مپبوت نام اڠݢوتا بادن أسا‌س.", obj: "موريد داڤت مپبوت 3 نام اڠݢوتا بادن (رأس، عين، أذن) دالم بهاس عرب دڠن بتول." }
-    ];
+  useEffect(() => {
+    if (rptData.length > 0) {
+      localStorage.setItem('rptDatabaseSAKNJ_v5', JSON.stringify(rptData));
+    }
+  }, [rptData]);
 
-    // Fungsi carian Data
-    function getMingguData(subjek, darjah, minggu) {
-        if (rptData[subjek] && rptData[subjek][darjah]) {
-            if (rptData[subjek][darjah][minggu]) {
-                return rptData[subjek][darjah][minggu];
-            } else {
-                let closestWeek = 1;
-                for (let key in rptData[subjek][darjah]) {
-                    if (parseInt(key) <= minggu) closestWeek = parseInt(key);
-                }
-                const data = rptData[subjek][darjah][closestWeek];
-                if(data) return { sk: data.sk, sp: data.sp, obj: data.obj };
-            }
-        }
-        return null;
+  useEffect(() => {
+    const matchedRecord = rptData.find(
+      r => r.darjah === selectedDarjah && 
+           r.mataPelajaran === selectedSubjek && 
+           String(r.minggu) === String(selectedMinggu)
+    );
+
+    if (matchedRecord) {
+      setErphForm(prev => ({
+        ...prev,
+        mataPelajaran: matchedRecord.mataPelajaran,
+        tema: matchedRecord.tema || '',
+        tajuk: matchedRecord.tajuk || '',
+        sk: matchedRecord.sk || '',
+        sp: matchedRecord.sp || '',
+        objektif: `موريد داڤت ممهمي دان مڠواسيني تاجوق ${matchedRecord.tajuk} دغن بتول سرتا لڠکڤ.`
+      }));
+    } else {
+      setErphForm(prev => ({
+        ...prev,
+        mataPelajaran: selectedSubjek,
+        tema: 'تيادا داتا RPT باڬي ميڠڬو اين',
+        tajuk: '-',
+        sk: '-',
+        sp: '-',
+        objektif: '-'
+      }));
+    }
+  }, [selectedDarjah, selectedSubjek, selectedMinggu, rptData]);
+
+  const handleDbChange = (e) => {
+    const { name, value } = e.target;
+    setDbForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const saveToDb = (e) => {
+    e.preventDefault();
+    if (!dbForm.darjah || !dbForm.minggu || !dbForm.tajuk || !dbForm.sk || !dbForm.sp) {
+      alert("سيلا ايسي درجه، ميڠڬو، تاجوق، SK دان SP.");
+      return;
+    }
+    const newRecord = { ...dbForm, id: Date.now().toString() };
+    setRptData([...rptData, newRecord]);
+    setDbForm(prev => ({ ...prev, minggu: '', tajuk: '', sk: '', sp: '', tema: '' }));
+    alert("رِيكود RPT berjaya disimpan!");
+  };
+
+  const deleteRecord = (id) => {
+    if (window.confirm('ادكه اندا ڤستي اونتوق ممادم ريكود اين؟')) {
+      setRptData(rptData.filter(record => record.id !== id));
+    }
+  };
+
+  const handlePdfUploadSimulation = (e) => {
+    e.preventDefault();
+    if (!uploadForm.rawText.trim()) {
+      alert("سيلا ماسوقكن تيكس التراكن PDF ترلبيه داهولو.");
+      return;
     }
 
-    // Load Dropdown Minggu & Tajuk
-    document.addEventListener('DOMContentLoaded', function() {
-        const mingguSelect = document.getElementById('minggu');
-        mingguSelect.innerHTML = '<option value="">- فيليه ميڠݢو -</option>';
-        for(let i = 1; i <= 43; i++) {
-            const opt = document.createElement('option');
-            opt.value = i;
-            opt.text = `ميڠݢو ${i}`;
-            mingguSelect.appendChild(opt);
-        }
+    const lines = uploadForm.rawText.split('\n');
+    let currentMinggu = '1';
+    let currentTajuk = '';
+    let currentSK = '';
+    let currentSP = '';
+    let currentTema = '';
 
-        document.getElementById('subjek').addEventListener('change', updateTajukList);
-        document.getElementById('darjah').addEventListener('change', updateTajukList);
-        document.getElementById('minggu').addEventListener('change', function() {
-            const tajukEl = document.getElementById('tajuk');
-            if (tajukEl.tagName.toLowerCase() === 'select' && this.value !== "") {
-                tajukEl.selectedIndex = this.value;
-            }
-            autoFillDSKP();
-        });
-        
-        updateTajukList();
+    lines.forEach((line) => {
+      const trimmed = line.trim();
+      if (/minggu\s*\d+/i.test(trimmed) || /^مڠڬو\s*\d+/i.test(trimmed)) {
+        const match = trimmed.match(/\d+/);
+        if (match) currentMinggu = match[0];
+      } else if (trimmed.startsWith('Tajuk:') || trimmed.startsWith('تاجوق:')) {
+        currentTajuk = trimmed.replace(/Tajuk:|تاجوق:/, '').trim();
+      } else if (trimmed.startsWith('SK:') || trimmed.startsWith('SK')) {
+        currentSK = trimmed;
+      } else if (trimmed.startsWith('SP:') || trimmed.startsWith('SP')) {
+        currentSP = trimmed;
+      } else {
+        if (!currentTajuk) currentTajuk = trimmed;
+        else if (!currentSK) currentSK = trimmed;
+      }
     });
 
-    // Update Tajuk List Dropdown
-    function updateTajukList() {
-        const subjek = document.getElementById('subjek').value;
-        const darjah = document.getElementById('darjah').value;
-        let tajukEl = document.getElementById('tajuk');
-        
-        if (tajukEl.tagName.toLowerCase() !== 'select') {
-            const newSelect = document.createElement('select');
-            newSelect.id = 'tajuk';
-            newSelect.name = 'tajuk';
-            newSelect.className = tajukEl.className;
-            newSelect.style.cssText = tajukEl.style.cssText;
-            newSelect.required = true;
-            tajukEl.parentNode.replaceChild(newSelect, tajukEl);
-            tajukEl = newSelect;
-        }
+    const newRec = {
+      id: Date.now().toString(),
+      darjah: uploadForm.darjah,
+      mataPelajaran: uploadForm.mataPelajaran,
+      minggu: currentMinggu || '1',
+      tema: currentTema || 'سليبوس ' + uploadForm.mataPelajaran,
+      tajuk: currentTajuk || uploadForm.rawText.substring(0, 50),
+      sk: currentSK || uploadForm.rawText,
+      sp: currentSP || uploadForm.rawText
+    };
 
-        tajukEl.addEventListener('change', function() {
-            if(this.selectedIndex > 0) {
-                document.getElementById('minggu').selectedIndex = this.selectedIndex;
-                autoFillDSKP();
-            }
+    setRptData(prev => [...prev, newRec]);
+    setUploadStatus(`بريتاهوان: Berjaya ekstrak dan masukkan 1 rekod RPT untuk ${uploadForm.darjah} (${uploadForm.mataPelajaran}) Minggu ${currentMinggu}!`);
+    setUploadForm(prev => ({ ...prev, rawText: '' }));
+  };
+
+  const handleGoogleSheetSync = async () => {
+    setIsSyncingSheet(true);
+    setUploadStatus("Sedang memuat turun data RPT dari Google Sheet rasmi...");
+    try {
+      const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/1s1ukNCTGKxZ5dWdvLMPhFGqzh4qN72gJcoRh-NoW4z8/export?format=csv&gid=0";
+      const response = await fetch(sheetCsvUrl);
+      if (!response.ok) throw new Error("Gagal mengambil data dari Google Sheet");
+      const csvText = await response.text();
+      
+      const rows = csvText.split('\n').map(row => {
+        const matches = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || row.split(',');
+        return matches.map(val => val.replace(/^"|"$/g, '').trim());
+      });
+
+      if (rows.length <= 1) {
+        throw new Error("Google Sheet kosong atau format tidak sah.");
+      }
+
+      const newImportedData = [];
+
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (r.length < 5) continue;
+        newImportedData.push({
+          id: 'gs_' + (Date.now() + i),
+          darjah: r[1] || 'درجه 1',
+          minggu: r[2] || '1',
+          mataPelajaran: r[3] || 'توحيد',
+          tema: r[4] || 'تيما',
+          tajuk: r[5] || r[4] || 'تاجوق',
+          sk: r[6] || '-',
+          sp: r[7] || '-'
         });
-        
-        tajukEl.innerHTML = '<option value="">- فيليه تاجوق -</option>';
-        
-        if (rptData[subjek] && rptData[subjek][darjah]) {
-            for (let i = 1; i <= 43; i++) {
-                const mingguData = getMingguData(subjek, darjah, i);
-                let tajukText = "اولڠكاجي / تيادا داتا / چوتي";
-                
-                if (mingguData && mingguData.sk) {
-                    tajukText = mingguData.sk.split('\n')[0].trim();
-                }
-                
-                const opt = document.createElement('option');
-                opt.value = tajukText;
-                opt.text = `ميڠݢو ${i} : ${tajukText}`;
-                tajukEl.appendChild(opt);
-            }
-        }
-    }
+      }
 
-    // Auto Fill DSKP
-    function autoFillDSKP() {
-        const subjek = document.getElementById('subjek').value;
-        const darjah = document.getElementById('darjah').value;
-        const minggu = parseInt(document.getElementById('minggu').value);
-        
-        if (!subjek || !darjah || !minggu) return;
-        
-        const mingguData = getMingguData(subjek, darjah, minggu);
-        const skEl = document.getElementById('sk');
-        const spEl = document.getElementById('sp');
-        const objEl = document.getElementById('objektif');
-        
-        if (mingguData) {
-            skEl.value = mingguData.sk || "اولڠكاجي / تيادا داتا / چوتي";
-            spEl.value = mingguData.sp || "اولڠكاجي / تيادا داتا / چوتي";
-            
-            if (mingguData.obj) {
-                objEl.value = mingguData.obj;
-            } else if (mingguData.sp) {
-                const spLines = mingguData.sp.split('\n').filter(line => line.trim() !== '');
-                const objText = spLines.map(line => {
-                    let text = line.replace(/^[0-9.]+\s*/, '').trim();
-                    return text.length > 0 ? "موريد داڤت " + text : "";
-                }).filter(t => t !== "").join('\n');
-                objEl.value = objText || "موريد داڤت مڠولڠكاجي ڤلاجرن دڠن باءيق.";
-            } else {
-                objEl.value = "موريد داڤت مڠولڠكاجي ڤلاجرن دڠن باءيق.";
-            }
-        } else {
-            skEl.value = "-";
-            spEl.value = "-";
-            objEl.value = "-";
-        }
-        
-        [skEl, spEl, objEl].forEach(el => {
-            el.style.height = 'auto';
-            el.style.height = (el.scrollHeight) + 'px';
+      if (newImportedData.length > 0) {
+        setRptData(prev => {
+          const combined = [...newImportedData, ...prev];
+          return combined;
         });
+        setUploadStatus(`✨ Berjaya menyegerakkan ${newImportedData.length} rekod RPT terus dari Google Sheet rasmi!`);
+      } else {
+        setUploadStatus("Tiada rekod sah dijumpai dalam Google Sheet tersebut.");
+      }
+    } catch (err) {
+      console.warn("Ralat muat turun Google Sheet CSV:", err);
+      setUploadStatus("Nota: Sambungan langsung CSV disekat oleh pelayar (CORS). Sila pastikan Google Sheet telah dikongsikan 'Anyone with the link can view'.");
+    } finally {
+      setIsSyncingSheet(false);
+    }
+  };
+
+  const handleUploadRPTToGoogleSheet = async (recordToUpload) => {
+    if (!WEB_APP_URL || !WEB_APP_URL.startsWith('https://script.google.com/macros/s/')) {
+      alert("Sila tetapkan WEB_APP_URL Google Apps Script yang sah untuk memuat naik data terus ke Google Sheet.");
+      return;
     }
 
-    // Logik Tetingkap Modal Cadangan
-    function binaSenaraiCadangan() {
-        const container = document.getElementById('senaraiCadangan');
-        container.innerHTML = '';
-        
-        cadanganData.forEach((item, index) => {
-            const card = document.createElement('div');
-            card.className = 'cadangan-card';
-            card.onclick = () => pilihCadangan(index);
-            
-            card.innerHTML = `
-                <div class="cadangan-kategori">${item.kategori}</div>
-                <div class="cadangan-tajuk">${item.tajuk}</div>
-                <div style="display:flex; gap: 10px; font-size: 0.85em;">
-                    <div style="flex:1; background:#fff; padding:8px; border:1px solid #eee; border-radius:4px;">
-                        <strong style="color:var(--primary-color);">اكتيۏيتي:</strong><br>
-                        <span class="jawi-text" style="font-size:1.1em; line-height:1.4;">${item.akt.replace(/\n/g, '<br>')}</span>
-                    </div>
-                    <div style="flex:1; background:#fff; padding:8px; border:1px solid #eee; border-radius:4px;">
-                        <strong style="color:var(--primary-color);">ريفليكسي:</strong><br>
-                        <span class="jawi-text" style="font-size:1.1em; line-height:1.4;">${item.ref}</span>
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
-        });
+    setIsUploadingToSheet(true);
+    try {
+      const payload = {
+        action: "saveRPT",
+        record: recordToUpload
+      };
+
+      await fetch(WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      alert("✨ ريكود RPT berjaya dimuat naik (upload) ke Google Sheet!");
+    } catch (err) {
+      console.error(err);
+      alert("Ralat semasa memuat naik ke Google Sheet.");
+    } finally {
+      setIsUploadingToSheet(false);
+    }
+  };
+
+  const handleErphChange = (e) => {
+    const { name, value } = e.target;
+    setErphForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleSaveToGoogleSheet = async () => {
+    if (!WEB_APP_URL || !WEB_APP_URL.startsWith('https://script.google.com/macros/s/')) {
+      alert("Sila masukkan URL Web Apps Google Apps Script yang sah pada pembolehubah WEB_APP_URL di dalam kod terlebih dahulu, atau rekod telah disimpan secara lokal.");
+      setSaveStatus("Berjaya disimpan ke sistem (Simpanan Lokal).");
+      setTimeout(() => setSaveStatus(''), 4000);
+      return;
     }
 
-    function bukaModalCadangan() {
-        // Tukar semakan innerHTML kepada children.length untuk mengelak ralat komen HTML
-        if(document.getElementById('senaraiCadangan').children.length === 0) {
-            binaSenaraiCadangan();
+    try {
+      setSaveStatus("Menghantar ke Google Sheet...");
+      const payload = {
+        action: "saveERPH",
+        record: {
+          ...erphForm,
+          minggu: selectedMinggu,
+          darjah: selectedDarjah
         }
-        document.getElementById('modalCadangan').style.display = "block";
+      };
+
+      await fetch(WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      setSaveStatus("Berjaya disimpan ke Google Sheet!");
+      setTimeout(() => setSaveStatus(''), 4000);
+    } catch (err) {
+      console.error(err);
+      setSaveStatus("Ralat sambungan ke Google Sheet.");
+      setTimeout(() => setSaveStatus(''), 4000);
     }
+  };
 
-    function tutupModalCadangan() {
-        document.getElementById('modalCadangan').style.display = "none";
-    }
+  const renderUploadTab = () => (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto space-y-6">
+      <div className="border-b pb-4">
+        <h3 className="text-xl font-bold text-gray-800 flex items-center">
+          <Upload className="w-6 h-6 ml-2 text-green-600" /> مواءت ناءيك / استخرج داتا RPT PDF & Google Sheet
+        </h3>
+        <p className="text-sm text-gray-600 mt-1">ڤيله درجه دان سوبجيك دي باوه، اتوق سڬرياكن داتا لڠسۊڠ دري ڤڠكلن داتا Google Sheet رسمي.</p>
+      </div>
 
-    function pilihCadangan(index) {
-        const data = cadanganData[index];
-        const aktEl = document.getElementById('aktiviti');
-        const refEl = document.getElementById('refleksi');
-        
-        aktEl.value = data.akt;
-        refEl.value = data.ref;
-        
-        // Auto-resize
-        [aktEl, refEl].forEach(el => {
-            el.style.height = 'auto';
-            el.style.height = (el.scrollHeight) + 'px';
-        });
-        
-        tutupModalCadangan();
-        paparNotifikasi(`Cadangan '${data.tajuk}' berjaya dimasukkan!`, 'success');
-    }
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg flex flex-col justify-between">
+          <div>
+            <h4 className="font-bold text-blue-900">سڬرياكن (Sync) دري Google Sheet</h4>
+            <p className="text-xs text-blue-700 mt-1">امبيل دان لواد سموا ريكود RPT تركيک دري سڤريدسيت.</p>
+          </div>
+          <button
+            onClick={handleGoogleSheetSync}
+            disabled={isSyncingSheet}
+            className="mt-4 bg-blue-700 hover:bg-blue-800 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center justify-center shadow"
+          >
+            <Database className="w-4 h-4 ml-2" /> {isSyncingSheet ? 'موات تورون...' : 'موئت تورون داري Google Sheet'}
+          </button>
+        </div>
 
-    // Modal DSKP Functions
-    function binaSenaraiDSKP() {
-        const container = document.getElementById('senaraiDSKP');
-        container.innerHTML = '';
-        
-        cadanganDSKPData.forEach((item, index) => {
-            const card = document.createElement('div');
-            card.className = 'cadangan-card';
-            card.style.borderColor = '#c5cae9';
-            card.onclick = () => pilihDSKP(index);
-            
-            card.innerHTML = `
-                <div class="cadangan-kategori" style="color: #303f9f; background: #e8eaf6;">${item.kategori}</div>
-                <div class="cadangan-tajuk" style="color: #3f51b5;">${item.tajuk}</div>
-                <div style="display:flex; flex-direction:column; gap: 8px; font-size: 0.85em;">
-                    <div style="background:#fff; padding:8px; border:1px solid #eee; border-radius:4px;">
-                        <strong style="color:#3f51b5;">ستندرد كاندوڠن:</strong><br>
-                        <span class="jawi-text" style="font-size:1.1em; line-height:1.4;">${item.sk}</span>
-                    </div>
-                    <div style="background:#fff; padding:8px; border:1px solid #eee; border-radius:4px;">
-                        <strong style="color:#3f51b5;">ستندرد ڤمبلاجرن:</strong><br>
-                        <span class="jawi-text" style="font-size:1.1em; line-height:1.4;">${item.sp}</span>
-                    </div>
-                    <div style="background:#fff; padding:8px; border:1px solid #eee; border-radius:4px;">
-                        <strong style="color:#3f51b5;">اوبجيكتيف:</strong><br>
-                        <span class="jawi-text" style="font-size:1.1em; line-height:1.4;">${item.obj}</span>
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    }
+        <div className="p-4 bg-green-50 border border-green-200 rounded-lg flex flex-col justify-between">
+          <div>
+            <h4 className="font-bold text-green-900">مواءت ناءيك (Upload) داتا بارو</h4>
+            <p className="text-xs text-green-700 mt-1">هنتر ريكود RPT سديا اد كدالمڤڠكلن داتا Google Sheet.</p>
+          </div>
+          <button
+            onClick={() => {
+              if (rptData.length > 0) {
+                handleUploadRPTToGoogleSheet(rptData[rptData.length - 1]);
+              } else {
+                alert("تيادا ريكود لونتوق ديموات ناءيك.");
+              }
+            }}
+            disabled={isUploadingToSheet}
+            className="mt-4 bg-green-700 hover:bg-green-800 text-white font-bold px-4 py-2 rounded-lg text-sm transition flex items-center justify-center shadow"
+          >
+            <CloudUpload className="w-4 h-4 ml-2" /> {isUploadingToSheet ? 'موات ناءيك...' : 'مؤات ناءيك ريكود تربر و كـ Sheet'}
+          </button>
+        </div>
+      </div>
 
-    function bukaModalDSKP() {
-        if(document.getElementById('senaraiDSKP').children.length === 0) {
-            binaSenaraiDSKP();
-        }
-        document.getElementById('modalDSKP').style.display = "block";
-    }
+      {uploadStatus && (
+        <div className="p-4 bg-green-100 border border-green-300 text-green-800 rounded-lg font-bold">
+          {uploadStatus}
+        </div>
+      )}
 
-    function tutupModalDSKP() {
-        document.getElementById('modalDSKP').style.display = "none";
-    }
+      <form onSubmit={handlePdfUploadSimulation} className="space-y-4 pt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">ڤيله درجه</label>
+            <select 
+              value={uploadForm.darjah}
+              onChange={(e) => setUploadForm({...uploadForm, darjah: e.target.value})}
+              className="w-full p-2 border rounded-lg font-bold bg-white"
+            >
+              {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">ڤيله سوبجيك SAKNJ</label>
+            <select 
+              value={uploadForm.mataPelajaran}
+              onChange={(e) => setUploadForm({...uploadForm, mataPelajaran: e.target.value})}
+              className="w-full p-2 border rounded-lg font-bold bg-white text-green-800"
+            >
+              {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+            </select>
+          </div>
+        </div>
 
-    function pilihDSKP(index) {
-        const data = cadanganDSKPData[index];
-        const skEl = document.getElementById('sk');
-        const spEl = document.getElementById('sp');
-        const objEl = document.getElementById('objektif');
-        
-        skEl.value = data.sk;
-        spEl.value = data.sp;
-        objEl.value = data.obj;
-        
-        [skEl, spEl, objEl].forEach(el => {
-            el.style.height = 'auto';
-            el.style.height = (el.scrollHeight) + 'px';
-        });
-        
-        tutupModalDSKP();
-        paparNotifikasi(`Cadangan SK, SP & Objektif '${data.tajuk}' berjaya dimasukkan!`, 'success');
-    }
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">ساڤوكن / سالين تيكس دري PDF RPT دالام كوتق اين</label>
+          <textarea 
+            rows="6"
+            value={uploadForm.rawText}
+            onChange={(e) => setUploadForm({...uploadForm, rawText: e.target.value})}
+            placeholder="چونتوه: Minggu 1: Tajuk: Air Mutlak. SK: Memahami konsep... SP: Menyebutkan..."
+            className="w-full p-3 border rounded-lg font-sans text-sm focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </div>
 
-    // Tutup modal jika klik di luar kotak
-    window.onclick = function(event) {
-        const modalCadangan = document.getElementById('modalCadangan');
-        const modalDSKP = document.getElementById('modalDSKP');
-        if (event.target == modalCadangan) {
-            tutupModalCadangan();
-        }
-        if (event.target == modalDSKP) {
-            tutupModalDSKP();
-        }
-    }
+        <div className="flex justify-end">
+          <button type="submit" className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition flex items-center">
+            <Database className="w-4 h-4 ml-2" /> ڤروسيس & سمڤن كڤڠكلن داتا
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 
-    // Sistem Notifikasi UX yang menggantikan alert()
-    function paparNotifikasi(mesej, jenis) {
-        const notif = document.getElementById('notification');
-        notif.textContent = mesej;
-        notif.className = `notify-${jenis}`;
-        notif.style.display = 'block';
-        
-        setTimeout(() => {
-            notif.style.opacity = '0';
-            setTimeout(() => {
-                notif.style.display = 'none';
-                notif.style.opacity = '1';
-            }, 300);
-        }, 3000);
-    }
-
-    function ubahSaiz(baseSize, titleSize) {
-        document.documentElement.style.setProperty('--font-size-base', baseSize);
-        document.documentElement.style.setProperty('--font-size-title', titleSize);
-        
-        const buttons = document.querySelectorAll('.btn-size');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        
-        const textareas = document.querySelectorAll('textarea');
-        textareas.forEach(ta => {
-            ta.style.height = 'auto';
-            ta.style.height = (ta.scrollHeight) + 'px';
-        });
-    }
-
-    function hantarKeGoogleSheets() {
-        const btn = document.getElementById('btnSave');
-        const teksAsal = btn.innerText;
-        btn.innerText = "⏳ Menyimpan...";
-        btn.disabled = true;
-        
-        const formData = {
-            tarikh: document.getElementById('tarikh').value,
-            hari: document.getElementById('hari').value,
-            darjah: document.getElementById('darjah').value,
-            subjek: document.getElementById('subjek').value,
-            minggu: document.getElementById('minggu').value,
-            tajuk: document.getElementById('tajuk').options[document.getElementById('tajuk').selectedIndex]?.text || '',
-            sk: document.getElementById('sk').value,
-            sp: document.getElementById('sp').value,
-            objektif: document.getElementById('objektif').value,
-            aktiviti: document.getElementById('aktiviti').value,
-            refleksi: document.getElementById('refleksi').value
-        };
-
-        const scriptURL = 'MASUKKAN_URL_WEB_APP_GOOGLE_SCRIPT_ANDA_DI_SINI'; 
-        
-        // Simulasi penghantaran berjaya memandangkan kita tidak menggunakan alert() dan mengelak error CORS tanpa URL sebenar
-        setTimeout(() => {
-            if(scriptURL.includes('MASUKKAN_URL')) {
-                paparNotifikasi("Simulasi Berjaya! (Sila masukkan URL Web App Google Script sebenar di kod)", "info");
-            } else {
-                fetch(scriptURL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                })
-                .then(response => paparNotifikasi("Berjaya dihantar ke Google Sheets!", "success"))
-                .catch(error => paparNotifikasi("Ralat semasa menghantar data ke pelayan.", "error"));
-            }
-            btn.innerText = teksAsal;
-            btn.disabled = false;
-        }, 1000);
-    }
-
-    function eksportCSV() {
-        let csv = '\uFEFF'; // BOM untuk UTF-8 Jawi
-        const fields = ['tarikh', 'hari', 'darjah', 'subjek', 'minggu', 'tajuk', 'sk', 'sp', 'objektif', 'aktiviti', 'refleksi'];
-        
-        let row = [];
-        fields.forEach(field => {
-            let el = document.getElementById(field);
-            let val = el ? (el.tagName === 'SELECT' ? el.options[el.selectedIndex]?.text || "" : el.value) : "";
-            row.push('"' + val.replace(/"/g, '""') + '"');
-        });
-        csv += row.join(',') + '\r\n';
-
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", `RPH_${document.getElementById('tarikh').value || 'baru'}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        paparNotifikasi("Fail CSV berjaya dimuat turun.", "success");
-    }
-
-    function importCSV(event) {
-        const file = event.target.files[0];
-        if (!file) {
-            paparNotifikasi("Tiada fail dipilih.", "error");
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const text = e.target.result;
-                const barisData = text.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                
-                if (barisData && barisData.length >= 11) {
-                    const bersihkanTeks = (str) => str.replace(/^"|"$/g, '').replace(/""/g, '"');
-                    
-                    document.getElementById('tarikh').value = bersihkanTeks(barisData[0]);
-                    
-                    paparNotifikasi("Data CSV berjaya dimuat naik!", "success");
+  const renderDatabaseTab = () => (
+    <div className="space-y-6">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 print:hidden">
+        <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+          <Plus className="w-5 h-5 ml-2 text-green-600" /> تمبه ريكود RPT مأنوءال
+        </h3>
+        <form onSubmit={saveToDb} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">درجه / كلس</label>
+            <select name="darjah" value={dbForm.darjah} onChange={handleDbChange} className="w-full p-2 border rounded-lg font-bold" required>
+              {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">مات ڤلاجرن SAKNJ</label>
+            <select name="mataPelajaran" value={dbForm.mataPelajaran} onChange={handleDbChange} className="w-full p-2 border rounded-lg font-bold text-green-800" required>
+              {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">ميڠڬو ك-</label>
+            <input type="number" name="minggu" value={dbForm.minggu} onChange={handleDbChange} className="w-full p-2 border rounded-lg" placeholder="1" required />
+          </div>
+          <div className="md:col-span-1">
+            <label className="block text-sm font-bold text-gray-700 mb-1">تيما / بيدڠ</label>
+            <input type="text" name="tema" value={dbForm.tema} onChange={handleDbChange} className="w-full p-2 border rounded-lg" placeholder="تيما درس" />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-bold text-gray-700 mb-1">تاجوق</label>
+            <input type="text" name="tajuk" value={dbForm.tajuk} onChange={handleDbChange} className="w-full p-2 border rounded-lg" placeholder="تاجوق ڤلاجرن" required />
+          </div>
+          <div className="md:col-span-3">
+            <label className="block text-sm font-bold text-gray-700 mb-1">ستندرد کاندوغن (SK)</label>
+            <textarea name="sk" value={dbForm.sk} onChange={handleDbChange} className="w-full p-2 border rounded-lg" rows="2" placeholder="SK..." required />
+          </div>
+          <div className="md:col-span-3">
+            <label className="block text-sm font-bold text-gray-700 mb-1">ستندرد ڤمبلاجرن (SP)</label>
+            <textarea name="sp" value={dbForm.sp} onChange={handleDbChange} className="w-full p-2 border rounded-lg" rows="2" placeholder="SP..." required />
+          </div>
+          <div className="md:col-span-3 flex justify-between items-center pt-2">
+            <button 
+              type="button" 
+              onClick={() => {
+                if (dbForm.darjah && dbForm.tajuk) {
+                  handleUploadRPTToGoogleSheet(dbForm);
                 } else {
-                    paparNotifikasi("Format fail CSV tidak sah.", "error");
+                  alert("سيلا ايسي مدخل دأتاس ترلبيه داهولو.");
                 }
-            } catch (err) {
-                paparNotifikasi("Ralat membaca fail CSV.", "error");
-            }
-            event.target.value = '';
-        };
-        reader.readAsText(file);
-    }
-</script>
+              }}
+              className="bg-blue-700 text-white px-5 py-2 rounded-lg font-bold hover:bg-blue-800 transition flex items-center text-sm"
+            >
+              <CloudUpload className="w-4 h-4 ml-2" /> مؤات ناءيك كـ Google Sheet
+            </button>
+            <button type="submit" className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition flex items-center">
+              <Save className="w-4 h-4 ml-2" /> سيمڤن ريكود
+            </button>
+          </div>
+        </form>
+      </div>
 
-</body>
-</html>
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex flex-wrap justify-between items-center mb-4 gap-4">
+          <h3 className="text-lg font-bold text-gray-800 flex items-center">
+            <Database className="w-5 h-5 ml-2 text-green-600" /> سناراي RPT ترسيمڤن
+          </h3>
+          <div className="flex gap-2">
+            <select 
+              value={darjahFilter}
+              onChange={(e) => setDarjahFilter(e.target.value)}
+              className="p-2 border rounded-lg font-bold bg-white text-sm"
+            >
+              <option value="">سموا درجه</option>
+              {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+            <select 
+              value={subjekFilter}
+              onChange={(e) => setSubjekFilter(e.target.value)}
+              className="p-2 border rounded-lg font-bold bg-white text-sm"
+            >
+              <option value="">سموا سوبجيك</option>
+              {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-right border-collapse">
+            <thead>
+              <tr className="bg-gray-50 border-b">
+                <th className="p-3 text-sm font-bold text-gray-600">درجه</th>
+                <th className="p-3 text-sm font-bold text-gray-600">سوبجيك</th>
+                <th className="p-3 text-sm font-bold text-gray-600">ميڠڬو</th>
+                <th className="p-3 text-sm font-bold text-gray-600">تاجوق & SK/SP</th>
+                <th className="p-3 text-sm font-bold text-gray-600 text-center">تيندقن</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rptData
+                .filter(row => (darjahFilter === '' || row.darjah === darjahFilter) && (subjekFilter === '' || row.mataPelajaran === subjekFilter))
+                .sort((a,b) => parseInt(a.minggu) - parseInt(b.minggu))
+                .map((row) => (
+                <tr key={row.id} className="border-b hover:bg-gray-50">
+                  <td className="p-3 align-top font-bold text-green-700">{row.darjah}</td>
+                  <td className="p-3 align-top font-bold text-blue-800">{row.mataPelajaran}</td>
+                  <td className="p-3 align-top font-bold">{row.minggu}</td>
+                  <td className="p-3 align-top">
+                    <div className="font-bold text-green-800">{row.tajuk}</div>
+                    <div className="text-sm text-gray-600 mt-1"><strong>SK:</strong> {row.sk}</div>
+                    <div className="text-sm text-gray-600 mt-1"><strong>SP:</strong> {row.sp}</div>
+                  </td>
+                  <td className="p-3 align-top text-center">
+                    <button onClick={() => deleteRecord(row.id)} className="text-red-500 hover:text-red-700 p-2 bg-red-50 rounded-full transition">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {rptData.filter(row => (darjahFilter === '' || row.darjah === darjahFilter) && (subjekFilter === '' || row.mataPelajaran === subjekFilter)).length === 0 && (
+                <tr>
+                  <td colSpan="5" className="text-center p-8 text-gray-500 font-bold">تيادا داتا RPT باڬي ڤيليهن اين.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderGeneratorTab = () => (
+    <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto erph-container">
+      
+      <div className="print:hidden mb-8 p-4 bg-green-50 border border-green-100 rounded-lg">
+        <h3 className="font-bold text-green-800 mb-3 flex items-center">
+          <Settings className="w-5 h-5 ml-2" /> ڤميليهن داتا اءوتوماتيك مڠيكت درجه، سوبجيك & ميڠڬو
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه درجه</label>
+            <select 
+              value={selectedDarjah} 
+              onChange={(e) => setSelectedDarjah(e.target.value)}
+              className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold"
+            >
+              {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه سوبجيك SAKNJ</label>
+            <select 
+              value={selectedSubjek} 
+              onChange={(e) => setSelectedSubjek(e.target.value)}
+              className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-green-800"
+            >
+              {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه ميڠڬو</label>
+            <select 
+              value={selectedMinggu} 
+              onChange={(e) => setSelectedMinggu(e.target.value)}
+              className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-blue-900"
+            >
+              {[...Array(42)].map((_, i) => (
+                <option key={i+1} value={i+1}>ميڠڬو {i+1}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {saveStatus && (
+        <div className="print:hidden mb-6 p-4 bg-blue-100 border border-blue-300 text-blue-900 rounded-lg font-bold text-center">
+          {saveStatus}
+        </div>
+      )}
+
+      <div className="print-content border-2 border-gray-900 p-6 bg-white" id="printable-area">
+        
+        <div className="text-center border-b-2 border-gray-900 pb-4 mb-4">
+          <h2 className="text-xl font-bold">رانچغن ڤڠاجرن هارين</h2>
+          <h1 className="text-2xl font-extrabold text-green-900 mt-1">سكوله اگام كراجاءن جوهر (SAKNJ)</h1>
+        </div>
+
+        <table className="w-full border-collapse border border-gray-900 mb-4 text-sm md:text-base">
+          <tbody>
+            <tr>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100 w-1/4">تاريخ / هاري</td>
+              <td className="border border-gray-900 p-2 w-1/4">
+                <input 
+                  type="text" 
+                  name="tarikh" 
+                  value={erphForm.tarikh} 
+                  onChange={handleErphChange} 
+                  placeholder="DD/MM/YYYY" 
+                  className="w-full bg-transparent border-b border-dashed border-gray-400 focus:outline-none font-bold text-center" 
+                />
+              </td>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100 w-1/4">هاري</td>
+              <td className="border border-gray-900 p-2 w-1/4">
+                <select name="hari" value={erphForm.hari} onChange={handleErphChange} className="w-full bg-transparent font-bold">
+                  <option value="الأحد (احد)">الأحد (احد)</option>
+                  <option value="الإثنين (اثنين)">الإثنين (اثنين)</option>
+                  <option value="الثلاثاء (ثلاث)">الثلاثاء (ثلاث)</option>
+                  <option value="الأربعاء (رابو)">الأربعاء (رابو)</option>
+                  <option value="الخميس (خميس)">الخميس (خميس)</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100">ماس</td>
+              <td className="border border-gray-900 p-2">
+                <select name="masa" value={erphForm.masa} onChange={handleErphChange} className="w-full bg-transparent font-bold text-blue-900 focus:outline-none">
+                  {listMasaSAKNJ.map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </td>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100">کلس / درجه</td>
+              <td className="border border-gray-900 p-2">
+                <select name="kelas" value={erphForm.kelas} onChange={handleErphChange} className="w-full bg-transparent font-bold text-green-800 focus:outline-none">
+                  {listKelasSAKNJ.map(k => (
+                    <option key={k} value={k}>{k}</option>
+                  ))}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100">مات ڤلاجرن</td>
+              <td className="border border-gray-900 p-2" colSpan="3">
+                <input type="text" name="mataPelajaran" value={erphForm.mataPelajaran} onChange={handleErphChange} className="w-full bg-transparent font-bold text-blue-900 focus:outline-none" readOnly />
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100">ميڠڬو</td>
+              <td className="border border-gray-900 p-2" colSpan="3">
+                <span className="font-bold text-green-800">ميڠڬو {selectedMinggu} (دڤيليه اءوتوماتيك)</span>
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100">تاجوق</td>
+              <td className="border border-gray-900 p-2" colSpan="3">
+                <input type="text" name="tajuk" value={erphForm.tajuk} onChange={handleErphChange} className="w-full bg-transparent font-bold text-gray-900 focus:outline-none" />
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100">ستندرد کاندوغن</td>
+              <td className="border border-gray-900 p-2" colSpan="3">
+                <textarea name="sk" value={erphForm.sk} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none resize-none h-14" />
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100">ستندرد ڤمبلاجرن</td>
+              <td className="border border-gray-900 p-2" colSpan="3">
+                <textarea name="sp" value={erphForm.sp} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none resize-none h-14" />
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100">اوبجيكتيف ڤمبلاجرن</td>
+              <td className="border border-gray-900 p-2" colSpan="3">
+                <textarea name="objektif" value={erphForm.objektif} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none resize-none h-16 font-semibold" />
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100 align-top">اكتيۏيتي ڤمبلاجرن</td>
+              <td className="border border-gray-900 p-2" colSpan="3">
+                <textarea name="aktiviti" value={erphForm.aktiviti} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none resize-none h-32 leading-relaxed" />
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-900 p-2 font-bold bg-gray-100">باهن بنتو مغاجر (BBM)</td>
+              <td className="border border-gray-900 p-2" colSpan="3">
+                <input type="text" name="bbm" value={erphForm.bbm} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div className="border border-gray-900 p-3 mb-6">
+          <label className="font-bold block mb-1 text-gray-800">ريفليكسي:</label>
+          <textarea name="refleksi" value={erphForm.refleksi} onChange={handleErphChange} className="w-full bg-transparent focus:outline-none resize-none h-20" />
+          <div className="mt-2 text-sm text-gray-700 flex items-center">
+            <CheckCircle className="w-4 h-4 ml-1 text-green-700" />
+            <span>موريد برجاي منچڤاي اوبجيكتيف يڠ دتتڤكن.</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mt-8 pt-4 border-t border-gray-400 text-center text-sm">
+          <div className="p-2">
+            <div className="font-bold mb-12">دسمق اوليه:</div>
+            <div className="border-t border-gray-600 pt-1 font-bold">({erphForm.disemakOleh})</div>
+            <div className="text-xs text-gray-500 mt-1">تاريخ: ..........................</div>
+          </div>
+          <div className="p-2">
+            <div className="font-bold mb-12">دصحکن اوليه:</div>
+            <div className="border-t border-gray-600 pt-1 font-bold">({erphForm.disahkanOleh})</div>
+            <div className="text-xs text-gray-500 mt-1">تاريخ: ..........................</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div className="mt-8 flex flex-wrap justify-end gap-3 print:hidden border-t pt-6">
+        <button onClick={handleSaveToGoogleSheet} className="bg-blue-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-800 flex items-center shadow-md transition">
+          <CloudUpload className="w-5 h-5 ml-2" /> سيمڤن كـ Google Sheet
+        </button>
+        <button onClick={handlePrint} className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 flex items-center shadow-md transition">
+          <Printer className="w-5 h-5 ml-2" /> چيتق / سيمڤن PDF
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div dir="rtl" className="min-h-screen bg-gray-50 text-gray-800 font-jawi print:bg-white" style={{ fontSize: `${fontSize}rem` }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+        .font-jawi {
+          font-family: 'Amiri', serif;
+          line-height: 1.8;
+        }
+        @media print {
+          body { background-color: white !important; font-size: 1.2rem !important; }
+          .print\\:hidden { display: none !important; }
+          .erph-container { box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; }
+          @page { size: A4; margin: 0.8cm; }
+        }
+      `}} />
+
+      <header className="bg-green-800 text-white shadow-md print:hidden">
+        <div className="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
+          <div className="flex items-center">
+            <BookOpen className="w-8 h-8 text-green-200 ml-3" />
+            <div>
+              <h1 className="text-2xl font-bold">سيستم e-RPH ساكنج (SAKNJ)</h1>
+              <p className="text-md text-green-200">فورمت رسمي رنچغن ڤڠاجرن هارين جوهر مڠيكت PDF</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center bg-green-900 px-3 py-1.5 rounded-lg border border-green-700 space-x-2 space-x-reverse">
+            <span className="text-sm font-bold ml-2">سايز فونت:</span>
+            <button 
+              onClick={decreaseFontSize}
+              title="کچيلکن فونت (-)"
+              className="bg-green-800 hover:bg-green-700 text-white w-8 h-8 rounded font-bold flex items-center justify-center transition text-lg"
+            >
+              -
+            </button>
+            <span className="text-sm font-mono px-2">{Math.round(fontSize * 100)}%</span>
+            <button 
+              onClick={increaseFontSize}
+              title="بسرکن فونت (+)"
+              className="bg-green-800 hover:bg-green-700 text-white w-8 h-8 rounded font-bold flex items-center justify-center transition text-lg"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-6xl mx-auto px-4 py-6">
+        <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 print:hidden">
+          <button 
+            onClick={() => setActiveTab('generator')}
+            className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'generator' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}
+          >
+            <FileText className="w-4 h-4 ml-2" /> توليس e-RPH
+          </button>
+          <button 
+            onClick={() => setActiveTab('upload')}
+            className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'upload' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}
+          >
+            <Upload className="w-4 h-4 ml-2" /> مواءت ناءيك PDF / استخرج
+          </button>
+          <button 
+            onClick={() => setActiveTab('database')}
+            className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'database' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}
+          >
+            <Database className="w-4 h-4 ml-2" /> ڤڠكلن داتا RPT
+          </button>
+        </div>
+
+        {activeTab === 'generator' && renderGeneratorTab()}
+        {activeTab === 'upload' && renderUploadTab()}
+        {activeTab === 'database' && renderDatabaseTab()}
+      </main>
+    </div>
+  );
+}
