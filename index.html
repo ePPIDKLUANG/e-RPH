@@ -11,14 +11,19 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Lateef:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --jawi-font: 'Jawi Uthman Taha', 'Jawi KSSM', 'Noto Naskh Arabic', serif;
+      /* Meletakkan Noto Naskh Arabic & Lateef di hadapan supaya gaya Nasakh kekal konsisten dan cantik di semua peranti */
+      --jawi-font: 'Noto Naskh Arabic', 'Lateef', 'Jawi Nasakh', 'Amiri', 'Traditional Arabic', 'Jawi KSSM', serif;
     }
     
     * {
         font-family: var(--jawi-font) !important;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
     }
 
     body, p, span, div, td, th, h1, h2, h3, h4, h5, h6, button, option, a, header, nav, main {
@@ -395,7 +400,7 @@
         }
       }, [rptData]);
 
-      useEffect(() => {
+      const handleJanaData = () => {
         const sDarjah = matchStr(selectedDarjah);
         const sSubjek = matchStr(selectedSubjek);
         const sMinggu = normalizeWeek(selectedMinggu);
@@ -421,6 +426,7 @@
             sp: combinedSP,
             objektif: `موريد داڤت ممهمي دان مڠواساءي تاجوق ${combinedTajuk.replace(/\n/g, ' ')} دڠن بتول سرتا لڠکڤ.`
           }));
+          alert("برجاي مجانا داتا رانچڠن ڤڠاجرن!");
         } else {
           setErphForm(prev => ({
             ...prev,
@@ -431,8 +437,9 @@
             sp: '',
             objektif: ''
           }));
+          alert("تيادا داتا RPT دجومڤاءي باڬي ميڠݢو اين.");
         }
-      }, [selectedDarjah, selectedSubjek, selectedMinggu, rptData]);
+      };
 
       const handleDbChange = (e) => {
         const { name, value } = e.target;
@@ -666,8 +673,8 @@
             {activeTab === 'generator' && (
               <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto erph-container">
                 <div className="print:hidden mb-8 p-4 bg-green-50 border border-green-100 rounded-lg">
-                  <h3 className="font-bold text-green-800 mb-3" dir="rtl">ڤميليهن داتا اءوتوماتيک مڠيکوت درجه، سوبجيک & ميڠݢو</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4" dir="rtl">
+                  <h3 className="font-bold text-green-800 mb-3" dir="rtl">ڤميليهن داتا مڠيکوت درجه، سوبجيک & ميڠݢو</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end" dir="rtl">
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه درجه</label>
                       <select value={selectedDarjah} onChange={(e) => setSelectedDarjah(e.target.value)} className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-purple-900">
@@ -693,6 +700,11 @@
                            );
                         })}
                       </select>
+                    </div>
+                    <div>
+                      <button onClick={handleJanaData} className="w-full bg-yellow-500 hover:bg-yellow-600 text-yellow-900 font-bold py-2.5 px-4 rounded-lg transition shadow-md flex items-center justify-center gap-2">
+                        <span>🔄</span> جانا داتا
+                      </button>
                     </div>
                   </div>
                 </div>
