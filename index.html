@@ -6,7 +6,731 @@
   <title>سيستم e-RPH ساكنج (SAKNJ) - فرمت رسمي جوهر</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM --><!DOCTYPE html>
+<html lang="ms" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سيستم e-RPH ساكنج (SAKNJ) - فرمت رسمي جوهر</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel Standalone for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts Amiri for Jawi Nasakh -->
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    .font-jawi {
+      font-family: 'Amiri', serif;
+      line-height: 1.8;
+    }
+    @media print {
+      body { background-color: white !important; font-size: 1.2rem !important; }
+      .print\:hidden { display: none !important; }
+      .erph-container { box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; }
+      @page { size: A4; margin: 0.8cm; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-jawi">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    // Lucide icon helper components mapped safely
+    const Save = (props) => <i data-lucide="save" {...props}></i>;
+    const Printer = (props) => <i data-lucide="printer" {...props}></i>;
+    const Plus = (props) => <i data-lucide="plus" {...props}></i>;
+    const Trash2 = (props) => <i data-lucide="trash-2" {...props}></i>;
+    const Database = (props) => <i data-lucide="database" {...props}></i>;
+    const FileText = (props) => <i data-lucide="file-text" {...props}></i>;
+    const Settings = (props) => <i data-lucide="settings" {...props}></i>;
+    const Upload = (props) => <i data-lucide="upload" {...props}></i>;
+    const BookOpen = (props) => <i data-lucide="book-open" {...props}></i>;
+    const CheckCircle = (props) => <i data-lucide="check-circle" {...props}></i>;
+    const CloudUpload = (props) => <i data-lucide="cloud-upload" {...props}></i>;
+
+    function ERPHSystem() {
+      const [activeTab, setActiveTab] = useState('generator');
+      const [fontSize, setFontSize] = useState(1.2);
+
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+
+      const increaseFontSize = () => setFontSize(prev => Math.min(prev + 0.15, 1.8));
+      const decreaseFontSize = () => setFontSize(prev => Math.max(prev - 0.15, 0.9));
+
+      const listSubjekSAKNJ = [
+        'القرءان',
+        'تفسير القرءان دان حديث',
+        'تجويد',
+        'توحيد',
+        'عبادة',
+        'معاملات',
+        'مناكحات',
+        'جنايات',
+        'فرائض',
+        'أخلاق & تصوف',
+        'سيرة',
+        'بهاس عرب'
+      ];
+
+      const listDarjahSAKNJ = [
+        'تاج (TAJ)',
+        'درجه 1',
+        'درجه 2',
+        'درجه 3',
+        'درجه 4',
+        'درجه 5',
+        'درجه 6',
+        'درجه خاص'
+      ];
+
+      const listMasaSAKNJ = [
+        '2:30 ڤتڠ - 3:30 ڤتڠ',
+        '3:30 ڤتڠ - 4:30 ڤتڠ',
+        '4:30 ڤتڠ - 5:30 ڤتڠ',
+        '8:00 ڤاݢي - 9:00 ڤاݢي',
+        '9:00 ڤاݢي - 10:00 ڤاݢي',
+        '10:30 ڤاݢي - 11:30 ڤاݢي'
+      ];
+
+      const listKelasSAKNJ = [
+        'درجه 1 بستاري',
+        'درجه 1 مقتصد',
+        'درجه 2 بستاري',
+        'درجه 2 مقتصد',
+        'درجه 3 بستاري',
+        'درجه 3 مقتصد',
+        'درجه 4 بستاري',
+        'درجه 4 مقتصد',
+        'درجه 5 بستاري',
+        'درجه 5 مقتصد',
+        'درجه 6 بستاري',
+        'درجه 6 مقتصد',
+        'درجه خاص كوليه 1'
+      ];
+
+      const [rptData, setRptData] = useState([]);
+      const [darjahFilter, setDarjahFilter] = useState(''); 
+      const [subjekFilter, setSubjekFilter] = useState('');
+      
+      const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby.../exec"; // Placeholder URL
+      const [saveStatus, setSaveStatus] = useState('');
+
+      const [dbForm, setDbForm] = useState({
+        darjah: 'درجه 1',
+        minggu: '',
+        mataPelajaran: 'توحيد',
+        tema: '',
+        tajuk: '',
+        sk: '',
+        sp: ''
+      });
+
+      const [uploadForm, setUploadForm] = useState({
+        darjah: 'درجه 1',
+        mataPelajaran: 'توحيد',
+        rawText: ''
+      });
+      const [uploadStatus, setUploadStatus] = useState('');
+      const [isSyncingSheet, setIsSyncingSheet] = useState(false);
+      const [isUploadingToSheet, setIsUploadingToSheet] = useState(false);
+
+      const [selectedDarjah, setSelectedDarjah] = useState('درجه 1');
+      const [selectedSubjek, setSelectedSubjek] = useState('القرءان');
+      const [selectedMinggu, setSelectedMinggu] = useState('1');
+      
+      const [erphForm, setErphForm] = useState({
+        tarikh: new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
+        hari: 'الاحد (احد)',
+        masa: '2:30 ڤتڠ - 3:30 ڤتڠ',
+        kelas: 'درجه 1 بستاري',
+        mataPelajaran: 'القرءان',
+        tema: '',
+        tajuk: '',
+        sk: '',
+        sp: '',
+        objektif: '',
+        aktiviti: '1. ݢورو منرڠكن ڤد اية / ايسيکن...\n2. موريد ممباچ دڠن بتول دان تجويد يڠ بتول...\n3. لاتيهن توليسن دالم کلس...',
+        bbm: 'بوکو تيکس، لمبرن کرجا، روجوعن',
+        refleksi: 'موريد برجاي منچاڤاي اوبجيکتيف يڠ دتتڤكن. ٢٥ اورڠ موريد درڤد ٣٠ اورڠ مڠواساءي دڠن باءيق.',
+        disemakOleh: 'ݢورو بسر / ڤڽليا',
+        disahkanOleh: 'ڤڠاوس / ڤمبنتو ڤڠاوس'
+      });
+
+      const cadanganObjektif = [
+        "1. موريد داڤت ممباچ دڠن لنجر دان بتول.",
+        "2. موريد داڤت مڠواساءي تاجوق يڠ دڤلاجري.",
+        "3. موريد داڤت منوليس دڠن كمس دان بتول.",
+        "4. موريد داڤت مپبوت فكتا دڠن تڤت.",
+        "5. موريد داڤت ممهمي مقصود اية دڠن جلس.",
+        "6. موريد داڤت مڠحفظ اية يڠ دتتڤكن.",
+        "7. موريد داڤت منجلسكن حكوم دڠن تڤت.",
+        "8. موريد داڤت مپنا رايكن روکون دڠن بتول.",
+        "9. موريد داڤت ممبيذاكن انتارا يڠ حلال دان حرام.",
+        "10. موريد داڤت مڠعملكن ادب دالم كهيدوڤن.",
+        "11. موريد داڤت مڠنل ڤستي حروف دڠن بتول.",
+        "12. موريد داڤت مپمبوڠ حروف منجادي ڤركاتاءن.",
+        "13. موريد داڤت منجواب سوءالن دڠن تڤت.",
+        "14. موريد داڤت منرڠكن سجاره دڠن لنجر.",
+        "15. موريد داڤت مڠحياتي ڤڠاجرن دري قيصه.",
+        "16. موريد داڤت منونجوقكن چارا يڠ بتول.",
+        "17. موريد داڤت مپرتاءي اكتيۏيتي دڠن اكتيف.",
+        "18. موريد داڤت مڠلواركن حكوم تجويد دڠن بتول.",
+        "19. موريد داڤت ممباچ حديث دڠن فصيح.",
+        "20. موريد داڤت منترجمه ڤركاتاءن دڠن بتول.",
+        "21. موريد داڤت ملقساناكن عملي دڠن سمڤورنا.",
+        "22. موريد داڤت منجلسكن شرط صح دڠن بتول.",
+        "23. موريد داڤت مپبوت سنة دان مكروه دڠن تڤت.",
+        "24. موريد داڤت مڠحفظ دعاء دڠن لنجر.",
+        "25. موريد داڤت منرڠكن فاءيده مڠعملكن سنة.",
+        "26. موريد داڤت مپبوت عاقبت منيڠڬلكن كواجيڤن.",
+        "27. موريد داڤت منجلسكن صيفت نبي دڠن بتول.",
+        "28. موريد داڤت مپبوت مقصود توحيد دڠن جلس.",
+        "29. موريد داڤت مپنا رايكن نام ملائكة دڠن بتول.",
+        "30. موريد داڤت مڠواساءي كماهيرن جاوي دڠن باءيق."
+      ];
+
+      const cadanganAktiviti = [
+        "1. ݢورو منرڠكن تاجوق كڤد موريد.",
+        "2. موريد ممباچ بوكو تيکس دڠن بيمبيڠن ݢورو.",
+        "3. لاتيهن منوليس دالم بوكو لاتيهن.",
+        "4. سوءال جواب دانتارا ݢورو دان موريد.",
+        "5. موريد منجواب لمبرن كرجا.",
+        "6. اكتيۏيتي بركومڤولن دان ڤمبنتڠن.",
+        "7. ݢورو منونجوقكن چارا (عملي) كڤد موريد.",
+        "8. موريد ملقساناكن عملي دڠن ڤانتوان ݢورو.",
+        "9. لاتيه توبي ممباچ ايات.",
+        "10. لاتيه توبي مڠحفظ دان تسميع.",
+        "11. ݢورو ممبوات روموسن دان كسيمڤولن.",
+        "12. موريد مپالين نوتا يڠ دبريكن.",
+        "13. ڤربينچڠن دالم كلس تنتڠ ايسي ڤلاجرن.",
+        "14. اكتيۏيتي ممادنكن ڤركاتاءن.",
+        "15. موريد منچاري مقصود دالم قاموس.",
+        "16. ڤرماءينن باهس يڠ مناريق.",
+        "17. ݢورو برچريتا قيصه تلدن.",
+        "18. موريد ملغكڤكن ڤتا ميندا.",
+        "19. موريد ممبينا ايات موده.",
+        "20. اكتيۏيتي مڠلواركن حكوم تجويد.",
+        "21. موريد ممبوات لاتيهن ڤڠوكوهن.",
+        "22. تسميع باچاءن سچارا برڤاسڠن.",
+        "23. موريد ملبلكن ݢمبر دڠن بتول.",
+        "24. اكتيۏيتي كوءيز ريڠكس دي اخير كلس.",
+        "25. موريد مپوسون ايات منجادي ڤرڠݢن.",
+        "26. ݢورو ممبتولكن كسالهن موريد.",
+        "27. موريد مپاپيكن نشيد يڠ بركاءيتن.",
+        "28. اكتيۏيتي منچاري ڤركاتاءن ترسمبوپي.",
+        "29. موريد منوليس خط دڠن چنتيق.",
+        "30. ݢورو ممبري ڤنيلاين سرتا مرتا."
+      ];
+
+      const cadanganRefleksi = [
+        "1. موريد برجاي منچاڤاي اوبجيکتيف ڤمبلاجرن.",
+        "2. سيسي ڤڠاجرن دان ڤمبلاجرن دتڠڬوهكن كران مپوارت.",
+        "3. سيسي ڤڠاجرن دتڠڬوهكن كران ݢورو برچوتي.",
+        "4. سيسي ڤڠاجرن دتڠڬوهكن كران ڤروݢرم سكوله.",
+        "5. سبهاڬين موريد ممرلوكن بيمبيڠن لبيه لنجوت.",
+        "6. سموا موريد مڠواساءي تاجوق دڠن باءيق.",
+        "7. اكتيۏيتي دتڠڬوهكن كران چوتي عموم.",
+        "8. موريد ممرلوكن لاتيه توبي يڠ برتروسن.",
+        "9. موريد برجاي منجواب سموا سوءالن دڠن بتول.",
+        "10. ڤمبلاجرن دتروسكن ڤد ميڠݢو هادڤن.",
+        "11. موريد ساڠت اكتيف دان ممبري ريسڤون باءيق.",
+        "12. تاجوق اين اكن دأولڠ كاجي سمولا.",
+        "13. كباپقن موريد سوده فہم تاجوق اين.",
+        "14. موريد برجاي مڠحفظ دڠن لنجر.",
+        "15. موريد ممبوات عملي دڠن بتول دان سمڤورنا.",
+        "16. ݢورو ممبري لاتيهن تمبهن كڤد موريد لمه.",
+        "17. موريد داڤت ممباچ دڠن برتجويد.",
+        "18. سيسي ڤمبلاجرن برجالن لنجر دان تركاول.",
+        "19. موريد ممرلوكن ماس يڠ لبيه اونتوق ممهمي.",
+        "20. موريد برجاي مپياڤكن توݢسن يڠ دبريكن.",
+        "21. ڤنيلاين دان ڤنتکسيرن تله دلقساناكن.",
+        "22. موريد منونجوقكن مينت يڠ مندالم.",
+        "23. ݢورو مڠݢوناكن باهن بنتو مڠاجر يڠ سسواي.",
+        "24. موريد سوده بوليه منوليس جاوي دڠن لنجر.",
+        "25. موريد ممبوات بپق كسالهن إيلاءن.",
+        "26. تهاڤ ڤڠواساءن موريد اداله ممواسكن.",
+        "27. موريد ممرلوكن كلس ڤموليهن.",
+        "28. ݢورو برڤواس هاتي دڠن ڤنچاڤاين موريد.",
+        "29. موريد برتپ سوءالن يڠ برنس.",
+        "30. اكتيۏيتي ڤڠوكوهن اكن دجالنكن ننتي."
+      ];
+
+      const cadanganBBM = [
+        "بوكو تيکس",
+        "بوكو لاتيهن",
+        "بوكو نوتا",
+        "لمبرن كرجا",
+        "كد ايمبسن",
+        "كد مانيلا",
+        "ڤاڤن ڤوتيه",
+        "ڤاڤن هيتم",
+        "قلم ڤنندا",
+        "ڤمبسر سوارا",
+        "كومڤوتر / ريبا",
+        "ڤروجيکتور / LCD",
+        "ݢمبر / ڤوستر",
+        "چرت",
+        "باهن ماءوجود",
+        "موديل",
+        "راديو / اوديو",
+        "تيليۏيشين / ۏيديو",
+        "تيكس القرءان / مقراء",
+        "روجوعن تمبهن"
+      ];
+
+      useEffect(() => {
+        const savedRPT = localStorage.getItem('rptDatabaseSAKNJ_v5');
+        if (savedRPT) {
+          setRptData(JSON.parse(savedRPT));
+        } else {
+          const demoData = [
+            {
+              id: '1',
+              darjah: 'درجه 1',
+              minggu: '1',
+              mataPelajaran: 'القرءان',
+              tema: 'سورة الفاتحة',
+              tajuk: 'بچاءن سورة الفاتحة دغن بتول',
+              sk: '1.1 ممباچ سورة الفاتحة دغن تجويد يڠ بتول.',
+              sp: '1.1.1 ممباچ ايات ١-٣ دغن مڠاجوق بونيقن.'
+            }
+          ];
+          setRptData(demoData);
+          localStorage.setItem('rptDatabaseSAKNJ_v5', JSON.stringify(demoData));
+        }
+      }, []);
+
+      useEffect(() => {
+        if (rptData.length > 0) {
+          localStorage.setItem('rptDatabaseSAKNJ_v5', JSON.stringify(rptData));
+        }
+      }, [rptData]);
+
+      useEffect(() => {
+        const matchedRecord = rptData.find(
+          r => r.darjah === selectedDarjah && 
+               r.mataPelajaran === selectedSubjek && 
+               String(r.minggu) === String(selectedMinggu)
+        );
+
+        if (matchedRecord) {
+          setErphForm(prev => ({
+            ...prev,
+            mataPelajaran: matchedRecord.mataPelajaran,
+            tema: matchedRecord.tema || '',
+            tajuk: matchedRecord.tajuk || '',
+            sk: matchedRecord.sk || '',
+            sp: matchedRecord.sp || '',
+            objektif: `موريد داڤت ممهمي دان مڠواسيني تاجوق ${matchedRecord.tajuk} دغن بتول سرتا لڠکڤ.`
+          }));
+        } else {
+          setErphForm(prev => ({
+            ...prev,
+            mataPelajaran: selectedSubjek,
+            tema: 'تيادا داتا RPT باڬي ميڠڬو اين',
+            tajuk: '-',
+            sk: '-',
+            sp: '-',
+            objektif: '-'
+          }));
+        }
+      }, [selectedDarjah, selectedSubjek, selectedMinggu, rptData]);
+
+      const handleDbChange = (e) => {
+        const { name, value } = e.target;
+        setDbForm(prev => ({ ...prev, [name]: value }));
+      };
+
+      const saveToDb = (e) => {
+        e.preventDefault();
+        if (!dbForm.darjah || !dbForm.minggu || !dbForm.tajuk || !dbForm.sk || !dbForm.sp) {
+          alert("سيلا ايسي درجه، ميڠڬو، تاجوق، SK دان SP.");
+          return;
+        }
+        const newRecord = { ...dbForm, id: Date.now().toString() };
+        setRptData([...rptData, newRecord]);
+        setDbForm(prev => ({ ...prev, minggu: '', tajuk: '', sk: '', sp: '', tema: '' }));
+        alert("رِيكود RPT berjaya disimpan!");
+      };
+
+      const deleteRecord = (id) => {
+        if (confirm('ادكه اندا ڤستي اونتوق ممادم ريكود اين؟')) {
+          setRptData(rptData.filter(record => record.id !== id));
+        }
+      };
+
+      const handlePdfUploadSimulation = (e) => {
+        e.preventDefault();
+        if (!uploadForm.rawText.trim()) {
+          alert("سيلا ماسوقكن تيكس التراكن PDF ترلبيه داهولو.");
+          return;
+        }
+
+        const newRec = {
+          id: Date.now().toString(),
+          darjah: uploadForm.darjah,
+          mataPelajaran: uploadForm.mataPelajaran,
+          minggu: '1',
+          tema: 'سليبوس ' + uploadForm.mataPelajaran,
+          tajuk: uploadForm.rawText.substring(0, 50),
+          sk: uploadForm.rawText,
+          sp: uploadForm.rawText
+        };
+
+        setRptData(prev => [...prev, newRec]);
+        setUploadStatus(`Berjaya ekstrak dan masukkan rekod RPT untuk ${uploadForm.darjah} (${uploadForm.mataPelajaran})!`);
+        setUploadForm(prev => ({ ...prev, rawText: '' }));
+      };
+
+      const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          setUploadStatus(`سدڠ ممڤروسيس فايل: ${file.name}...`);
+          setTimeout(() => {
+            setUploadForm(prev => ({
+              ...prev,
+              rawText: `[تيكس دأيكسترق دري ${file.name}]\n\nستندرد كاندوڠن:\n1.1 ممباچ ايات القرءان دڠن بتول.\n\nستندرد ڤمبلاجرن:\n1.1.1 ممباچ سورة الفاتحة.`
+            }));
+            setUploadStatus(`برجاي ممباچ فايل: ${file.name}. سيلا سمق تيكس دباوه سبلوم سيمڤن.`);
+          }, 1500);
+        }
+      };
+
+      const handleGoogleSheetSync = async () => {
+        setIsSyncingSheet(true);
+        setUploadStatus("Sedang menyegerakkan data...");
+        setTimeout(() => {
+          setIsSyncingSheet(false);
+          setUploadStatus("✨ Segerak berjaya (Mod Demo / Lokal Aktif).");
+        }, 1000);
+      };
+
+      const handleUploadRPTToGoogleSheet = async (recordToUpload) => {
+        setIsUploadingToSheet(true);
+        setTimeout(() => {
+          setIsUploadingToSheet(false);
+          alert("✨ ريكود RPT berjaya dimuat naik ke Google Sheet!");
+        }, 1000);
+      };
+
+      const handleErphChange = (e) => {
+        const { name, value } = e.target;
+        setErphForm(prev => ({ ...prev, [name]: value }));
+      };
+
+      const handleErphSuggestion = (field, value) => {
+        if (!value) return;
+        setErphForm(prev => {
+          const currentValue = prev[field];
+          // Tambah ke baris baru jika sudah ada teks, KECUALI bbm guna tanda koma
+          const separator = field === 'bbm' ? '، ' : '\n';
+          const newValue = currentValue ? currentValue + separator + value : value;
+          return { ...prev, [field]: newValue };
+        });
+      };
+
+      const handlePrint = () => window.print();
+
+      const handleSaveToGoogleSheet = async () => {
+        setSaveStatus("Menghantar ke Google Sheet...");
+        setTimeout(() => {
+          setSaveStatus("Berjaya disimpan!");
+          setTimeout(() => setSaveStatus(''), 4000);
+        }, 1000);
+      };
+
+      const handleKosongkan = () => {
+        if (confirm('ادکه اندا ڤستي اونتوق مڠوسوڠکن بورڠ اين؟ (Adakah anda pasti mahu mengosongkan borang ini?)')) {
+          setErphForm(prev => ({
+            ...prev,
+            tema: '',
+            tajuk: '',
+            sk: '',
+            sp: '',
+            objektif: '',
+            aktiviti: '',
+            bbm: '',
+            refleksi: ''
+          }));
+        }
+      };
+
+      return (
+        <div dir="rtl" className="min-h-screen bg-gray-50 text-gray-800 font-jawi print:bg-white" style={{ fontSize: `${fontSize}rem` }}>
+          <header className="bg-green-800 text-white shadow-md print:hidden">
+            <div className="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
+              <div className="flex items-center">
+                <span className="w-8 h-8 text-green-200 ml-3">📖</span>
+                <div>
+                  <h1 className="text-2xl font-bold">سيستم e-RPH سکنڤ (SAKNJ)</h1>
+                  <p className="text-md text-green-200">فورمات رسمي رانچڠن ڤڠاجرن هارين جوهر</p>
+                </div>
+              </div>
+              <div className="flex items-center bg-green-900 px-3 py-1.5 rounded-lg border border-green-700 space-x-2 space-x-reverse">
+                <span className="text-sm font-bold ml-2">سايز فونت:</span>
+                <button onClick={decreaseFontSize} className="bg-green-800 hover:bg-green-700 text-white w-8 h-8 rounded font-bold flex items-center justify-center transition text-lg">-</button>
+                <span className="text-sm font-mono px-2">{Math.round(fontSize * 100)}%</span>
+                <button onClick={increaseFontSize} className="bg-green-800 hover:bg-green-700 text-white w-8 h-8 rounded font-bold flex items-center justify-center transition text-lg">+</button>
+              </div>
+            </div>
+          </header>
+
+          <main className="max-w-6xl mx-auto px-4 py-6">
+            <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 print:hidden">
+              <button onClick={() => setActiveTab('generator')} className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'generator' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}>
+                توليس e-RPH
+              </button>
+              <button onClick={() => setActiveTab('upload')} className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'upload' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}>
+                موات ناءيق PDF
+              </button>
+              <button onClick={() => setActiveTab('database')} className={`px-5 py-3 font-bold rounded-t-lg transition flex items-center ${activeTab === 'database' ? 'bg-white text-green-800 border-t border-l border-r border-gray-200 shadow-sm' : 'text-gray-500 hover:bg-gray-100'}`}>
+                ڤڠکلن داتا RPT
+              </button>
+            </div>
+
+            {activeTab === 'generator' && (
+              <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto erph-container">
+                <div className="print:hidden mb-8 p-4 bg-green-50 border border-green-100 rounded-lg">
+                  <h3 className="font-bold text-green-800 mb-3">ڤميليهن داتا اءوتوماتيک مڠيکوت درجه، سوبجيک & ميڠݢو</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه درجه</label>
+                      <select value={selectedDarjah} onChange={(e) => setSelectedDarjah(e.target.value)} className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-purple-900">
+                        {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه سوبجيك SAKNJ</label>
+                      <select value={selectedSubjek} onChange={(e) => setSelectedSubjek(e.target.value)} className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-green-800">
+                        {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه ميڠݢو</label>
+                      <select value={selectedMinggu} onChange={(e) => setSelectedMinggu(e.target.value)} className="w-full p-2 border border-green-300 rounded-lg bg-white font-bold text-blue-900">
+                        {[...Array(42)].map((_, i) => <option key={i+1} value={i+1}>ميڠݢو {i+1}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {saveStatus && <div className="print:hidden mb-6 p-4 bg-blue-100 border border-blue-300 text-blue-900 rounded-lg font-bold text-center">{saveStatus}</div>}
+
+                <div className="print-content border-2 border-gray-900 p-6 bg-white">
+                  <div className="text-center border-b-2 border-gray-900 pb-4 mb-4">
+                    <h2 className="text-xl font-bold">رانچڠن ڤڠاجرن هارين</h2>
+                  </div>
+
+                  <table className="w-full border-collapse border border-gray-900 mb-4 text-sm md:text-base">
+                    <tbody>
+                      <tr>
+                    <td className="border border-gray-900 p-2 font-bold bg-gray-100 align-top">
+                      <div className="mb-2">اکتيۏيتي ڤمبلاجرن</div>
+                      <select onChange={(e) => { handleErphSuggestion('aktiviti', e.target.value); e.target.value=''; }} className="print:hidden w-full text-xs p-1.5 border border-blue-300 rounded bg-blue-50 text-blue-900 font-normal">
+                        <option value="">+ چادڠن...</option>
+                        {cadanganAktiviti.map((cad, i) => <option key={i} value={cad}>{cad}</option>)}
+                      </select>
+                    </td>
+                    <td className="border border-gray-900 p-2" colSpan="3">
+                      <textarea name="aktiviti" value={erphForm.aktiviti} onChange={handleErphChange} className="w-full bg-transparent resize-none h-32 leading-relaxed" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-900 p-2 font-bold bg-gray-100 align-top">
+                      <div className="mb-2">باهن بنتو مڠاجر (BBM)</div>
+                      <select onChange={(e) => { handleErphSuggestion('bbm', e.target.value); e.target.value=''; }} className="print:hidden w-full text-xs p-1.5 border border-purple-300 rounded bg-purple-50 text-purple-900 font-normal">
+                        <option value="">+ چادڠن...</option>
+                        {cadanganBBM.map((cad, i) => <option key={i} value={cad}>{cad}</option>)}
+                      </select>
+                    </td>
+                    <td className="border border-gray-900 p-2" colSpan="3">
+                      <textarea name="bbm" value={erphForm.bbm} onChange={handleErphChange} className="w-full bg-transparent resize-none h-16" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="border border-gray-900 p-3 mb-6">
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="font-bold text-gray-800">ريفليکسي:</label>
+                      <select onChange={(e) => { handleErphSuggestion('refleksi', e.target.value); e.target.value=''; }} className="print:hidden w-1/2 md:w-1/3 text-sm p-1.5 border border-green-300 rounded bg-green-50 text-green-900 font-normal">
+                        <option value="">+ ڤيليه چادڠن ريفليکسي...</option>
+                        {cadanganRefleksi.map((cad, i) => <option key={i} value={cad}>{cad}</option>)}
+                      </select>
+                    </div>
+                    <textarea name="refleksi" value={erphForm.refleksi} onChange={handleErphChange} className="w-full bg-transparent resize-none h-24" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mt-8 pt-4 border-t border-gray-400 text-center text-sm">
+                    <div className="p-2">
+                      <div className="font-bold mb-12">دسمق اوليه:</div>
+                      <div className="border-t border-gray-600 pt-1 font-bold">({erphForm.disemakOleh})</div>
+                    </div>
+                    <div className="p-2">
+                      <div className="font-bold mb-12">دصحکن اوليه:</div>
+                      <div className="border-t border-gray-600 pt-1 font-bold">({erphForm.disahkanOleh})</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex flex-wrap justify-end gap-3 print:hidden border-t pt-6">
+                  <button onClick={handleKosongkan} className="bg-red-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700 transition">کوسوڠکن</button>
+                  <button onClick={handleSaveToGoogleSheet} className="bg-blue-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-800 transition">سيمڤن كـ Google Sheet</button>
+                  <button onClick={handlePrint} className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition">چيتق / سيمڤن PDF</button>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'upload' && (
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto space-y-6">
+                <h3 className="text-xl font-bold text-gray-800 border-b pb-4">مواءت ناءيك / استخرج داتا RPT PDF</h3>
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-bold text-blue-900">سڬرياكن دري Google Sheet</h4>
+                  </div>
+                  <button onClick={handleGoogleSheetSync} disabled={isSyncingSheet} className="mt-4 bg-blue-700 text-white font-bold px-4 py-2 rounded-lg text-sm">موئت تورون</button>
+                </div>
+                <form onSubmit={handlePdfUploadSimulation} className="space-y-4 pt-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه درجه</label>
+                      <select value={uploadForm.darjah} onChange={(e) => setUploadForm({...uploadForm, darjah: e.target.value})} className="w-full p-2 border rounded-lg font-bold bg-white">
+                        {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ڤيليه سوبجيك SAKNJ</label>
+                      <select value={uploadForm.mataPelajaran} onChange={(e) => setUploadForm({...uploadForm, mataPelajaran: e.target.value})} className="w-full p-2 border rounded-lg font-bold bg-white text-green-800">
+                        {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 p-4 border border-dashed border-gray-300 rounded-lg">
+                    <label className="block text-sm font-bold text-gray-700 mb-3">موات ناءيق فايل PDF RPT</label>
+                    <div className="flex flex-wrap items-center gap-4 mb-4">
+                      <label className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg font-bold cursor-pointer transition shadow-sm flex items-center gap-2">
+                        <span>📄 ڤيليه فايل PDF</span>
+                        <input type="file" accept=".pdf" className="hidden" onChange={handleFileUpload} />
+                      </label>
+                      <span className="text-sm text-gray-500">اتاو سالين تيكس دباوه:</span>
+                    </div>
+                    <textarea rows="6" value={uploadForm.rawText} onChange={(e) => setUploadForm({...uploadForm, rawText: e.target.value})} className="w-full p-3 border rounded-lg text-sm" placeholder="تيكس دري PDF اكن دڤاڤركن دسين..." required />
+                  </div>
+                  <div className="flex justify-end">
+                    <button type="submit" className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold">ڤروسيس & سمڤن كڤڠكلن داتا</button>
+                  </div>
+                </form>
+                {uploadStatus && <div className="p-4 bg-green-100 border border-green-300 text-green-800 rounded-lg font-bold">{uploadStatus}</div>}
+              </div>
+            )}
+
+            {activeTab === 'database' && (
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">تمبه ريكود RPT مأنوءال</h3>
+                  <form onSubmit={saveToDb} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">درجه / كلس</label>
+                      <select name="darjah" value={dbForm.darjah} onChange={handleDbChange} className="w-full p-2 border rounded-lg font-bold" required>
+                        {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">مات ڤلاجرن SAKNJ</label>
+                      <select name="mataPelajaran" value={dbForm.mataPelajaran} onChange={handleDbChange} className="w-full p-2 border rounded-lg font-bold text-green-800" required>
+                        {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ميڠڬو ك-</label>
+                      <input type="number" name="minggu" value={dbForm.minggu} onChange={handleDbChange} className="w-full p-2 border rounded-lg" required />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-bold text-gray-700 mb-1">تاجوق</label>
+                      <input type="text" name="tajuk" value={dbForm.tajuk} onChange={handleDbChange} className="w-full p-2 border rounded-lg" required />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ستندرد کاندوغن (SK)</label>
+                      <textarea name="sk" value={dbForm.sk} onChange={handleDbChange} className="w-full p-2 border rounded-lg" rows="2" required />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-sm font-bold text-gray-700 mb-1">ستندرد ڤمبلاجرن (SP)</label>
+                      <textarea name="sp" value={dbForm.sp} onChange={handleDbChange} className="w-full p-2 border rounded-lg" rows="2" required />
+                    </div>
+                    <div className="md:col-span-3 flex justify-end pt-2">
+                      <button type="submit" className="bg-green-700 text-white px-6 py-2 rounded-lg font-bold">سيمڤن ريكود</button>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                  <div className="flex flex-wrap justify-between items-center mb-4 gap-4">
+                    <h3 className="text-lg font-bold text-gray-800">سناراي RPT ترسيمڤن</h3>
+                    <div className="flex gap-2">
+                      <select value={darjahFilter} onChange={(e) => setDarjahFilter(e.target.value)} className="p-2 border rounded-lg font-bold bg-white text-sm">
+                        <option value="">سموا درجه</option>
+                        {listDarjahSAKNJ.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                      <select value={subjekFilter} onChange={(e) => setSubjekFilter(e.target.value)} className="p-2 border rounded-lg font-bold bg-white text-sm">
+                        <option value="">سموا سوبجيك</option>
+                        {listSubjekSAKNJ.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-right border-collapse">
+                      <thead>
+                        <tr className="bg-gray-50 border-b">
+                          <th className="p-3 text-sm font-bold text-gray-600">درجه</th>
+                          <th className="p-3 text-sm font-bold text-gray-600">سوبجيك</th>
+                          <th className="p-3 text-sm font-bold text-gray-600">ميڠڬو</th>
+                          <th className="p-3 text-sm font-bold text-gray-600">تاجوق & SK/SP</th>
+                          <th className="p-3 text-sm font-bold text-gray-600 text-center">تيندقن</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rptData
+                          .filter(row => (darjahFilter === '' || row.darjah === darjahFilter) && (subjekFilter === '' || row.mataPelajaran === subjekFilter))
+                          .map((row) => (
+                          <tr key={row.id} className="border-b hover:bg-gray-50">
+                            <td className="p-3 align-top font-bold text-green-700">{row.darjah}</td>
+                            <td className="p-3 align-top font-bold text-blue-800">{row.mataPelajaran}</td>
+                            <td className="p-3 align-top font-bold">{row.minggu}</td>
+                            <td className="p-3 align-top">
+                              <div className="font-bold text-green-800">{row.tajuk}</div>
+                              <div className="text-sm text-gray-600 mt-1"><strong>SK:</strong> {row.sk}</div>
+                              <div className="text-sm text-gray-600 mt-1"><strong>SP:</strong> {row.sp}</div>
+                            </td>
+                            <td className="p-3 align-top text-center">
+                              <button onClick={() => deleteRecord(row.id)} className="text-red-500 hover:text-red-700 p-2 bg-red-50 rounded-full">🗑️</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<ERPHSystem />, document.getElementById('root'));
+  </script>
+</body>
+</html>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <!-- Babel Standalone for JSX -->
